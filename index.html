@@ -1780,8 +1780,8 @@
       <button class="ghost-btn" onclick="disconnectFitbit()">Disconnect</button>
     </div>
     <div id="fitbit-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
-    <div class="tip-box" style="margin-top:12px;"><strong>Auto-sync:</strong> once connected, this pulls fresh Fitbit data automatically every time you open or refresh the app — no need to tap Sync unless you want the very latest numbers mid-session.</div>
-    <div class="tip-box" style="margin-top:8px;"><strong>Heads up — this is changing:</strong> Fitbit is retiring its legacy Web API in September 2026 in favour of the new Google Health API, and new app registrations on dev.fitbit.com are already closed. A token generated before the cutover will keep working until then, but after September 2026 this connection will need rebuilding against Google's new API and OAuth flow. Manual entry on the Fitness tab always works regardless.</div>
+    <div class="tip-box" style="margin-top:12px;"><strong>Auto-sync:</strong> once connected, this pulls fresh data automatically every time you open or refresh the app — no need to tap Sync unless you want the very latest numbers mid-session.</div>
+    <div class="tip-box" style="margin-top:8px;"><strong>This now runs on the Google Health API</strong> (Fitbit's old Web API is retiring September 2026). The token above comes from Google's OAuth flow, not Fitbit's old token page — see the walkthrough we worked through together if you need to regenerate one. Steps and Sleep sync reliably; Calories, Active Minutes and Weight are best-effort since Google hasn't published example responses for those fields yet, and will fall back to manual entry if the shape doesn't match.</div>
   </div>
 
   <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('fitness')">Done</button>
@@ -2676,35 +2676,142 @@ async function syncFitbit({ silent }) {
   const noteEl = document.getElementById('fitbit-sync-note');
   if (noteEl && !silent) { noteEl.textContent = 'Syncing…'; noteEl.style.color = 'var(--text-dim)'; }
 
-  try {
-    const today = todayKey();
-    const headers = { Authorization: 'Bearer ' + token };
+  const headers = { Authorization: 'Bearer ' + token, Accept: 'application/json' };
+  const today = todayKey();
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  let gotAnyData = false;
 
-    const [activity, sleep] = await Promise.all([
-      fetch(`https://api.fitbit.com/1/user/-/activities/date/${today}.json`, { headers }).then(r => r.ok ? r.json() : null),
-      fetch(`https://api.fitbit.com/1.2/user/-/sleep/date/${today}.json`, { headers }).then(r => r.ok ? r.json() : null)
+  // Fetch every page of dataPoints for a given Google Health data type + filter
+  async function fetchAllDataPoints(dataType, filter) {
+    let points = [];
+    let pageToken = null;
+    for (let i = 0; i < 5; i++) { // hard cap of 5 pages, plenty for one day of data
+      const qs = new URLSearchParams({ filter, pageSize: '2000' });
+      if (pageToken) qs.set('pageToken', pageToken);
+      const url = `https://health.googleapis.com/v4/users/me/dataTypes/${dataType}/dataPoints?${qs}`;
+      const res = await fetch(url, { headers });
+      if (!res.ok) return points; // 401/403/404 etc — bail with whatever we have (likely nothing)
+      const body = await res.json();
+      points = points.concat(body.dataPoints || []);
+      pageToken = body.nextPageToken;
+      if (!pageToken) break;
+    }
+    return points;
+  }
+
+  // Confirmed shape: steps.count per interval — sum across today's civil day
+  async function syncSteps() {
+    try {
+      const filter = `steps.interval.civil_start_time >= "${today}T00:00:00" AND steps.interval.civil_start_time < "${tomorrow}T00:00:00"`;
+      const points = await fetchAllDataPoints('steps', filter);
+      if (!points.length) return;
+      const total = points.reduce((sum, dp) => sum + (parseInt(dp.steps && dp.steps.count, 10) || 0), 0);
+      saveFitnessValue('steps', total);
+      gotAnyData = true;
+    } catch (e) { console.warn('Steps sync failed', e); }
+  }
+
+  // Confirmed shape: sleep.summary.minutesAsleep on the main sleep session ending today
+  async function syncSleep() {
+    try {
+      const filter = `sleep.interval.end_time >= "${today}T00:00:00Z" AND sleep.interval.end_time < "${tomorrow}T00:00:00Z"`;
+      const points = await fetchAllDataPoints('sleep', filter);
+      if (!points.length) return;
+      const minutes = Math.max(...points.map(dp => (dp.sleep && dp.sleep.summary && dp.sleep.summary.minutesAsleep) || 0));
+      if (minutes > 0) {
+        saveFitnessValue('sleep', Math.round(minutes / 6) / 10);
+        gotAnyData = true;
+      }
+    } catch (e) { console.warn('Sleep sync failed', e); }
+  }
+
+  // Best-effort: exact field names for these three aren't published anywhere with an example.
+  // We try several plausible field names; if none match, we log the raw point so the shape
+  // can be read from the browser console and the parser fixed precisely next time.
+  async function syncBestEffort(dataType, saveKey, candidateFields, civilFilterField) {
+    try {
+      const filter = `${civilFilterField} >= "${today}T00:00:00" AND ${civilFilterField} < "${tomorrow}T00:00:00"`;
+      const points = await fetchAllDataPoints(dataType, filter);
+      if (!points.length) return;
+
+      let total = 0;
+      let matched = false;
+      points.forEach(dp => {
+        const obj = dp[Object.keys(dp).find(k => k !== 'name' && k !== 'dataSource')] || {};
+        for (const field of candidateFields) {
+          const val = field.split('.').reduce((o, k) => (o ? o[k] : undefined), obj);
+          if (val !== undefined) {
+            total += parseFloat(val) || 0;
+            matched = true;
+            break;
+          }
+        }
+      });
+
+      if (matched) {
+        saveFitnessValue(saveKey, Math.round(total));
+        gotAnyData = true;
+      } else {
+        console.info(`Fitbit sync: unrecognised shape for "${dataType}" — raw data point for inspection:`, points[0]);
+      }
+    } catch (e) { console.warn(`${dataType} sync failed`, e); }
+  }
+
+  // Weight is best-effort (unpublished field shape) and writes into the weight log/chart,
+  // not the daily fitness-metrics store, since that's what actually feeds the Weight section.
+  async function syncWeight() {
+    try {
+      const filter = `weight.sample_time.civil_time >= "${today}T00:00:00" AND weight.sample_time.civil_time < "${tomorrow}T00:00:00"`;
+      const points = await fetchAllDataPoints('weight', filter);
+      if (!points.length) return;
+
+      const candidateFields = ['massKg', 'kg', 'value', 'weightKg'];
+      let kg = null;
+      for (const dp of points) {
+        const obj = dp.weight || {};
+        for (const field of candidateFields) {
+          if (obj[field] !== undefined) { kg = parseFloat(obj[field]); break; }
+        }
+        if (kg !== null) break;
+      }
+
+      if (kg !== null && !isNaN(kg)) {
+        const entries = loadJSON('results-log', []);
+        const idx = entries.findIndex(e => e.date === today);
+        const entry = { date: today, weight: kg };
+        if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+        entries.sort((a, b) => b.date.localeCompare(a.date));
+        saveJSON('results-log', entries);
+        renderResults();
+        renderWeightChart();
+        gotAnyData = true;
+      } else {
+        console.info('Fitbit sync: unrecognised shape for "weight" — raw data point for inspection:', points[0]);
+      }
+    } catch (e) { console.warn('Weight sync failed', e); }
+  }
+
+  try {
+    await Promise.all([
+      syncSteps(),
+      syncSleep(),
+      syncWeight(),
+      syncBestEffort('total-calories', 'kcal', ['caloriesKcal', 'kcal', 'calories', 'value'], 'total-calories.interval.civil_start_time'),
+      syncBestEffort('active-minutes', 'active', ['durationMinutes', 'minutes', 'value', 'duration'], 'active-minutes.interval.civil_start_time')
     ]);
 
-    if (activity && activity.summary) {
-      saveFitnessValue('steps', activity.summary.steps || 0);
-      saveFitnessValue('active', (activity.summary.fairlyActiveMinutes || 0) + (activity.summary.veryActiveMinutes || 0));
-      saveFitnessValue('kcal', activity.summary.caloriesOut || 0);
-    }
-    if (sleep && sleep.summary) {
-      saveFitnessValue('sleep', Math.round((sleep.summary.totalMinutesAsleep || 0) / 6) / 10);
-    }
     renderFitnessStats();
 
-    if (activity || sleep) {
+    if (gotAnyData) {
       saveJSON('fitbit-last-sync', Date.now());
       renderLastSync();
       if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
     } else if (noteEl && !silent) {
-      noteEl.textContent = 'Sync failed — check your token';
+      noteEl.textContent = 'Sync ran but found no data — check console for details';
       noteEl.style.color = 'var(--chest)';
     }
   } catch (err) {
-    console.warn('Fitbit sync failed — likely a CORS restriction on api.fitbit.com from a static site. Manual entry still works.', err);
+    console.warn('Fitbit sync failed — check token validity, or this may be a CORS restriction on health.googleapis.com from a static site.', err);
     if (noteEl && !silent) {
       noteEl.textContent = 'Sync failed — check your token or connection';
       noteEl.style.color = 'var(--chest)';
