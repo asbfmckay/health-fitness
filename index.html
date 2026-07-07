@@ -1966,9 +1966,10 @@
     </div>
   </div>
   <div class="tracker-card" style="margin-top:-4px;">
-    <div style="display:flex; gap:8px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <button class="solid-btn" id="cloud-sync-btn" onclick="syncCloudNow()" style="display:none;">Sync now</button>
-      <button class="ghost-btn" onclick="disconnectCloud()">Reset connection</button>
+      <button class="ghost-btn" id="cloud-reconnect-btn" onclick="reconnectCloud()" style="display:none;">Reconnect</button>
+      <button class="ghost-btn" onclick="disconnectCloud()">Reset</button>
     </div>
     <div id="cloud-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
     <!-- Hidden input kept for JS compatibility — never shown -->
@@ -2333,7 +2334,8 @@ async function autoLoadCloudKey() {
 const DAY_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 function todayKey() {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 function getWeekKey(d = new Date()) {
@@ -2941,19 +2943,7 @@ function renderLastSync() {
   el.textContent = `Last synced: ${when}`;
 }
 
-async function getGoogleToken() {
-  const cloudKey = loadJSON('cloud-key', '');
-  if (!cloudKey) throw new Error('Cloud sync not connected — set up the Cloud Sync key in Settings first');
-  const res = await fetch(CLOUD_WORKER_URL + '/fitness-token', {
-    headers: { Authorization: 'Bearer ' + cloudKey }
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.detail || body.error || `HTTP ${res.status}`);
-  }
-  const { access_token } = await res.json();
-  return access_token;
-}
+
 
 async function connectFitbit() {
   // "Connect & sync" now just triggers a sync — no token to paste
@@ -2971,163 +2961,44 @@ async function syncFitbit({ silent }) {
   const noteEl = document.getElementById('fitbit-sync-note');
   if (noteEl && !silent) { noteEl.textContent = 'Syncing…'; noteEl.style.color = 'var(--text-dim)'; }
 
-  let token;
   try {
-    token = await getGoogleToken();
-  } catch (e) {
-    console.warn('Fitbit: could not get access token —', e.message);
-    if (noteEl && !silent) {
-      noteEl.textContent = 'Could not get token — ' + e.message;
-      noteEl.style.color = 'var(--chest)';
+    const today = todayKey();
+    const res = await fetch(CLOUD_WORKER_URL + '/fitness-data?date=' + today, {
+      headers: { Authorization: 'Bearer ' + cloudKey }
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || body.error || `HTTP ${res.status}`);
     }
-    return;
-  }
 
-  const headers = { Authorization: 'Bearer ' + token, Accept: 'application/json' };
-  const today = todayKey();
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
-  let gotAnyData = false;
+    const data = await res.json();
 
-  // Fetch every page of dataPoints for a given Google Health data type + filter
-  async function fetchAllDataPoints(dataType, filter) {
-    let points = [];
-    let pageToken = null;
-    for (let i = 0; i < 5; i++) { // hard cap of 5 pages, plenty for one day of data
-      const qs = new URLSearchParams({ filter, pageSize: '2000' });
-      if (pageToken) qs.set('pageToken', pageToken);
-      const url = `https://health.googleapis.com/v4/users/me/dataTypes/${dataType}/dataPoints?${qs}`;
-      const res = await fetch(url, { headers });
-      if (!res.ok) {
-        const bodyText = await res.text().catch(() => '');
-        console.warn(`Fitbit sync: "${dataType}" request failed — HTTP ${res.status} ${res.statusText}`, bodyText, '\nURL used:', url);
-        return points;
-      }
-      const body = await res.json();
-      points = points.concat(body.dataPoints || []);
-      pageToken = body.nextPageToken;
-      if (!pageToken) break;
+    if (data.steps !== undefined) saveFitnessValue('steps', data.steps);
+    if (data.active !== undefined) saveFitnessValue('active', data.active);
+    if (data.kcal !== undefined) saveFitnessValue('kcal', data.kcal);
+    if (data.sleep !== undefined) saveFitnessValue('sleep', data.sleep);
+
+    if (data.weight !== undefined) {
+      const entries = loadJSON('results-log', []);
+      const idx = entries.findIndex(e => e.date === today);
+      const entry = { date: today, weight: data.weight };
+      if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+      entries.sort((a, b) => b.date.localeCompare(a.date));
+      saveJSON('results-log', entries);
+      renderResults();
+      renderWeightChart();
     }
-    if (!points.length) {
-      console.info(`Fitbit sync: "${dataType}" request succeeded but returned zero data points. Filter used:`, filter);
-    }
-    return points;
-  }
-
-  // Confirmed shape: steps.count per interval — sum across today's civil day
-  async function syncSteps() {
-    try {
-      const filter = `steps.interval.civil_start_time >= "${today}T00:00:00" AND steps.interval.civil_start_time < "${tomorrow}T00:00:00"`;
-      const points = await fetchAllDataPoints('steps', filter);
-      if (!points.length) return;
-      const total = points.reduce((sum, dp) => sum + (parseInt(dp.steps && dp.steps.count, 10) || 0), 0);
-      saveFitnessValue('steps', total);
-      gotAnyData = true;
-    } catch (e) { console.warn('Steps sync failed', e); }
-  }
-
-  // Confirmed shape: sleep.summary.minutesAsleep on the main sleep session ending today
-  async function syncSleep() {
-    try {
-      const filter = `sleep.interval.end_time >= "${today}T00:00:00Z" AND sleep.interval.end_time < "${tomorrow}T00:00:00Z"`;
-      const points = await fetchAllDataPoints('sleep', filter);
-      if (!points.length) return;
-      const minutes = Math.max(...points.map(dp => (dp.sleep && dp.sleep.summary && dp.sleep.summary.minutesAsleep) || 0));
-      if (minutes > 0) {
-        saveFitnessValue('sleep', Math.round(minutes / 6) / 10);
-        gotAnyData = true;
-      }
-    } catch (e) { console.warn('Sleep sync failed', e); }
-  }
-
-  // Best-effort: exact field names for these three aren't published anywhere with an example.
-  // We try several plausible field names; if none match, we log the raw point so the shape
-  // can be read from the browser console and the parser fixed precisely next time.
-  async function syncBestEffort(dataType, saveKey, candidateFields, civilFilterField) {
-    try {
-      const filter = `${civilFilterField} >= "${today}T00:00:00" AND ${civilFilterField} < "${tomorrow}T00:00:00"`;
-      const points = await fetchAllDataPoints(dataType, filter);
-      if (!points.length) return;
-
-      let total = 0;
-      let matched = false;
-      points.forEach(dp => {
-        const obj = dp[Object.keys(dp).find(k => k !== 'name' && k !== 'dataSource')] || {};
-        for (const field of candidateFields) {
-          const val = field.split('.').reduce((o, k) => (o ? o[k] : undefined), obj);
-          if (val !== undefined) {
-            total += parseFloat(val) || 0;
-            matched = true;
-            break;
-          }
-        }
-      });
-
-      if (matched) {
-        saveFitnessValue(saveKey, Math.round(total));
-        gotAnyData = true;
-      } else {
-        console.info(`Fitbit sync: unrecognised shape for "${dataType}" — raw data point for inspection:`, points[0]);
-      }
-    } catch (e) { console.warn(`${dataType} sync failed`, e); }
-  }
-
-  // Weight is best-effort (unpublished field shape) and writes into the weight log/chart,
-  // not the daily fitness-metrics store, since that's what actually feeds the Weight section.
-  async function syncWeight() {
-    try {
-      const filter = `weight.sample_time.civil_time >= "${today}T00:00:00" AND weight.sample_time.civil_time < "${tomorrow}T00:00:00"`;
-      const points = await fetchAllDataPoints('weight', filter);
-      if (!points.length) return;
-
-      const candidateFields = ['massKg', 'kg', 'value', 'weightKg'];
-      let kg = null;
-      for (const dp of points) {
-        const obj = dp.weight || {};
-        for (const field of candidateFields) {
-          if (obj[field] !== undefined) { kg = parseFloat(obj[field]); break; }
-        }
-        if (kg !== null) break;
-      }
-
-      if (kg !== null && !isNaN(kg)) {
-        const entries = loadJSON('results-log', []);
-        const idx = entries.findIndex(e => e.date === today);
-        const entry = { date: today, weight: kg };
-        if (idx >= 0) entries[idx] = entry; else entries.push(entry);
-        entries.sort((a, b) => b.date.localeCompare(a.date));
-        saveJSON('results-log', entries);
-        renderResults();
-        renderWeightChart();
-        gotAnyData = true;
-      } else {
-        console.info('Fitbit sync: unrecognised shape for "weight" — raw data point for inspection:', points[0]);
-      }
-    } catch (e) { console.warn('Weight sync failed', e); }
-  }
-
-  try {
-    await Promise.all([
-      syncSteps(),
-      syncSleep(),
-      syncWeight(),
-      syncBestEffort('total-calories', 'kcal', ['caloriesKcal', 'kcal', 'calories', 'value'], 'total-calories.interval.civil_start_time'),
-      syncBestEffort('active-minutes', 'active', ['durationMinutes', 'minutes', 'value', 'duration'], 'active-minutes.interval.civil_start_time')
-    ]);
 
     renderFitnessStats();
+    saveJSON('fitbit-last-sync', Date.now());
+    renderLastSync();
+    if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
 
-    if (gotAnyData) {
-      saveJSON('fitbit-last-sync', Date.now());
-      renderLastSync();
-      if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
-    } else if (noteEl && !silent) {
-      noteEl.textContent = 'Sync ran but found no data — check console for details';
-      noteEl.style.color = 'var(--chest)';
-    }
   } catch (err) {
-    console.warn('Fitbit sync failed — check token validity, or this may be a CORS restriction on health.googleapis.com from a static site.', err);
+    console.warn('Fitbit sync failed:', err);
     if (noteEl && !silent) {
-      noteEl.textContent = 'Sync failed — check your token or connection';
+      noteEl.textContent = 'Sync failed — ' + (err && err.message || 'check connection');
       noteEl.style.color = 'var(--chest)';
     }
   }
@@ -3281,9 +3152,26 @@ function updateCloudUI(linked) {
   const status = document.getElementById('cloud-sync-status');
   const sub = document.getElementById('cloud-sync-sub');
   const btn = document.getElementById('cloud-sync-btn');
+  const reconnect = document.getElementById('cloud-reconnect-btn');
   if (status) { status.textContent = linked ? 'LINKED' : 'OFFLINE'; status.classList.toggle('linked', linked); }
-  if (sub) sub.textContent = linked ? 'Auto-syncing across devices' : 'Connecting…';
+  if (sub) sub.textContent = linked ? 'Auto-syncing across devices' : 'Not connected';
   if (btn) btn.style.display = linked ? '' : 'none';
+  if (reconnect) reconnect.style.display = linked ? 'none' : '';
+}
+
+async function reconnectCloud() {
+  const noteEl = document.getElementById('cloud-sync-note');
+  if (noteEl) { noteEl.textContent = 'Reconnecting…'; noteEl.style.color = 'var(--text-dim)'; }
+  localStorage.removeItem('cloud-key');
+  await autoLoadCloudKey();
+  const key = loadJSON('cloud-key', '');
+  if (key) {
+    updateCloudUI(true);
+    if (noteEl) { noteEl.textContent = ''; }
+    await pushCloudState({ silent: false });
+  } else {
+    if (noteEl) { noteEl.textContent = 'Could not fetch key — check Worker secrets (FITNESS_PIN)'; noteEl.style.color = 'var(--chest)'; }
+  }
 }
 
 function renderCloudLastSync() {
@@ -3383,7 +3271,7 @@ async function pushCloudState({ silent }) {
     if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
   } catch (err) {
     console.warn('Cloud sync failed', err);
-    if (noteEl && !silent) { noteEl.textContent = 'Sync failed — check the app key or connection'; noteEl.style.color = 'var(--chest)'; }
+    if (noteEl && !silent) { noteEl.textContent = 'Sync failed — ' + (err && err.message || 'check connection'); noteEl.style.color = 'var(--chest)'; }
   }
 }
 </script>
