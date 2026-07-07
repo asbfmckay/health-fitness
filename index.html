@@ -58,84 +58,95 @@
     background: var(--bg);
     color: var(--text-body);
     -webkit-tap-highlight-color: transparent;
-    padding-bottom: 90px;
+    padding-bottom: 24px;
     transition: padding-bottom 0.15s ease;
     font-variant-numeric: tabular-nums;
   }
 
   .hero-band {
-    padding: 56px 20px 32px;
+    padding: 22px 0 16px;
     position: relative;
   }
 
   .page-header {
     max-width: 520px;
     margin: 0 auto;
-    text-align: center;
+    padding: 0 16px;
+    text-align: left;
     position: relative;
     z-index: 1;
   }
 
-  .home-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 22px;
-    background: var(--green-deep);
-    border: none;
-    box-shadow: 0 6px 16px rgba(23,27,46,0.25);
-    text-decoration: none;
-  }
-
-  .home-icon svg { width: 40px; height: 40px; }
-
   .header-top {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    position: relative;
+    gap: 8px;
   }
 
-  .settings-btn {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    background: var(--green-deep);
+  .home-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(23,27,46,0.3);
-    z-index: 20;
+    background: var(--green-deep);
+    border: none;
+    text-decoration: none;
+    flex-shrink: 0;
   }
 
-  .settings-btn svg { width: 22px; height: 22px; }
+  .home-icon svg { width: 15px; height: 15px; }
+
+  .header-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
 
   .page-title {
     font-family: var(--display);
-    font-size: 25px;
-    line-height: 1.1;
+    font-size: 22px;
+    line-height: 1.15;
     letter-spacing: -0.01em;
     font-weight: 800;
     color: var(--text-h);
     text-transform: none;
+    margin-top: 8px;
   }
 
   .page-rule {
     width: 26px;
     height: 3px;
     background: var(--lime);
-    margin: 18px auto 0;
+    margin: 12px 0 0;
     border-radius: 2px;
   }
+
+  .settings-link-wrap {
+    text-align: center;
+    padding: 4px 16px 24px;
+  }
+
+  .settings-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--body-f);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+    padding: 6px 4px;
+  }
+
+  .settings-link svg { width: 15px; height: 15px; flex-shrink: 0; }
 
   .week-nav-wrap {
     width: 100%;
@@ -1124,13 +1135,6 @@
 </head>
 <body>
 
-<button class="settings-btn" id="settings-btn" onclick="showPage('settings')" aria-label="Settings">
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="var(--lime)" stroke-width="1.6"/>
-    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="var(--lime)" stroke-width="1.6" stroke-linejoin="round"/>
-  </svg>
-</button>
-
 <div class="hero-band">
 <div class="page-header">
   <div class="header-top">
@@ -1143,8 +1147,9 @@
         <rect x="16.3" y="8" width="2.4" height="8" rx="0.8" fill="var(--lime)"/>
       </svg>
     </a>
+    <span class="header-eyebrow">Health &amp; Fitness</span>
   </div>
-  <div class="page-title">Health &amp; Fitness</div>
+  <div class="page-title" id="header-greeting">Good morning, Andrew</div>
   <div class="page-rule"></div>
 </div>
 </div>
@@ -1564,6 +1569,16 @@
   <div class="timer-actions" id="timer-actions"></div>
 </div>
 
+<div class="settings-link-wrap">
+  <button class="settings-link" onclick="showPage('settings')">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+    Settings
+  </button>
+</div>
+
 </div><!-- /page-workout -->
 
 <!-- ══════════════════════════════════════════════════════
@@ -1691,6 +1706,16 @@
     </div>
   </div>
 
+  <div class="settings-link-wrap">
+    <button class="settings-link" onclick="showPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </svg>
+      Settings
+    </button>
+  </div>
+
 </div><!-- /page-fitness -->
 
 <!-- ══════════════════════════════════════════════════════
@@ -1706,6 +1731,16 @@
   <div class="section-label">Check-Ups &amp; Assessments</div>
   <div class="tracker-card">
     <div id="checkups-list"></div>
+  </div>
+
+  <div class="settings-link-wrap">
+    <button class="settings-link" onclick="showPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </svg>
+      Settings
+    </button>
   </div>
 
 </div><!-- /page-health -->
@@ -1772,7 +1807,12 @@
   <div class="tracker-card" id="fitbit-connect-card" style="margin-top:-4px;">
     <div class="log-field" style="margin-bottom:10px;">
       <label class="mini-label">Fitbit access token</label>
-      <input type="text" id="fitbit-token" placeholder="Paste personal access token">
+      <div style="display:flex; gap:6px;">
+        <input type="password" id="fitbit-token" placeholder="Paste personal access token" style="flex:1;">
+        <button class="icon-btn" type="button" onclick="toggleTokenVisibility()" aria-label="Show/hide token">
+          <svg viewBox="0 0 24 24" fill="none" id="fitbit-token-eye"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" stroke="var(--text-dim)" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" stroke="var(--text-dim)" stroke-width="1.6"/></svg>
+        </button>
+      </div>
     </div>
     <div style="display:flex; gap:8px;">
       <button class="solid-btn" onclick="connectFitbit()">Connect &amp; sync</button>
@@ -1782,6 +1822,39 @@
     <div id="fitbit-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
     <div class="tip-box" style="margin-top:12px;"><strong>Auto-sync:</strong> once connected, this pulls fresh data automatically every time you open or refresh the app — no need to tap Sync unless you want the very latest numbers mid-session.</div>
     <div class="tip-box" style="margin-top:8px;"><strong>This now runs on the Google Health API</strong> (Fitbit's old Web API is retiring September 2026). The token above comes from Google's OAuth flow, not Fitbit's old token page — see the walkthrough we worked through together if you need to regenerate one. Steps and Sleep sync reliably; Calories, Active Minutes and Weight are best-effort since Google hasn't published example responses for those fields yet, and will fall back to manual entry if the shape doesn't match.</div>
+  </div>
+
+  <div class="section-label">Cloud Sync — Phone ⇄ Computer</div>
+  <div class="tracker-card connect-card">
+    <div class="connect-logo">
+      <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M7 17a4 4 0 01-.6-7.96A5 5 0 0116 8a4 4 0 01.6 7.96" stroke="var(--lime)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 12v6M9.5 15.5L12 18l2.5-2.5" stroke="var(--lime)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div style="flex:1;">
+      <div class="tracker-title">Cloud Sync</div>
+      <div class="tracker-sub" id="cloud-sync-sub">Not connected</div>
+      <div class="tracker-sub" id="cloud-last-sync" style="margin-top:2px;">Never synced yet</div>
+    </div>
+    <div>
+      <span class="connect-status" id="cloud-sync-status">OFFLINE</span>
+    </div>
+  </div>
+  <div class="tracker-card" style="margin-top:-4px;">
+    <div class="log-field" style="margin-bottom:10px;">
+      <label class="mini-label">App key</label>
+      <div style="display:flex; gap:6px;">
+        <input type="password" id="cloud-key" placeholder="Paste the app key for this Worker" style="flex:1;">
+        <button class="icon-btn" type="button" onclick="toggleCloudKeyVisibility()" aria-label="Show/hide key">
+          <svg viewBox="0 0 24 24" fill="none" id="cloud-key-eye"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" stroke="var(--text-dim)" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" stroke="var(--text-dim)" stroke-width="1.6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="solid-btn" onclick="saveCloudKeyAndSync()">Connect &amp; sync</button>
+      <button class="ghost-btn" id="cloud-sync-btn" onclick="syncCloudNow()" style="display:none;">Sync now</button>
+      <button class="ghost-btn" onclick="disconnectCloud()">Disconnect</button>
+    </div>
+    <div id="cloud-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
+    <div class="tip-box" style="margin-top:12px;"><strong>What this syncs:</strong> targets, weight log, alcohol-free days, workout sessions and check-up dates — the Fitbit token itself stays on this device only, since it's short-lived and device-specific anyway. Runs through the same Worker as your other connected apps, under its own key so it can't collide with their data.</div>
   </div>
 
   <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('fitness')">Done</button>
@@ -2104,8 +2177,15 @@ function loadJSON(key, fallback) {
   } catch { return fallback; }
 }
 
+const CLOUD_NO_SYNC_KEYS = new Set(['fitbit-token', 'fitbit-last-sync', 'cloud-key', 'cloud-last-sync']);
+
 function saveJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+  if (!CLOUD_NO_SYNC_KEYS.has(key)) queueCloudPush();
+}
+
+function genId() {
+  return 'id' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
 function initTrackers() {
@@ -2116,6 +2196,13 @@ function initTrackers() {
   initCheckups();
   initFitbit();
   initTimer();
+  initCloudSync();
+  const greetingEl = document.getElementById('header-greeting');
+  if (greetingEl) {
+    const hour = new Date().getHours();
+    const part = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+    greetingEl.textContent = `Good ${part}, Andrew`;
+  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -2549,7 +2636,7 @@ function finishSession() {
 
   if (totalSec >= 30) { // ignore accidental near-zero taps
     const log = loadJSON('session-log', []);
-    log.push({ date: todayKey(), type: session.type, durationSec: totalSec });
+    log.push({ id: genId(), date: todayKey(), type: session.type, durationSec: totalSec });
     saveJSON('session-log', log);
   }
 
@@ -2614,6 +2701,16 @@ function deleteSessionEntry(index) {
 /* ══════════════════════════════════════════════════════
    Fitbit connect (personal access token, no server needed)
    ══════════════════════════════════════════════════════ */
+function toggleTokenVisibility() {
+  const input = document.getElementById('fitbit-token');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function toggleCloudKeyVisibility() {
+  const input = document.getElementById('cloud-key');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
 function initFitbit() {
   const token = loadJSON('fitbit-token', null);
   document.getElementById('fitbit-token').value = token || '';
@@ -2690,11 +2787,18 @@ async function syncFitbit({ silent }) {
       if (pageToken) qs.set('pageToken', pageToken);
       const url = `https://health.googleapis.com/v4/users/me/dataTypes/${dataType}/dataPoints?${qs}`;
       const res = await fetch(url, { headers });
-      if (!res.ok) return points; // 401/403/404 etc — bail with whatever we have (likely nothing)
+      if (!res.ok) {
+        const bodyText = await res.text().catch(() => '');
+        console.warn(`Fitbit sync: "${dataType}" request failed — HTTP ${res.status} ${res.statusText}`, bodyText, '\nURL used:', url);
+        return points;
+      }
       const body = await res.json();
       points = points.concat(body.dataPoints || []);
       pageToken = body.nextPageToken;
       if (!pageToken) break;
+    }
+    if (!points.length) {
+      console.info(`Fitbit sync: "${dataType}" request succeeded but returned zero data points. Filter used:`, filter);
     }
     return points;
   }
@@ -2825,6 +2929,242 @@ function disconnectFitbit() {
   document.getElementById('fitbit-token').value = '';
   updateFitbitUI(false);
   renderLastSync();
+}
+
+/* ══════════════════════════════════════════════════════
+   Cloud Sync — phone ⇄ computer, via the same Worker used
+   elsewhere, under its own key/route so data can't collide.
+   ══════════════════════════════════════════════════════ */
+const CLOUD_WORKER_URL = 'https://little-sunset-b8a7.andrew-bronnia.workers.dev';
+const CLOUD_ROUTE = '/fitness-backup';
+
+function scanPrefixed(prefix) {
+  const out = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith(prefix)) {
+      try { out[k] = JSON.parse(localStorage.getItem(k)); } catch (_) {}
+    }
+  }
+  return out;
+}
+
+function collectSyncState() {
+  return {
+    targets: loadJSON('targets', null),
+    resultsLog: loadJSON('results-log', []),
+    checkups: loadJSON('checkups', null),
+    sessionLog: loadJSON('session-log', []),
+    afd: scanPrefixed('afd-'),
+    fitness: scanPrefixed('fitness-'),
+    savedAt: Date.now()
+  };
+}
+
+function applySyncState(state) {
+  if (state.targets) localStorage.setItem('targets', JSON.stringify(state.targets));
+  localStorage.setItem('results-log', JSON.stringify(state.resultsLog || []));
+  if (state.checkups) localStorage.setItem('checkups', JSON.stringify(state.checkups));
+  localStorage.setItem('session-log', JSON.stringify(state.sessionLog || []));
+  Object.entries(state.afd || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
+  Object.entries(state.fitness || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
+}
+
+function mergeByDateArray(localArr, cloudArr, localNewer) {
+  const map = new Map();
+  (cloudArr || []).forEach(e => map.set(e.date, e));
+  (localArr || []).forEach(e => {
+    if (!map.has(e.date) || localNewer) map.set(e.date, e);
+  });
+  return Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
+}
+
+function mergeCheckupsState(localArr, cloudArr) {
+  const base = (cloudArr && cloudArr.length) ? cloudArr : (localArr || []);
+  const map = new Map(base.map(c => [c.id, c]));
+  (localArr || []).forEach(c => {
+    const existing = map.get(c.id);
+    if (!existing) { map.set(c.id, c); return; }
+    if (c.last && (!existing.last || c.last > existing.last)) map.set(c.id, c);
+  });
+  return Array.from(map.values());
+}
+
+function mergeSessionLogsState(localArr, cloudArr) {
+  const seen = new Set();
+  const out = [];
+  [...(cloudArr || []), ...(localArr || [])].forEach(e => {
+    const key = e.id || (e.date + '|' + e.type + '|' + e.durationSec);
+    if (!seen.has(key)) { seen.add(key); out.push(e); }
+  });
+  return out;
+}
+
+function mergeAfdState(localObj, cloudObj) {
+  const keys = new Set([...Object.keys(localObj || {}), ...Object.keys(cloudObj || {})]);
+  const out = {};
+  keys.forEach(k => {
+    const l = (localObj || {})[k] || [false, false, false, false, false, false, false];
+    const c = (cloudObj || {})[k] || [false, false, false, false, false, false, false];
+    out[k] = l.map((v, i) => !!(v || c[i]));
+  });
+  return out;
+}
+
+function mergeFitnessState(localObj, cloudObj) {
+  const keys = new Set([...Object.keys(localObj || {}), ...Object.keys(cloudObj || {})]);
+  const out = {};
+  keys.forEach(k => {
+    const l = (localObj || {})[k] || {};
+    const c = (cloudObj || {})[k] || {};
+    const merged = {};
+    new Set([...Object.keys(l), ...Object.keys(c)]).forEach(field => {
+      merged[field] = Math.max(l[field] || 0, c[field] || 0);
+    });
+    out[k] = merged;
+  });
+  return out;
+}
+
+function mergeSyncState(local, cloud) {
+  if (!cloud) return local;
+  if (!local) return cloud;
+  const localNewer = (local.savedAt || 0) >= (cloud.savedAt || 0);
+  return {
+    targets: localNewer ? (local.targets || cloud.targets) : (cloud.targets || local.targets),
+    resultsLog: mergeByDateArray(local.resultsLog, cloud.resultsLog, localNewer),
+    checkups: mergeCheckupsState(local.checkups, cloud.checkups),
+    sessionLog: mergeSessionLogsState(local.sessionLog, cloud.sessionLog),
+    afd: mergeAfdState(local.afd, cloud.afd),
+    fitness: mergeFitnessState(local.fitness, cloud.fitness),
+    savedAt: Date.now()
+  };
+}
+
+function refreshAllViewsAfterSync() {
+  renderAfd();
+  renderFitnessStats();
+  renderResults();
+  renderWeightChart();
+  renderSessionStats();
+  renderCheckups();
+  refreshSettingsFields();
+}
+
+function refreshSettingsFields() {
+  const targets = getTargets();
+  const map = {
+    'set-steps-target': 'steps', 'set-active-target': 'active', 'set-kcal-target': 'kcal',
+    'set-sleep-target': 'sleep', 'set-weight-target': 'weight', 'set-afd-target': 'afd',
+    'set-workouts-target': 'workouts'
+  };
+  Object.entries(map).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = targets[key];
+  });
+}
+
+function cloudHeaders() {
+  const key = loadJSON('cloud-key', '');
+  return key ? { Authorization: 'Bearer ' + key } : {};
+}
+
+function updateCloudUI(linked) {
+  const status = document.getElementById('cloud-sync-status');
+  const sub = document.getElementById('cloud-sync-sub');
+  const btn = document.getElementById('cloud-sync-btn');
+  if (status) { status.textContent = linked ? 'LINKED' : 'OFFLINE'; status.classList.toggle('linked', linked); }
+  if (sub) sub.textContent = linked ? 'Connected' : 'Not connected';
+  if (btn) btn.style.display = linked ? '' : 'none';
+}
+
+function renderCloudLastSync() {
+  const el = document.getElementById('cloud-last-sync');
+  if (!el) return;
+  const last = loadJSON('cloud-last-sync', null);
+  if (!last) { el.textContent = 'Never synced yet'; return; }
+  const mins = Math.round((Date.now() - last) / 60000);
+  let when;
+  if (mins < 1) when = 'just now';
+  else if (mins < 60) when = `${mins} min ago`;
+  else {
+    const d = new Date(last);
+    when = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' }) + ' at ' +
+      d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  }
+  el.textContent = `Last synced: ${when}`;
+}
+
+function initCloudSync() {
+  const key = loadJSON('cloud-key', '');
+  document.getElementById('cloud-key').value = key || '';
+  updateCloudUI(!!key);
+  renderCloudLastSync();
+  if (key) pushCloudState({ silent: true }); // pull-merge-push on every load, like the Fitbit connection
+}
+
+function saveCloudKeyAndSync() {
+  const input = document.getElementById('cloud-key');
+  const key = input.value.trim();
+  if (!key) return;
+  localStorage.setItem('cloud-key', JSON.stringify(key));
+  updateCloudUI(true);
+  pushCloudState({ silent: false });
+}
+
+function syncCloudNow() {
+  pushCloudState({ silent: false });
+}
+
+function disconnectCloud() {
+  localStorage.removeItem('cloud-key');
+  localStorage.removeItem('cloud-last-sync');
+  document.getElementById('cloud-key').value = '';
+  updateCloudUI(false);
+  renderCloudLastSync();
+}
+
+let cloudPushTimer = null;
+function queueCloudPush() {
+  const key = loadJSON('cloud-key', '');
+  if (!key) return;
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer = setTimeout(() => pushCloudState({ silent: true }), 2000);
+}
+
+async function pushCloudState({ silent }) {
+  const key = loadJSON('cloud-key', '');
+  if (!key) return;
+
+  const noteEl = document.getElementById('cloud-sync-note');
+  if (noteEl && !silent) { noteEl.textContent = 'Syncing…'; noteEl.style.color = 'var(--text-dim)'; }
+
+  try {
+    const local = collectSyncState();
+    let cloud = null;
+    try {
+      const getRes = await fetch(CLOUD_WORKER_URL + CLOUD_ROUTE, { headers: cloudHeaders() });
+      if (getRes.ok) { const body = await getRes.json(); cloud = body.data || body; }
+    } catch (_) { /* no backup yet, or unreachable — proceed with local only */ }
+
+    const merged = cloud ? mergeSyncState(local, cloud) : local;
+    applySyncState(merged);
+    refreshAllViewsAfterSync();
+
+    const res = await fetch(CLOUD_WORKER_URL + CLOUD_ROUTE, {
+      method: 'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, cloudHeaders()),
+      body: JSON.stringify(merged)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    localStorage.setItem('cloud-last-sync', JSON.stringify(Date.now()));
+    renderCloudLastSync();
+    if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
+  } catch (err) {
+    console.warn('Cloud sync failed', err);
+    if (noteEl && !silent) { noteEl.textContent = 'Sync failed — check the app key or connection'; noteEl.style.color = 'var(--chest)'; }
+  }
 }
 </script>
 </body>
