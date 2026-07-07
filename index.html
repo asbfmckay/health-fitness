@@ -1130,10 +1130,151 @@
   .timer-btn.resume-btn { background: var(--lime); color: var(--green-deep); }
   .timer-btn.finish-btn { background: var(--green-deep); color: var(--lime); }
   .timer-btn.reset-btn { flex: 0 0 auto; background: none; color: var(--text-dim); font-size: 11px; font-weight: 600; padding: 12px 8px; }
+
+  /* ══════════ Lock screen ══════════ */
+  .lock-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--green-deep);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 32px 32px 48px;
+    gap: 0;
+  }
+
+  .lock-screen.hidden { display: none; }
+
+  .lock-logo {
+    width: 76px;
+    height: 76px;
+    border-radius: 16px;
+    background: rgba(203,229,88,0.12);
+    border: 2px solid rgba(203,229,88,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .lock-logo svg { width: 40px; height: 40px; }
+
+  .lock-title {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .lock-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 36px;
+  }
+
+  .lock-dots {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 40px;
+  }
+
+  .lock-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(203,229,88,0.5);
+    background: transparent;
+    transition: background 0.1s ease, border-color 0.1s ease;
+  }
+
+  .lock-dot.filled { background: var(--lime); border-color: var(--lime); }
+  .lock-dot.error { background: var(--chest); border-color: var(--chest); }
+
+  .lock-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 14px;
+  }
+
+  .lock-key {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .lock-key:active { background: rgba(203,229,88,0.2); }
+  .lock-key.del { font-size: 18px; color: rgba(255,255,255,0.5); }
+  .lock-key.empty { background: none; cursor: default; }
+
+  .lock-error-msg {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--chest);
+    min-height: 18px;
+    text-align: center;
+  }
 </style>
 
 </head>
 <body>
+
+<!-- ══════════ Lock screen ══════════ -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect x="7.5" y="10.6" width="9" height="2.8" rx="0.4" fill="var(--lime)"/>
+      <rect x="1.5" y="5.5" width="3.6" height="13" rx="1.4" fill="var(--lime)"/>
+      <rect x="18.9" y="5.5" width="3.6" height="13" rx="1.4" fill="var(--lime)"/>
+      <rect x="5.3" y="8" width="2.4" height="8" rx="0.8" fill="var(--lime)"/>
+      <rect x="16.3" y="8" width="2.4" height="8" rx="0.8" fill="var(--lime)"/>
+    </svg>
+  </div>
+  <div class="lock-title">Health &amp; Fitness</div>
+  <div class="lock-sub">Enter your PIN</div>
+  <div class="lock-dots" id="lock-dots">
+    <div class="lock-dot" id="d0"></div>
+    <div class="lock-dot" id="d1"></div>
+    <div class="lock-dot" id="d2"></div>
+    <div class="lock-dot" id="d3"></div>
+  </div>
+  <div class="lock-keypad">
+    <button class="lock-key" onclick="lockKey('1')">1</button>
+    <button class="lock-key" onclick="lockKey('2')">2</button>
+    <button class="lock-key" onclick="lockKey('3')">3</button>
+    <button class="lock-key" onclick="lockKey('4')">4</button>
+    <button class="lock-key" onclick="lockKey('5')">5</button>
+    <button class="lock-key" onclick="lockKey('6')">6</button>
+    <button class="lock-key" onclick="lockKey('7')">7</button>
+    <button class="lock-key" onclick="lockKey('8')">8</button>
+    <button class="lock-key" onclick="lockKey('9')">9</button>
+    <button class="lock-key" onclick="">&#35;</button>
+    <button class="lock-key" onclick="lockKey('0')">0</button>
+    <button class="lock-key del" onclick="lockDel()">
+      <svg viewBox="0 0 24 24" fill="none" width="26" height="26">
+        <path d="M20 7H9.5a2 2 0 0 0-1.5.69L3.5 12l4.5 4.31A2 2 0 0 0 9.5 17H20a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1z" stroke="rgba(255,255,255,0.7)" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M15.5 10l-3 4M12.5 10l3 4" stroke="rgba(255,255,255,0.7)" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="lock-error-msg" id="lock-error"></div>
+</div>
+<!-- ══════════ End lock screen ══════════ -->
 
 <div class="hero-band">
 <div class="page-header">
@@ -1807,7 +1948,7 @@
   <div class="tracker-card" style="margin-top:-4px;">
     <button class="ghost-btn" id="fitbit-sync-btn" onclick="syncFitbitNow()">Sync now</button>
     <div id="fitbit-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
-    <div class="tip-box" style="margin-top:12px;"><strong>No token to manage anymore:</strong> this now runs through the same Worker and App key as Cloud Sync below — set that up once and Fitbit data pulls automatically on every load, no hourly token refresh. <strong>Steps and Sleep</strong> sync reliably; <strong>Calories, Active Minutes and Weight</strong> are best-effort and fall back to manual entry if Google's response shape doesn't match.</div>
+    <div class="tip-box" style="margin-top:12px;">Token handled automatically via Cloud Sync — no manual refresh needed. Steps and Sleep are reliable; Calories, Active Minutes and Weight fall back to manual if Google's data shape doesn't match.</div>
   </div>
 
   <div class="section-label">Cloud Sync — Phone ⇄ Computer</div>
@@ -1840,7 +1981,7 @@
       <button class="ghost-btn" onclick="disconnectCloud()">Disconnect</button>
     </div>
     <div id="cloud-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
-    <div class="tip-box" style="margin-top:12px;"><strong>What this syncs:</strong> targets, weight log, alcohol-free days, workout sessions and check-up dates — the Fitbit token itself stays on this device only, since it's short-lived and device-specific anyway. Runs through the same Worker as your other connected apps, under its own key so it can't collide with their data.</div>
+    <div class="tip-box" style="margin-top:12px;">Syncs targets, weight, AFDs, sessions and check-ups across all your devices. Fitbit token stays local only.</div>
   </div>
 
   <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('fitness')">Done</button>
@@ -2117,12 +2258,83 @@ async function restoreSavedImages() {
   }
 }
 
+/* ══════════════════════════════════════════════════════
+   Lock screen — 4-digit PIN gate, auto-loads cloud key
+   after first unlock so no manual key entry needed.
+   ══════════════════════════════════════════════════════ */
+const LOCK_PIN = '9294';
+const SESSION_UNLOCKED_KEY = 'session-unlocked';
+let lockInput = '';
+
+function lockKey(digit) {
+  if (lockInput.length >= 4) return;
+  lockInput += digit;
+  renderLockDots();
+  if (lockInput.length === 4) setTimeout(checkPin, 80);
+}
+
+function lockDel() {
+  lockInput = lockInput.slice(0, -1);
+  renderLockDots(false);
+}
+
+function renderLockDots(error = false) {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('d' + i);
+    dot.classList.toggle('filled', i < lockInput.length && !error);
+    dot.classList.toggle('error', error && i < 4);
+  }
+}
+
+function checkPin() {
+  if (lockInput === LOCK_PIN) {
+    sessionStorage.setItem(SESSION_UNLOCKED_KEY, '1');
+    document.getElementById('lock-screen').classList.add('hidden');
+    bootApp();
+  } else {
+    renderLockDots(true);
+    document.getElementById('lock-error').textContent = 'Incorrect PIN';
+    setTimeout(() => {
+      lockInput = '';
+      renderLockDots(false);
+      document.getElementById('lock-error').textContent = '';
+    }, 900);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  // Skip lock screen within the same browser session (only ask once per tab open)
+  if (sessionStorage.getItem(SESSION_UNLOCKED_KEY) === '1') {
+    document.getElementById('lock-screen').classList.add('hidden');
+    await bootApp();
+  }
+  // otherwise the lock screen is already visible — bootApp() fires after PIN
+});
+
+async function bootApp() {
+  // Auto-load the cloud key from the Worker if not already stored
+  await autoLoadCloudKey();
   enableWeightPersistence();
   enableDragAndDrop();
   await restoreSavedImages();
   initTrackers();
-});
+}
+
+async function autoLoadCloudKey() {
+  const existing = loadJSON('cloud-key', '');
+  if (existing) return; // already have it, nothing to do
+  try {
+    const res = await fetch(CLOUD_WORKER_URL + '/fitness-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: LOCK_PIN })
+    });
+    if (!res.ok) return;
+    const { key } = await res.json();
+    if (key) localStorage.setItem('cloud-key', JSON.stringify(key));
+  } catch { /* silent — manual key entry in Settings still works */ }
+}
+
 
 /* ══════════════════════════════════════════════════════
    5.1 / 5.2 / 5.3 — shared date/week helpers
