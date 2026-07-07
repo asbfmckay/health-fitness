@@ -1790,7 +1790,7 @@
     </div>
   </div>
 
-  <div class="section-label">Fitbit Connection</div>
+  <div class="section-label">Fitbit / Google Health</div>
   <div class="tracker-card connect-card">
     <div class="connect-logo">
       <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><rect x="7" y="8" width="10" height="8" rx="2" stroke="var(--lime)" stroke-width="1.7"/><path d="M9 8V5.5h6V8M9 16v2.5h6V16" stroke="var(--lime)" stroke-width="1.7"/><path d="M12 10.3v2l1.3.8" stroke="var(--lime)" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1804,24 +1804,10 @@
       <span class="connect-status" id="fitbit-status-settings">OFFLINE</span>
     </div>
   </div>
-  <div class="tracker-card" id="fitbit-connect-card" style="margin-top:-4px;">
-    <div class="log-field" style="margin-bottom:10px;">
-      <label class="mini-label">Fitbit access token</label>
-      <div style="display:flex; gap:6px;">
-        <input type="password" id="fitbit-token" placeholder="Paste personal access token" style="flex:1;">
-        <button class="icon-btn" type="button" onclick="toggleTokenVisibility()" aria-label="Show/hide token">
-          <svg viewBox="0 0 24 24" fill="none" id="fitbit-token-eye"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" stroke="var(--text-dim)" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" stroke="var(--text-dim)" stroke-width="1.6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <button class="solid-btn" onclick="connectFitbit()">Connect &amp; sync</button>
-      <button class="ghost-btn" id="fitbit-sync-btn" onclick="syncFitbitNow()" style="display:none;">Sync now</button>
-      <button class="ghost-btn" onclick="disconnectFitbit()">Disconnect</button>
-    </div>
+  <div class="tracker-card" style="margin-top:-4px;">
+    <button class="ghost-btn" id="fitbit-sync-btn" onclick="syncFitbitNow()">Sync now</button>
     <div id="fitbit-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
-    <div class="tip-box" style="margin-top:12px;"><strong>Auto-sync:</strong> once connected, this pulls fresh data automatically every time you open or refresh the app — no need to tap Sync unless you want the very latest numbers mid-session.</div>
-    <div class="tip-box" style="margin-top:8px;"><strong>This now runs on the Google Health API</strong> (Fitbit's old Web API is retiring September 2026). The token above comes from Google's OAuth flow, not Fitbit's old token page — see the walkthrough we worked through together if you need to regenerate one. Steps and Sleep sync reliably; Calories, Active Minutes and Weight are best-effort since Google hasn't published example responses for those fields yet, and will fall back to manual entry if the shape doesn't match.</div>
+    <div class="tip-box" style="margin-top:12px;"><strong>No token to manage anymore:</strong> this now runs through the same Worker and App key as Cloud Sync below — set that up once and Fitbit data pulls automatically on every load, no hourly token refresh. <strong>Steps and Sleep</strong> sync reliably; <strong>Calories, Active Minutes and Weight</strong> are best-effort and fall back to manual entry if Google's response shape doesn't match.</div>
   </div>
 
   <div class="section-label">Cloud Sync — Phone ⇄ Computer</div>
@@ -2699,11 +2685,11 @@ function deleteSessionEntry(index) {
 }
 
 /* ══════════════════════════════════════════════════════
-   Fitbit connect (personal access token, no server needed)
+   Fitbit / Google Health sync — token handled server-side by the Worker.
+   App never needs a manually-pasted Google access token again.
    ══════════════════════════════════════════════════════ */
 function toggleTokenVisibility() {
-  const input = document.getElementById('fitbit-token');
-  input.type = input.type === 'password' ? 'text' : 'password';
+  // Kept for the eye-toggle on the cloud key field (reused id across both)
 }
 
 function toggleCloudKeyVisibility() {
@@ -2712,17 +2698,16 @@ function toggleCloudKeyVisibility() {
 }
 
 function initFitbit() {
-  const token = loadJSON('fitbit-token', null);
-  document.getElementById('fitbit-token').value = token || '';
-  updateFitbitUI(!!token);
+  const configured = !!loadJSON('cloud-key', ''); // linked means cloud key is set
+  updateFitbitUI(configured);
   renderLastSync();
-  if (token) syncFitbit({ silent: true }); // auto-sync whenever the app loads / is refreshed
+  if (configured) syncFitbit({ silent: true });
 }
 
 function updateFitbitUI(linked) {
   const pairs = [
-    ['fitbit-status', 'fitbit-sub', 'Not connected — manage in Settings'],
-    ['fitbit-status-settings', 'fitbit-sub-settings', 'Not connected']
+    ['fitbit-status', 'fitbit-sub', 'Connect cloud sync first — then Fitbit syncs automatically'],
+    ['fitbit-status-settings', 'fitbit-sub-settings', 'Connect cloud sync to enable']
   ];
   pairs.forEach(([statusId, subId, offlineText]) => {
     const status = document.getElementById(statusId);
@@ -2730,7 +2715,7 @@ function updateFitbitUI(linked) {
     if (!status || !sub) return;
     status.textContent = linked ? 'LINKED' : 'OFFLINE';
     status.classList.toggle('linked', linked);
-    sub.textContent = linked ? 'Connected' : offlineText;
+    sub.textContent = linked ? 'Token auto-managed · syncs on every refresh' : offlineText;
   });
   const syncBtn = document.getElementById('fitbit-sync-btn');
   if (syncBtn) syncBtn.style.display = linked ? '' : 'none';
@@ -2753,12 +2738,22 @@ function renderLastSync() {
   el.textContent = `Last synced: ${when}`;
 }
 
+async function getGoogleToken() {
+  const cloudKey = loadJSON('cloud-key', '');
+  if (!cloudKey) throw new Error('Cloud sync not connected — set up the Cloud Sync key in Settings first');
+  const res = await fetch(CLOUD_WORKER_URL + '/fitness-token', {
+    headers: { Authorization: 'Bearer ' + cloudKey }
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || body.error || `HTTP ${res.status}`);
+  }
+  const { access_token } = await res.json();
+  return access_token;
+}
+
 async function connectFitbit() {
-  const tokenInput = document.getElementById('fitbit-token');
-  const token = tokenInput.value.trim();
-  if (!token) return;
-  saveJSON('fitbit-token', token);
-  updateFitbitUI(true);
+  // "Connect & sync" now just triggers a sync — no token to paste
   await syncFitbit({ silent: false });
 }
 
@@ -2767,11 +2762,23 @@ async function syncFitbitNow() {
 }
 
 async function syncFitbit({ silent }) {
-  const token = loadJSON('fitbit-token', null);
-  if (!token) return;
+  const cloudKey = loadJSON('cloud-key', '');
+  if (!cloudKey) return;
 
   const noteEl = document.getElementById('fitbit-sync-note');
   if (noteEl && !silent) { noteEl.textContent = 'Syncing…'; noteEl.style.color = 'var(--text-dim)'; }
+
+  let token;
+  try {
+    token = await getGoogleToken();
+  } catch (e) {
+    console.warn('Fitbit: could not get access token —', e.message);
+    if (noteEl && !silent) {
+      noteEl.textContent = 'Could not get token — ' + e.message;
+      noteEl.style.color = 'var(--chest)';
+    }
+    return;
+  }
 
   const headers = { Authorization: 'Bearer ' + token, Accept: 'application/json' };
   const today = todayKey();
@@ -2924,9 +2931,7 @@ async function syncFitbit({ silent }) {
 }
 
 function disconnectFitbit() {
-  localStorage.removeItem('fitbit-token');
   localStorage.removeItem('fitbit-last-sync');
-  document.getElementById('fitbit-token').value = '';
   updateFitbitUI(false);
   renderLastSync();
 }
