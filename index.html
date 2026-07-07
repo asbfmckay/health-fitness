@@ -3314,10 +3314,11 @@ function renderCloudLastSync() {
 
 function initCloudSync() {
   const key = loadJSON('cloud-key', '');
-  document.getElementById('cloud-key').value = key || '';
+  // Don't populate the field — the key is sensitive and auto-managed via the Worker.
+  // Just reflect the linked state in the UI.
   updateCloudUI(!!key);
   renderCloudLastSync();
-  if (key) pushCloudState({ silent: true }); // pull-merge-push on every load, like the Fitbit connection
+  if (key) pushCloudState({ silent: true });
 }
 
 function saveCloudKeyAndSync() {
