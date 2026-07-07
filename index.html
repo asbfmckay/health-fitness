@@ -683,6 +683,24 @@
     white-space: nowrap;
   }
 
+  .icon-btn {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    align-self: flex-end;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-md);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .icon-btn svg { width: 17px; height: 17px; }
+  .icon-btn.active { background: var(--green-deep); border-color: var(--green-deep); }
+  .icon-btn.active svg * { stroke: var(--lime) !important; fill: var(--lime) !important; }
+
   .solid-btn {
     background: var(--lime);
     border: none;
@@ -1640,7 +1658,14 @@
         <label class="mini-label">Today's weight (kg)</label>
         <input type="number" id="log-weight" step="0.1" placeholder="0.0">
       </div>
+      <button class="icon-btn" id="weight-date-toggle" onclick="toggleWeightDate()" aria-label="Log for a different date" title="Log for a different date">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2.5" stroke="var(--text-dim)" stroke-width="1.7"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5" stroke="var(--text-dim)" stroke-width="1.7" stroke-linecap="round"/><circle cx="8.2" cy="13.3" r="1.1" fill="var(--text-dim)"/><circle cx="12" cy="13.3" r="1.1" fill="var(--text-dim)"/><circle cx="15.8" cy="13.3" r="1.1" fill="var(--text-dim)"/></svg>
+      </button>
       <button class="solid-btn" onclick="addResultEntry()">Log</button>
+    </div>
+    <div class="log-field" id="weight-date-row" style="display:none; margin-top:10px;">
+      <label class="mini-label">Date</label>
+      <input type="date" id="log-weight-date">
     </div>
     <div class="chart-wrap" id="weight-chart-wrap"></div>
     <div class="chart-legend">
@@ -1738,6 +1763,7 @@
     <div style="flex:1;">
       <div class="tracker-title">Fitbit</div>
       <div class="tracker-sub" id="fitbit-sub-settings">Not connected</div>
+      <div class="tracker-sub" id="fitbit-last-sync" style="margin-top:2px;">Never synced yet</div>
     </div>
     <div>
       <span class="connect-status" id="fitbit-status-settings">OFFLINE</span>
@@ -1750,9 +1776,12 @@
     </div>
     <div style="display:flex; gap:8px;">
       <button class="solid-btn" onclick="connectFitbit()">Connect &amp; sync</button>
+      <button class="ghost-btn" id="fitbit-sync-btn" onclick="syncFitbitNow()" style="display:none;">Sync now</button>
       <button class="ghost-btn" onclick="disconnectFitbit()">Disconnect</button>
     </div>
-    <div class="tip-box" style="margin-top:12px;"><strong>Heads up — this is changing:</strong> Fitbit is retiring its legacy Web API in September 2026 in favour of the new Google Health API, and new app registrations on dev.fitbit.com are already closed. A token generated before the cutover will keep working until then, but after September 2026 this connection will need rebuilding against Google's new API and OAuth flow. Manual entry on the Fitness tab always works regardless.</div>
+    <div id="fitbit-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
+    <div class="tip-box" style="margin-top:12px;"><strong>Auto-sync:</strong> once connected, this pulls fresh Fitbit data automatically every time you open or refresh the app — no need to tap Sync unless you want the very latest numbers mid-session.</div>
+    <div class="tip-box" style="margin-top:8px;"><strong>Heads up — this is changing:</strong> Fitbit is retiring its legacy Web API in September 2026 in favour of the new Google Health API, and new app registrations on dev.fitbit.com are already closed. A token generated before the cutover will keep working until then, but after September 2026 this connection will need rebuilding against Google's new API and OAuth flow. Manual entry on the Fitness tab always works regardless.</div>
   </div>
 
   <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('fitness')">Done</button>
@@ -2246,6 +2275,17 @@ function formatNumber(n, decimals) {
 function initResultsLog() {
   renderResults();
   renderWeightChart();
+  document.getElementById('log-weight-date').max = todayKey();
+}
+
+function toggleWeightDate() {
+  const row = document.getElementById('weight-date-row');
+  const btn = document.getElementById('weight-date-toggle');
+  const dateInput = document.getElementById('log-weight-date');
+  const isHidden = row.style.display === 'none' || !row.style.display;
+  row.style.display = isHidden ? 'block' : 'none';
+  btn.classList.toggle('active', isHidden);
+  if (isHidden && !dateInput.value) dateInput.value = todayKey();
 }
 
 function addResultEntry() {
@@ -2253,15 +2293,23 @@ function addResultEntry() {
   const weight = weightInput.value.trim();
   if (!weight) return;
 
+  const dateRow = document.getElementById('weight-date-row');
+  const dateInput = document.getElementById('log-weight-date');
+  const chosenDate = (dateRow.style.display !== 'none' && dateInput.value) ? dateInput.value : todayKey();
+
   const entries = loadJSON('results-log', []);
-  const today = todayKey();
-  const existingIdx = entries.findIndex(e => e.date === today);
-  const entry = { date: today, weight: parseFloat(weight) };
+  const existingIdx = entries.findIndex(e => e.date === chosenDate);
+  const entry = { date: chosenDate, weight: parseFloat(weight) };
   if (existingIdx >= 0) entries[existingIdx] = entry; else entries.push(entry);
   entries.sort((a, b) => b.date.localeCompare(a.date));
   saveJSON('results-log', entries);
 
   weightInput.value = '';
+  if (dateRow.style.display !== 'none') {
+    dateRow.style.display = 'none';
+    document.getElementById('weight-date-toggle').classList.remove('active');
+    dateInput.value = '';
+  }
   renderResults();
   renderWeightChart();
 }
@@ -2570,6 +2618,8 @@ function initFitbit() {
   const token = loadJSON('fitbit-token', null);
   document.getElementById('fitbit-token').value = token || '';
   updateFitbitUI(!!token);
+  renderLastSync();
+  if (token) syncFitbit({ silent: true }); // auto-sync whenever the app loads / is refreshed
 }
 
 function updateFitbitUI(linked) {
@@ -2583,10 +2633,27 @@ function updateFitbitUI(linked) {
     if (!status || !sub) return;
     status.textContent = linked ? 'LINKED' : 'OFFLINE';
     status.classList.toggle('linked', linked);
-    sub.textContent = linked
-      ? 'Connected — tap "Connect & sync" in Settings any time'
-      : offlineText;
+    sub.textContent = linked ? 'Connected' : offlineText;
   });
+  const syncBtn = document.getElementById('fitbit-sync-btn');
+  if (syncBtn) syncBtn.style.display = linked ? '' : 'none';
+}
+
+function renderLastSync() {
+  const el = document.getElementById('fitbit-last-sync');
+  if (!el) return;
+  const last = loadJSON('fitbit-last-sync', null);
+  if (!last) { el.textContent = 'Never synced yet'; return; }
+  const mins = Math.round((Date.now() - last) / 60000);
+  let when;
+  if (mins < 1) when = 'just now';
+  else if (mins < 60) when = `${mins} min ago`;
+  else {
+    const d = new Date(last);
+    when = d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' }) + ' at ' +
+      d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  }
+  el.textContent = `Last synced: ${when}`;
 }
 
 async function connectFitbit() {
@@ -2595,6 +2662,19 @@ async function connectFitbit() {
   if (!token) return;
   saveJSON('fitbit-token', token);
   updateFitbitUI(true);
+  await syncFitbit({ silent: false });
+}
+
+async function syncFitbitNow() {
+  await syncFitbit({ silent: false });
+}
+
+async function syncFitbit({ silent }) {
+  const token = loadJSON('fitbit-token', null);
+  if (!token) return;
+
+  const noteEl = document.getElementById('fitbit-sync-note');
+  if (noteEl && !silent) { noteEl.textContent = 'Syncing…'; noteEl.style.color = 'var(--text-dim)'; }
 
   try {
     const today = todayKey();
@@ -2614,15 +2694,30 @@ async function connectFitbit() {
       saveFitnessValue('sleep', Math.round((sleep.summary.totalMinutesAsleep || 0) / 6) / 10);
     }
     renderFitnessStats();
+
+    if (activity || sleep) {
+      saveJSON('fitbit-last-sync', Date.now());
+      renderLastSync();
+      if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
+    } else if (noteEl && !silent) {
+      noteEl.textContent = 'Sync failed — check your token';
+      noteEl.style.color = 'var(--chest)';
+    }
   } catch (err) {
     console.warn('Fitbit sync failed — likely a CORS restriction on api.fitbit.com from a static site. Manual entry still works.', err);
+    if (noteEl && !silent) {
+      noteEl.textContent = 'Sync failed — check your token or connection';
+      noteEl.style.color = 'var(--chest)';
+    }
   }
 }
 
 function disconnectFitbit() {
   localStorage.removeItem('fitbit-token');
+  localStorage.removeItem('fitbit-last-sync');
   document.getElementById('fitbit-token').value = '';
   updateFitbitUI(false);
+  renderLastSync();
 }
 </script>
 </body>
