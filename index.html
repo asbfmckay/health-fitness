@@ -1958,7 +1958,7 @@
     </div>
     <div style="flex:1;">
       <div class="tracker-title">Cloud Sync</div>
-      <div class="tracker-sub" id="cloud-sync-sub">Not connected</div>
+      <div class="tracker-sub" id="cloud-sync-sub">Loading…</div>
       <div class="tracker-sub" id="cloud-last-sync" style="margin-top:2px;">Never synced yet</div>
     </div>
     <div>
@@ -1966,22 +1966,13 @@
     </div>
   </div>
   <div class="tracker-card" style="margin-top:-4px;">
-    <div class="log-field" style="margin-bottom:10px;">
-      <label class="mini-label">App key</label>
-      <div style="display:flex; gap:6px;">
-        <input type="password" id="cloud-key" placeholder="Paste the app key for this Worker" style="flex:1;">
-        <button class="icon-btn" type="button" onclick="toggleCloudKeyVisibility()" aria-label="Show/hide key">
-          <svg viewBox="0 0 24 24" fill="none" id="cloud-key-eye"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" stroke="var(--text-dim)" stroke-width="1.6"/><circle cx="12" cy="12" r="2.6" stroke="var(--text-dim)" stroke-width="1.6"/></svg>
-        </button>
-      </div>
-    </div>
     <div style="display:flex; gap:8px;">
-      <button class="solid-btn" onclick="saveCloudKeyAndSync()">Connect &amp; sync</button>
-      <button class="ghost-btn" id="cloud-sync-btn" onclick="syncCloudNow()" style="display:none;">Sync now</button>
-      <button class="ghost-btn" onclick="disconnectCloud()">Disconnect</button>
+      <button class="solid-btn" id="cloud-sync-btn" onclick="syncCloudNow()" style="display:none;">Sync now</button>
+      <button class="ghost-btn" onclick="disconnectCloud()">Reset connection</button>
     </div>
     <div id="cloud-sync-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
-    <div class="tip-box" style="margin-top:12px;">Syncs targets, weight, AFDs, sessions and check-ups across all your devices. Fitbit token stays local only.</div>
+    <!-- Hidden input kept for JS compatibility — never shown -->
+    <input type="hidden" id="cloud-key">
   </div>
 
   <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('fitness')">Done</button>
@@ -3291,7 +3282,7 @@ function updateCloudUI(linked) {
   const sub = document.getElementById('cloud-sync-sub');
   const btn = document.getElementById('cloud-sync-btn');
   if (status) { status.textContent = linked ? 'LINKED' : 'OFFLINE'; status.classList.toggle('linked', linked); }
-  if (sub) sub.textContent = linked ? 'Connected' : 'Not connected';
+  if (sub) sub.textContent = linked ? 'Auto-syncing across devices' : 'Connecting…';
   if (btn) btn.style.display = linked ? '' : 'none';
 }
 
@@ -3314,11 +3305,22 @@ function renderCloudLastSync() {
 
 function initCloudSync() {
   const key = loadJSON('cloud-key', '');
-  // Don't populate the field — the key is sensitive and auto-managed via the Worker.
-  // Just reflect the linked state in the UI.
-  updateCloudUI(!!key);
-  renderCloudLastSync();
-  if (key) pushCloudState({ silent: true });
+  if (key) {
+    updateCloudUI(true);
+    renderCloudLastSync();
+    pushCloudState({ silent: true });
+  } else {
+    // No key stored — try fetching it from the Worker automatically
+    updateCloudUI(false);
+    renderCloudLastSync();
+    autoLoadCloudKey().then(() => {
+      const loaded = loadJSON('cloud-key', '');
+      if (loaded) {
+        updateCloudUI(true);
+        pushCloudState({ silent: true });
+      }
+    });
+  }
 }
 
 function saveCloudKeyAndSync() {
