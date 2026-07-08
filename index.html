@@ -3159,20 +3159,25 @@ function renderSessionStats() {
 
   const recent = log.slice().reverse().slice(0, 8);
   listEl.innerHTML = recent.map((e, i) => {
-    const sid = e.id; // always set after migration
+    if (!e.id) e.id = genId(); // safety net — should always exist after merge migration
+    const sid = e.id;
     const displayLabel = e.label || (e.type === 'workout' ? 'Workout' : 'Walk / Run');
-    const h = Math.floor(e.durationSec / 3600);
-    const m = Math.floor((e.durationSec % 3600) / 60);
-    const s = e.durationSec % 60;
-    const editId = `ses-edit-${i}`; // use loop index so each row always has a unique DOM id
+    const h = Math.floor((e.durationSec || 0) / 3600);
+    const m = Math.floor(((e.durationSec || 0) % 3600) / 60);
+    const s = (e.durationSec || 0) % 60;
+    const editId = `ses-edit-${i}`;
     return `<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="le-date" style="flex:0 0 auto;">${formatDate(e.date)}</span>
-        <span class="le-val" style="flex:1;">${displayLabel} &middot; ${formatDuration(e.durationSec)}</span>
+        <span class="le-val" style="flex:1;">${displayLabel} &middot; ${formatDuration(e.durationSec || 0)}</span>
         <button class="cancel-btn" onclick="toggleSessionEdit('${editId}')">Edit</button>
       </div>
       <div class="session-edit-row" id="${editId}">
         <div class="session-edit-fields">
+          <div class="log-field" style="flex:1 1 100%;">
+            <label class="mini-label">Label</label>
+            <input type="text" id="${editId}-label" value="${(e.label || '').replace(/'/g, '&apos;')}" placeholder="e.g. MON — Chest &amp; Triceps" style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 8px;font-family:var(--body-f);font-size:12px;color:var(--text-h);outline:none;">
+          </div>
           <div class="log-field">
             <label class="mini-label">Date</label>
             <input type="date" id="${editId}-date" value="${e.date}" max="${todayKey()}" style="background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 8px;font-family:var(--mono);font-size:12px;color:var(--text-h);outline:none;">
@@ -3207,16 +3212,16 @@ function toggleSessionEdit(editId) {
 
 function saveSessionEntry(sid, editId) {
   const log = loadJSON('session-log', []);
-  // Match by stable ID — not array index, which shifts when cloud sync runs
-  const idx = log.findIndex(e => (e.id || (e.date + '|' + e.durationSec)) === sid);
-  if (idx < 0) return;
+  const idx = log.findIndex(e => e.id === sid);
+  if (idx < 0) { console.warn('saveSessionEntry: session not found for id', sid); return; }
   const date = document.getElementById(editId + '-date').value;
+  const label = document.getElementById(editId + '-label').value.trim();
   const h = parseInt(document.getElementById(editId + '-h').value, 10) || 0;
   const m = parseInt(document.getElementById(editId + '-m').value, 10) || 0;
   const s = parseInt(document.getElementById(editId + '-s').value, 10) || 0;
   const durationSec = h * 3600 + m * 60 + s;
   if (!date) return;
-  log[idx] = { ...log[idx], date, durationSec };
+  log[idx] = { ...log[idx], date, durationSec, label: label || undefined };
   saveJSON('session-log', log);
   renderSessionStats();
 }
@@ -3224,8 +3229,8 @@ function saveSessionEntry(sid, editId) {
 function deleteSessionEntry(sid) {
   if (!confirm('Delete this session?')) return;
   const log = loadJSON('session-log', []);
-  const idx = log.findIndex(e => (e.id || (e.date + '|' + e.durationSec)) === sid);
-  if (idx < 0) return;
+  const idx = log.findIndex(e => e.id === sid);
+  if (idx < 0) { console.warn('deleteSessionEntry: session not found for id', sid); return; }
   log.splice(idx, 1);
   saveJSON('session-log', log);
   renderSessionStats();
@@ -3439,7 +3444,8 @@ function mergeSessionLogsState(localArr, cloudArr) {
   const out = [];
   [...toArr(cloudArr), ...toArr(localArr)].forEach(e => {
     if (!e) return;
-    const key = e.id || (e.date + '|' + e.type + '|' + e.durationSec);
+    if (!e.id) e.id = genId(); // assign ID here so it survives cloud sync
+    const key = e.id;
     if (!seen.has(key)) { seen.add(key); out.push(e); }
   });
   return out;
