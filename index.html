@@ -2976,7 +2976,7 @@ function saveActiveSession(s) {
 }
 
 function initTimer() {
-  // Migrate any sessions that are missing an id (logged before ids were added)
+  // Migrate sessions missing IDs — use saveJSON so IDs push to cloud immediately
   const log = loadJSON('session-log', []);
   let changed = false;
   log.forEach(e => { if (!e.id) { e.id = genId(); changed = true; } });
@@ -3137,11 +3137,11 @@ function renderSessionStats() {
   const weekDates = new Set(getWeekDates());
   const targets = getTargets();
 
-  // Ensure all sessions have IDs and save immediately — without this,
-  // the sid in onclick won't match what loadJSON returns in save/delete
+  // Ensure all sessions have IDs. Use saveJSON (not localStorage directly)
+  // so the IDs also get pushed to cloud — otherwise cloud overwrites them on next sync.
   let needsSave = false;
   log.forEach(e => { if (!e.id) { e.id = genId(); needsSave = true; } });
-  if (needsSave) localStorage.setItem('session-log', JSON.stringify(log));
+  if (needsSave) saveJSON('session-log', log); // triggers cloud push via queueCloudPush
 
   const thisWeek = log.filter(e => e.type === 'workout' && weekDates.has(e.date));
   const count = thisWeek.length;
@@ -3446,14 +3446,39 @@ function mergeCheckupsState(localArr, cloudArr) {
 }
 
 function mergeSessionLogsState(localArr, cloudArr) {
+  const la = toArr(localArr);
+  const ca = toArr(cloudArr);
+
+  // Assign IDs to local sessions first
+  la.forEach(e => { if (e && !e.id) e.id = genId(); });
+
+  // Build fingerprint map from local so we can match cloud sessions without IDs
+  // to the same session that already has an ID locally
+  const fpMap = new Map(); // fingerprint → local session
+  la.forEach(e => {
+    if (!e) return;
+    const fp = e.date + '|' + (e.type || '') + '|' + (e.durationSec || 0);
+    if (!fpMap.has(fp)) fpMap.set(fp, e);
+  });
+
   const seen = new Set();
   const out = [];
-  [...toArr(cloudArr), ...toArr(localArr)].forEach(e => {
-    if (!e) return;
-    if (!e.id) e.id = genId(); // assign ID here so it survives cloud sync
-    const key = e.id;
-    if (!seen.has(key)) { seen.add(key); out.push(e); }
+
+  // Local sessions first (they have IDs, trust them)
+  la.forEach(e => {
+    if (!e || !e.id) return;
+    if (!seen.has(e.id)) { seen.add(e.id); out.push(e); }
   });
+
+  // Cloud sessions: skip if a local session with the same fingerprint exists
+  ca.forEach(e => {
+    if (!e) return;
+    const fp = e.date + '|' + (e.type || '') + '|' + (e.durationSec || 0);
+    if (fpMap.has(fp)) return; // already have this one from local
+    if (!e.id) e.id = genId();
+    if (!seen.has(e.id)) { seen.add(e.id); out.push(e); }
+  });
+
   return out;
 }
 
