@@ -2172,12 +2172,12 @@ function enableWeightPersistence() {
 
     input.addEventListener('input', () => {
       const value = input.value.trim();
-
       if (value === '') {
         localStorage.removeItem(key);
       } else {
         localStorage.setItem(key, value);
       }
+      queueCloudPush(); // trigger sync so weights reach the other device
     });
   });
 }
@@ -2976,6 +2976,12 @@ function saveActiveSession(s) {
 }
 
 function initTimer() {
+  // Migrate any sessions that are missing an id (logged before ids were added)
+  const log = loadJSON('session-log', []);
+  let changed = false;
+  log.forEach(e => { if (!e.id) { e.id = genId(); changed = true; } });
+  if (changed) saveJSON('session-log', log);
+
   const session = getActiveSession();
   renderTimerActions(session);
   updateTimerDisplay(session);
@@ -3152,14 +3158,13 @@ function renderSessionStats() {
   }
 
   const recent = log.slice().reverse().slice(0, 8);
-  listEl.innerHTML = recent.map((e) => {
-    // Use session ID as the stable key for edit/delete — not array index
-    const sid = e.id || (e.date + '|' + e.durationSec);
+  listEl.innerHTML = recent.map((e, i) => {
+    const sid = e.id; // always set after migration
     const displayLabel = e.label || (e.type === 'workout' ? 'Workout' : 'Walk / Run');
     const h = Math.floor(e.durationSec / 3600);
     const m = Math.floor((e.durationSec % 3600) / 60);
     const s = e.durationSec % 60;
-    const editId = `edit-${sid}`;
+    const editId = `ses-edit-${i}`; // use loop index so each row always has a unique DOM id
     return `<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="le-date" style="flex:0 0 auto;">${formatDate(e.date)}</span>
@@ -3366,6 +3371,15 @@ function scanPrefixed(prefix) {
 }
 
 function collectSyncState() {
+  // Collect all workout-weight-N keys
+  const weights = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('workout-weight-')) {
+      const v = localStorage.getItem(k);
+      if (v !== null) weights[k] = v;
+    }
+  }
   return {
     targets: loadJSON('targets', null),
     resultsLog: loadJSON('results-log', []),
@@ -3373,6 +3387,7 @@ function collectSyncState() {
     sessionLog: loadJSON('session-log', []),
     afd: scanPrefixed('afd-'),
     fitness: scanPrefixed('fitness-'),
+    weights,
     savedAt: Date.now()
   };
 }
@@ -3384,6 +3399,15 @@ function applySyncState(state) {
   localStorage.setItem('session-log', JSON.stringify(state.sessionLog || []));
   Object.entries(state.afd || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   Object.entries(state.fitness || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
+  // Restore exercise weights — raw strings, not JSON-wrapped
+  Object.entries(state.weights || {}).forEach(([k, v]) => {
+    if (v !== null && v !== undefined && v !== '') localStorage.setItem(k, v);
+  });
+  // Refresh weight inputs on screen if they exist
+  document.querySelectorAll('.ex-weight-input').forEach((input, index) => {
+    const v = localStorage.getItem(`workout-weight-${index}`);
+    if (v !== null && input.value !== v) input.value = v;
+  });
 }
 
 function toArr(v) { return Array.isArray(v) ? v : []; }
@@ -3457,6 +3481,8 @@ function mergeSyncState(local, cloud) {
   if (!cloud) return local;
   if (!local) return cloud;
   const localNewer = (local.savedAt || 0) >= (cloud.savedAt || 0);
+  // Merge weights: cloud fills in any missing keys; local value wins if both have it
+  const mergedWeights = Object.assign({}, cloud.weights || {}, local.weights || {});
   return {
     targets: localNewer ? (local.targets || cloud.targets) : (cloud.targets || local.targets),
     resultsLog: mergeByDateArray(local.resultsLog, cloud.resultsLog, localNewer),
@@ -3464,6 +3490,7 @@ function mergeSyncState(local, cloud) {
     sessionLog: mergeSessionLogsState(local.sessionLog, cloud.sessionLog),
     afd: mergeAfdState(local.afd, cloud.afd),
     fitness: mergeFitnessState(local.fitness, cloud.fitness),
+    weights: mergedWeights,
     savedAt: Date.now()
   };
 }
