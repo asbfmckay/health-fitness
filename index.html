@@ -1196,19 +1196,19 @@
 
   .lock-keypad {
     display: grid;
-    grid-template-columns: repeat(3, 72px);
-    gap: 14px;
+    grid-template-columns: repeat(3, 82px);
+    gap: 16px;
   }
 
   .lock-key {
-    width: 72px;
-    height: 72px;
+    width: 82px;
+    height: 82px;
     border-radius: 50%;
     border: none;
     background: rgba(255,255,255,0.07);
     color: #fff;
     font-family: var(--display);
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -2681,8 +2681,10 @@ function checkupStatus(c) {
 }
 
 function renderCheckups() {
-  const checkups = loadJSON('checkups', DEFAULT_CHECKUPS);
+  let checkups = loadJSON('checkups', DEFAULT_CHECKUPS);
+  if (!Array.isArray(checkups)) checkups = DEFAULT_CHECKUPS;
   const container = document.getElementById('checkups-list');
+  if (!container) return;
   container.innerHTML = checkups.map(c => {
     const status = checkupStatus(c);
     return `<div class="checkup-row">
@@ -3049,19 +3051,23 @@ function applySyncState(state) {
   Object.entries(state.fitness || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
 }
 
+function toArr(v) { return Array.isArray(v) ? v : []; }
+
 function mergeByDateArray(localArr, cloudArr, localNewer) {
   const map = new Map();
-  (cloudArr || []).forEach(e => map.set(e.date, e));
-  (localArr || []).forEach(e => {
+  toArr(cloudArr).forEach(e => e && e.date && map.set(e.date, e));
+  toArr(localArr).forEach(e => {
+    if (!e || !e.date) return;
     if (!map.has(e.date) || localNewer) map.set(e.date, e);
   });
-  return Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
+  return Array.from(map.values()).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 }
 
 function mergeCheckupsState(localArr, cloudArr) {
-  const base = (cloudArr && cloudArr.length) ? cloudArr : (localArr || []);
+  const la = toArr(localArr), ca = toArr(cloudArr);
+  const base = ca.length ? ca : la;
   const map = new Map(base.map(c => [c.id, c]));
-  (localArr || []).forEach(c => {
+  la.forEach(c => {
     const existing = map.get(c.id);
     if (!existing) { map.set(c.id, c); return; }
     if (c.last && (!existing.last || c.last > existing.last)) map.set(c.id, c);
@@ -3072,7 +3078,8 @@ function mergeCheckupsState(localArr, cloudArr) {
 function mergeSessionLogsState(localArr, cloudArr) {
   const seen = new Set();
   const out = [];
-  [...(cloudArr || []), ...(localArr || [])].forEach(e => {
+  [...toArr(cloudArr), ...toArr(localArr)].forEach(e => {
+    if (!e) return;
     const key = e.id || (e.date + '|' + e.type + '|' + e.durationSec);
     if (!seen.has(key)) { seen.add(key); out.push(e); }
   });
@@ -3080,11 +3087,14 @@ function mergeSessionLogsState(localArr, cloudArr) {
 }
 
 function mergeAfdState(localObj, cloudObj) {
-  const keys = new Set([...Object.keys(localObj || {}), ...Object.keys(cloudObj || {})]);
+  const lo = (localObj && typeof localObj === 'object') ? localObj : {};
+  const co = (cloudObj && typeof cloudObj === 'object') ? cloudObj : {};
+  const keys = new Set([...Object.keys(lo), ...Object.keys(co)]);
+  const blank = [false, false, false, false, false, false, false];
   const out = {};
   keys.forEach(k => {
-    const l = (localObj || {})[k] || [false, false, false, false, false, false, false];
-    const c = (cloudObj || {})[k] || [false, false, false, false, false, false, false];
+    const l = Array.isArray(lo[k]) ? lo[k] : blank;
+    const c = Array.isArray(co[k]) ? co[k] : blank;
     out[k] = l.map((v, i) => !!(v || c[i]));
   });
   return out;
@@ -3270,8 +3280,8 @@ async function pushCloudState({ silent }) {
     renderCloudLastSync();
     if (noteEl && !silent) { noteEl.textContent = 'Synced successfully'; noteEl.style.color = 'var(--green)'; }
   } catch (err) {
-    console.warn('Cloud sync failed', err);
-    if (noteEl && !silent) { noteEl.textContent = 'Sync failed — ' + (err && err.message || 'check connection'); noteEl.style.color = 'var(--chest)'; }
+    console.error('Cloud sync failed:', err, err && err.stack);
+    if (noteEl && !silent) { noteEl.textContent = 'Sync failed — ' + (err && (err.message || String(err)) || 'unknown error'); noteEl.style.color = 'var(--chest)'; }
   }
 }
 </script>
