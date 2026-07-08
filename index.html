@@ -3076,6 +3076,17 @@ function resetSession() {
   updateTimerDisplay(fresh);
 }
 
+function getActiveWorkoutLabel() {
+  const btn = document.querySelector('.day-btn.active');
+  if (!btn) return null;
+  const dn = btn.querySelector('.dn');
+  const df = btn.querySelector('.df');
+  if (!dn) return null;
+  const day = dn.textContent.trim();
+  const workout = df ? df.innerText.replace(/\s+/g, ' ').trim() : '';
+  return workout ? `${day} — ${workout}` : day;
+}
+
 function finishSession() {
   const session = getActiveSession();
   const totalSec = Math.round(currentElapsedSec(session));
@@ -3083,9 +3094,15 @@ function finishSession() {
 
   if (totalSec >= 5) {
     const log = loadJSON('session-log', []);
-    log.push({ id: genId(), date: todayKey(), type: session.type, durationSec: totalSec });
+    const workoutLabel = getActiveWorkoutLabel();
+    log.push({
+      id: genId(),
+      date: todayKey(),
+      type: session.type,
+      durationSec: totalSec,
+      label: workoutLabel
+    });
     saveJSON('session-log', log);
-    // Flash confirmation
     const msg = document.getElementById('timer-logged-msg');
     if (msg) {
       msg.classList.add('show');
@@ -3102,6 +3119,7 @@ function finishSession() {
 
 function formatDuration(totalSec) {
   const s = Math.max(0, Math.round(totalSec));
+  if (s < 60) return `${s}s`;
   const h = Math.floor(s / 3600);
   const m = Math.round((s % 3600) / 60);
   if (h > 0) return `${h}h ${m}m`;
@@ -3134,17 +3152,18 @@ function renderSessionStats() {
   }
 
   const recent = log.slice().reverse().slice(0, 8);
-  listEl.innerHTML = recent.map((e, i) => {
-    const realIdx = log.length - 1 - i;
-    const label = e.type === 'workout' ? 'Workout' : 'Walk / Run';
+  listEl.innerHTML = recent.map((e) => {
+    // Use session ID as the stable key for edit/delete — not array index
+    const sid = e.id || (e.date + '|' + e.durationSec);
+    const displayLabel = e.label || (e.type === 'workout' ? 'Workout' : 'Walk / Run');
     const h = Math.floor(e.durationSec / 3600);
     const m = Math.floor((e.durationSec % 3600) / 60);
     const s = e.durationSec % 60;
-    const editId = `edit-${realIdx}`;
+    const editId = `edit-${sid}`;
     return `<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="le-date" style="flex:0 0 auto;">${formatDate(e.date)}</span>
-        <span class="le-val" style="flex:1;">${label} &middot; ${formatDuration(e.durationSec)}</span>
+        <span class="le-val" style="flex:1;">${displayLabel} &middot; ${formatDuration(e.durationSec)}</span>
         <button class="cancel-btn" onclick="toggleSessionEdit('${editId}')">Edit</button>
       </div>
       <div class="session-edit-row" id="${editId}">
@@ -3167,8 +3186,8 @@ function renderSessionStats() {
           </div>
         </div>
         <div class="session-edit-actions">
-          <button class="save-btn" onclick="saveSessionEntry(${realIdx}, '${editId}')">Save</button>
-          <button class="del-btn" onclick="deleteSessionEntry(${realIdx})">Delete</button>
+          <button class="save-btn" onclick="saveSessionEntry('${sid}', '${editId}')">Save</button>
+          <button class="del-btn" onclick="deleteSessionEntry('${sid}')">Delete</button>
           <button class="cancel-btn" onclick="toggleSessionEdit('${editId}')">Cancel</button>
         </div>
       </div>
@@ -3181,24 +3200,28 @@ function toggleSessionEdit(editId) {
   if (row) row.classList.toggle('open');
 }
 
-function saveSessionEntry(index, editId) {
+function saveSessionEntry(sid, editId) {
   const log = loadJSON('session-log', []);
-  if (index < 0 || index >= log.length) return;
+  // Match by stable ID — not array index, which shifts when cloud sync runs
+  const idx = log.findIndex(e => (e.id || (e.date + '|' + e.durationSec)) === sid);
+  if (idx < 0) return;
   const date = document.getElementById(editId + '-date').value;
   const h = parseInt(document.getElementById(editId + '-h').value, 10) || 0;
   const m = parseInt(document.getElementById(editId + '-m').value, 10) || 0;
   const s = parseInt(document.getElementById(editId + '-s').value, 10) || 0;
   const durationSec = h * 3600 + m * 60 + s;
-  if (!date || durationSec <= 0) return;
-  log[index] = { ...log[index], date, durationSec };
+  if (!date) return;
+  log[idx] = { ...log[idx], date, durationSec };
   saveJSON('session-log', log);
   renderSessionStats();
 }
 
-function deleteSessionEntry(index) {
+function deleteSessionEntry(sid) {
   if (!confirm('Delete this session?')) return;
   const log = loadJSON('session-log', []);
-  log.splice(index, 1);
+  const idx = log.findIndex(e => (e.id || (e.date + '|' + e.durationSec)) === sid);
+  if (idx < 0) return;
+  log.splice(idx, 1);
   saveJSON('session-log', log);
   renderSessionStats();
 }
@@ -3405,9 +3428,12 @@ function mergeAfdState(localObj, cloudObj) {
   const blank = [false, false, false, false, false, false, false];
   const out = {};
   keys.forEach(k => {
+    const hasLocal = lo[k] !== undefined;
     const l = Array.isArray(lo[k]) ? lo[k] : blank;
     const c = Array.isArray(co[k]) ? co[k] : blank;
-    out[k] = l.map((v, i) => !!(v || c[i]));
+    // If local device has any data for this week, trust it entirely.
+    // Only pull from cloud if this week is missing locally (e.g. fresh device).
+    out[k] = hasLocal ? l : c;
   });
   return out;
 }
