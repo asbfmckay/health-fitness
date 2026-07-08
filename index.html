@@ -984,15 +984,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
   }
 
-  .stat-head svg { width: 15px; height: 15px; flex-shrink: 0; }
-
   .stat-label {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-h);
   }
 
   .stat-ring-wrap {
@@ -1074,6 +1071,50 @@
     color: var(--text-dim);
   }
 
+  .fitness-log-form {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+    margin-bottom: 4px;
+  }
+
+  .fitness-log-date-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .fitness-log-inputs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .fitness-log-inputs input {
+    width: 100%;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-md);
+    border-radius: 6px;
+    padding: 7px 6px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-h);
+    text-align: center;
+    outline: none;
+  }
+
+  .fitness-log-inputs input::-webkit-outer-spin-button,
+  .fitness-log-inputs input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .fl-entry-vals {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .fl-entry-vals span { color: var(--text-h); font-weight: 600; }
+
   .connect-status.linked { background: rgba(92,122,31,0.14); color: var(--green); }
 
   /* ══════════ Workout timer card (inline, sits under the last exercise) ══════════ */
@@ -1130,6 +1171,74 @@
   .timer-btn.resume-btn { background: var(--lime); color: var(--green-deep); }
   .timer-btn.finish-btn { background: var(--green-deep); color: var(--lime); }
   .timer-btn.reset-btn { flex: 0 0 auto; background: none; color: var(--text-dim); font-size: 11px; font-weight: 600; padding: 12px 8px; }
+
+  .timer-logged-msg {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--green);
+    text-align: center;
+    padding: 6px 0 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .timer-logged-msg.show { opacity: 1; }
+
+  /* Session edit rows */
+  .session-edit-row {
+    border-top: 1px solid var(--border);
+    padding: 8px 0 4px;
+    display: none;
+  }
+
+  .session-edit-row.open { display: block; }
+
+  .session-edit-fields {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .session-edit-fields .log-field { min-width: 80px; }
+
+  .session-edit-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .save-btn {
+    background: var(--green-deep);
+    color: var(--lime);
+    border: none;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-family: var(--body-f);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .del-btn {
+    background: none;
+    border: 1px solid var(--border-md);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: var(--body-f);
+    font-size: 12px;
+    color: var(--chest);
+    cursor: pointer;
+  }
+
+  .cancel-btn {
+    background: none;
+    border: none;
+    padding: 7px 8px;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
 
   /* ══════════ Lock screen ══════════ */
   .lock-screen {
@@ -1708,6 +1817,7 @@
     <div class="timer-display" id="timer-display">00:00</div>
   </div>
   <div class="timer-actions" id="timer-actions"></div>
+  <div class="timer-logged-msg" id="timer-logged-msg">✓ Session logged</div>
 </div>
 
 <div class="settings-link-wrap">
@@ -1751,48 +1861,72 @@
   <div class="stat-grid">
     <div class="stat-card">
       <div class="stat-head">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v4M12 17v4M5 12H3M21 12h-2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4" stroke="var(--green-deep)" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="var(--green-deep)"/></svg>
         <div class="stat-label">Steps</div>
       </div>
       <div class="stat-ring-wrap" id="steps-ring"></div>
       <div class="stat-sub" id="steps-target-label">/ 10,000</div>
-      <input type="number" class="stat-input" id="steps-input" placeholder="Log steps" min="0">
     </div>
     <div class="stat-card">
       <div class="stat-head">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2c1 3-2 4-2 7a3 3 0 006 0c1.5 1.5 2 3.5 2 5a6 6 0 11-12 0c0-4 3-6 3-9 1 1 1.5 2 1.5 3 .5-1 1.5-2.5 1.5-6z" fill="var(--green-deep)"/></svg>
         <div class="stat-label">Active Minutes</div>
       </div>
       <div class="stat-ring-wrap" id="active-ring"></div>
       <div class="stat-sub" id="active-target-label">/ 30 min</div>
-      <input type="number" class="stat-input" id="active-input" placeholder="Log minutes" min="0">
     </div>
     <div class="stat-card">
       <div class="stat-head">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 8.5a4 4 0 014 4c0 2.5-1.8 5-4 7.5-2.2-2.5-4-5-4-7.5a4 4 0 014-4z" stroke="var(--green-deep)" stroke-width="1.8"/><path d="M12 8.5c0-2 .8-4 2.2-5.5-.2 1.6.3 2.6 1.1 3.4" stroke="var(--green-deep)" stroke-width="1.8" stroke-linecap="round"/></svg>
         <div class="stat-label">Calories Burned</div>
       </div>
       <div class="stat-ring-wrap" id="kcal-ring"></div>
       <div class="stat-sub" id="kcal-target-label">/ 2,400</div>
-      <input type="number" class="stat-input" id="kcal-input" placeholder="Log kcal" min="0">
     </div>
     <div class="stat-card">
       <div class="stat-head">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M20 14.5a8 8 0 11-9.5-10.9 6.5 6.5 0 009.5 10.9z" fill="var(--green-deep)"/></svg>
         <div class="stat-label">Sleep</div>
       </div>
       <div class="stat-ring-wrap" id="sleep-ring"></div>
       <div class="stat-sub" id="sleep-target-label">/ 8h</div>
-      <input type="number" class="stat-input" id="sleep-input" placeholder="Log hours" min="0" step="0.1">
     </div>
   </div>
 
-  <!-- Training sessions: workouts + walks/runs, tracked via the timer on the Workout tab -->
+  <!-- Daily Fitness Log -->
+  <div class="section-label">Daily Fitness Log</div>
+  <div class="tracker-card">
+    <div class="fitness-log-form">
+      <div class="fitness-log-date-row">
+        <div class="log-field" style="flex:0 0 auto;">
+          <label class="mini-label">Date</label>
+          <input type="date" id="fl-date">
+        </div>
+        <button class="solid-btn" onclick="addFitnessLogEntry()">Log</button>
+      </div>
+      <div class="fitness-log-inputs">
+        <div class="log-field">
+          <label class="mini-label">Steps</label>
+          <input type="number" id="fl-steps" placeholder="—" min="0" style="-moz-appearance:textfield;">
+        </div>
+        <div class="log-field">
+          <label class="mini-label">Active min</label>
+          <input type="number" id="fl-active" placeholder="—" min="0" style="-moz-appearance:textfield;">
+        </div>
+        <div class="log-field">
+          <label class="mini-label">Kcal</label>
+          <input type="number" id="fl-kcal" placeholder="—" min="0" style="-moz-appearance:textfield;">
+        </div>
+        <div class="log-field">
+          <label class="mini-label">Sleep (h)</label>
+          <input type="number" id="fl-sleep" placeholder="—" min="0" step="0.1" style="-moz-appearance:textfield;">
+        </div>
+      </div>
+    </div>
+    <div id="fitness-log-list" class="log-list" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- Training sessions -->
   <div class="section-label">This Week — Sessions</div>
   <div class="stat-grid" style="grid-template-columns: 1fr;">
     <div class="stat-card">
       <div class="stat-head">
-        <svg viewBox="0 0 24 24" fill="none"><rect x="1.5" y="9.5" width="3" height="5" rx="1" fill="var(--green-deep)"/><rect x="19.5" y="9.5" width="3" height="5" rx="1" fill="var(--green-deep)"/><rect x="6" y="11" width="12" height="2" rx="0.5" fill="var(--green-deep)"/></svg>
         <div class="stat-label">Workouts</div>
       </div>
       <div class="stat-ring-wrap" id="workouts-ring"></div>
@@ -2439,6 +2573,7 @@ function initSettings() {
 function refreshAllTargetDisplays() {
   renderAfd();
   renderFitnessStats();
+  renderFitnessLog();
   renderWeightChart();
   renderSessionStats();
 }
@@ -2494,22 +2629,26 @@ function todayFitnessData() {
   return loadJSON('fitness-' + todayKey(), {});
 }
 
+function getFitnessData(date) {
+  return loadJSON('fitness-' + date, {});
+}
+
 function saveFitnessValue(key, value) {
   const data = todayFitnessData();
   data[key] = value;
   saveJSON('fitness-' + todayKey(), data);
 }
 
+function saveFitnessDataForDate(date, data) {
+  saveJSON('fitness-' + date, data);
+}
+
 function initFitnessStats() {
-  FITNESS_METRICS.forEach(m => {
-    const input = document.getElementById(m.key + '-input');
-    input.addEventListener('change', () => {
-      const val = parseFloat(input.value);
-      if (!isNaN(val)) saveFitnessValue(m.key, val);
-      renderFitnessStats();
-    });
-  });
+  // Inputs removed from tiles — no listeners needed
   renderFitnessStats();
+  renderFitnessLog();
+  const dateEl = document.getElementById('fl-date');
+  if (dateEl) { dateEl.value = todayKey(); dateEl.max = todayKey(); }
 }
 
 function renderFitnessStats() {
@@ -2545,6 +2684,123 @@ function makeRingSVG(pct, centerText, color) {
 
 function formatNumber(n, decimals) {
   return Number(n).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+
+/* ══════════════════════════════════════════════════════
+   Daily Fitness Log — manual entry, edit, delete
+   ══════════════════════════════════════════════════════ */
+function addFitnessLogEntry() {
+  const date = document.getElementById('fl-date').value;
+  if (!date) return;
+  const steps = parseFloat(document.getElementById('fl-steps').value) || null;
+  const active = parseFloat(document.getElementById('fl-active').value) || null;
+  const kcal = parseFloat(document.getElementById('fl-kcal').value) || null;
+  const sleep = parseFloat(document.getElementById('fl-sleep').value) || null;
+  if (steps === null && active === null && kcal === null && sleep === null) return;
+
+  const data = getFitnessData(date);
+  if (steps !== null) data.steps = steps;
+  if (active !== null) data.active = active;
+  if (kcal !== null) data.kcal = kcal;
+  if (sleep !== null) data.sleep = sleep;
+  saveFitnessDataForDate(date, data);
+
+  // Clear inputs
+  ['fl-steps','fl-active','fl-kcal','fl-sleep'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  renderFitnessLog();
+  if (date === todayKey()) renderFitnessStats();
+}
+
+function getFitnessLogDates() {
+  const out = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('fitness-')) {
+      const date = k.replace('fitness-', '');
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) out.push(date);
+    }
+  }
+  return out.sort((a, b) => b.localeCompare(a));
+}
+
+function renderFitnessLog() {
+  const listEl = document.getElementById('fitness-log-list');
+  if (!listEl) return;
+  const dates = getFitnessLogDates().slice(0, 30);
+  if (!dates.length) {
+    listEl.innerHTML = '<div class="log-empty">No fitness data logged yet.</div>';
+    return;
+  }
+  listEl.innerHTML = dates.map(date => {
+    const d = getFitnessData(date);
+    const vals = [];
+    if (d.steps !== undefined) vals.push(`Steps <span>${formatNumber(d.steps,0)}</span>`);
+    if (d.active !== undefined) vals.push(`Active <span>${formatNumber(d.active,0)}m</span>`);
+    if (d.kcal !== undefined) vals.push(`Kcal <span>${formatNumber(d.kcal,0)}</span>`);
+    if (d.sleep !== undefined) vals.push(`Sleep <span>${formatNumber(d.sleep,1)}h</span>`);
+    const editId = `fl-edit-${date}`;
+    return `<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="le-date" style="flex:0 0 auto;">${formatDate(date)}</span>
+        <span class="fl-entry-vals" style="flex:1;">${vals.join(' · ')}</span>
+        <button class="cancel-btn" onclick="toggleFitnessEdit('${editId}','${date}')">Edit</button>
+      </div>
+      <div class="session-edit-row" id="${editId}">
+        <div class="fitness-log-inputs" style="margin-bottom:8px;">
+          <div class="log-field">
+            <label class="mini-label">Steps</label>
+            <input type="number" id="${editId}-steps" value="${d.steps||''}" placeholder="—" min="0" style="-moz-appearance:textfield;width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 6px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--text-h);text-align:center;outline:none;">
+          </div>
+          <div class="log-field">
+            <label class="mini-label">Active min</label>
+            <input type="number" id="${editId}-active" value="${d.active||''}" placeholder="—" min="0" style="-moz-appearance:textfield;width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 6px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--text-h);text-align:center;outline:none;">
+          </div>
+          <div class="log-field">
+            <label class="mini-label">Kcal</label>
+            <input type="number" id="${editId}-kcal" value="${d.kcal||''}" placeholder="—" min="0" style="-moz-appearance:textfield;width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 6px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--text-h);text-align:center;outline:none;">
+          </div>
+          <div class="log-field">
+            <label class="mini-label">Sleep (h)</label>
+            <input type="number" id="${editId}-sleep" value="${d.sleep||''}" placeholder="—" min="0" step="0.1" style="-moz-appearance:textfield;width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 6px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--text-h);text-align:center;outline:none;">
+          </div>
+        </div>
+        <div class="session-edit-actions">
+          <button class="save-btn" onclick="saveFitnessLogEdit('${editId}','${date}')">Save</button>
+          <button class="del-btn" onclick="deleteFitnessLogEntry('${date}')">Delete</button>
+          <button class="cancel-btn" onclick="toggleFitnessEdit('${editId}','${date}')">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleFitnessEdit(editId) {
+  const row = document.getElementById(editId);
+  if (row) row.classList.toggle('open');
+}
+
+function saveFitnessLogEdit(editId, date) {
+  const steps = parseFloat(document.getElementById(editId + '-steps').value);
+  const active = parseFloat(document.getElementById(editId + '-active').value);
+  const kcal = parseFloat(document.getElementById(editId + '-kcal').value);
+  const sleep = parseFloat(document.getElementById(editId + '-sleep').value);
+  const data = {};
+  if (!isNaN(steps)) data.steps = steps;
+  if (!isNaN(active)) data.active = active;
+  if (!isNaN(kcal)) data.kcal = kcal;
+  if (!isNaN(sleep)) data.sleep = sleep;
+  saveFitnessDataForDate(date, data);
+  renderFitnessLog();
+  if (date === todayKey()) renderFitnessStats();
+}
+
+function deleteFitnessLogEntry(date) {
+  if (!confirm('Delete fitness data for ' + formatDate(date) + '?')) return;
+  localStorage.removeItem('fitness-' + date);
+  renderFitnessLog();
+  if (date === todayKey()) renderFitnessStats();
 }
 
 /* ══════════════════════════════════════════════════════
@@ -2827,10 +3083,16 @@ function finishSession() {
   const totalSec = Math.round(currentElapsedSec(session));
   stopTick();
 
-  if (totalSec >= 30) { // ignore accidental near-zero taps
+  if (totalSec >= 30) {
     const log = loadJSON('session-log', []);
     log.push({ id: genId(), date: todayKey(), type: session.type, durationSec: totalSec });
     saveJSON('session-log', log);
+    // Flash confirmation
+    const msg = document.getElementById('timer-logged-msg');
+    if (msg) {
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 2500);
+    }
   }
 
   const fresh = { type: session.type, status: 'idle', startedAt: null, accumulatedSec: 0 };
@@ -2866,25 +3128,77 @@ function renderSessionStats() {
   if (timeEl) timeEl.textContent = formatDuration(totalSec) + ' total';
 
   const listEl = document.getElementById('sessions-list');
-  if (listEl) {
-    const recent = log.slice().reverse().slice(0, 8);
-    if (!recent.length) {
-      listEl.innerHTML = '<div class="log-empty">No sessions logged yet — use the timer on the Workout tab.</div>';
-    } else {
-      listEl.innerHTML = recent.map((e, i) => {
-        const realIdx = log.length - 1 - i;
-        const label = e.type === 'workout' ? 'Workout' : 'Walk / Run';
-        return `<div class="log-entry">
-          <span class="le-date">${formatDate(e.date)}</span>
-          <span class="le-val">${label} · ${formatDuration(e.durationSec)}</span>
-          <button class="le-del" onclick="deleteSessionEntry(${realIdx})">✕</button>
-        </div>`;
-      }).join('');
-    }
+  if (!listEl) return;
+
+  if (!log.length) {
+    listEl.innerHTML = '<div class="log-empty">No sessions logged yet — use the timer on the Workout tab.</div>';
+    return;
   }
+
+  const recent = log.slice().reverse().slice(0, 8);
+  listEl.innerHTML = recent.map((e, i) => {
+    const realIdx = log.length - 1 - i;
+    const label = e.type === 'workout' ? 'Workout' : 'Walk / Run';
+    const h = Math.floor(e.durationSec / 3600);
+    const m = Math.floor((e.durationSec % 3600) / 60);
+    const s = e.durationSec % 60;
+    const editId = `edit-${realIdx}`;
+    return `<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="le-date" style="flex:0 0 auto;">${formatDate(e.date)}</span>
+        <span class="le-val" style="flex:1;">${label} &middot; ${formatDuration(e.durationSec)}</span>
+        <button class="cancel-btn" onclick="toggleSessionEdit('${editId}')">Edit</button>
+      </div>
+      <div class="session-edit-row" id="${editId}">
+        <div class="session-edit-fields">
+          <div class="log-field">
+            <label class="mini-label">Date</label>
+            <input type="date" id="${editId}-date" value="${e.date}" max="${todayKey()}" style="background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 8px;font-family:var(--mono);font-size:12px;color:var(--text-h);outline:none;">
+          </div>
+          <div class="log-field" style="min-width:60px;max-width:68px;">
+            <label class="mini-label">Hours</label>
+            <input type="number" id="${editId}-h" value="${h}" min="0" max="5" style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 8px;font-family:var(--mono);font-size:13px;color:var(--text-h);outline:none;text-align:center;-moz-appearance:textfield;">
+          </div>
+          <div class="log-field" style="min-width:60px;max-width:68px;">
+            <label class="mini-label">Mins</label>
+            <input type="number" id="${editId}-m" value="${m}" min="0" max="59" style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 8px;font-family:var(--mono);font-size:13px;color:var(--text-h);outline:none;text-align:center;-moz-appearance:textfield;">
+          </div>
+          <div class="log-field" style="min-width:60px;max-width:68px;">
+            <label class="mini-label">Secs</label>
+            <input type="number" id="${editId}-s" value="${s}" min="0" max="59" style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:7px 8px;font-family:var(--mono);font-size:13px;color:var(--text-h);outline:none;text-align:center;-moz-appearance:textfield;">
+          </div>
+        </div>
+        <div class="session-edit-actions">
+          <button class="save-btn" onclick="saveSessionEntry(${realIdx}, '${editId}')">Save</button>
+          <button class="del-btn" onclick="deleteSessionEntry(${realIdx})">Delete</button>
+          <button class="cancel-btn" onclick="toggleSessionEdit('${editId}')">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSessionEdit(editId) {
+  const row = document.getElementById(editId);
+  if (row) row.classList.toggle('open');
+}
+
+function saveSessionEntry(index, editId) {
+  const log = loadJSON('session-log', []);
+  if (index < 0 || index >= log.length) return;
+  const date = document.getElementById(editId + '-date').value;
+  const h = parseInt(document.getElementById(editId + '-h').value, 10) || 0;
+  const m = parseInt(document.getElementById(editId + '-m').value, 10) || 0;
+  const s = parseInt(document.getElementById(editId + '-s').value, 10) || 0;
+  const durationSec = h * 3600 + m * 60 + s;
+  if (!date || durationSec <= 0) return;
+  log[index] = { ...log[index], date, durationSec };
+  saveJSON('session-log', log);
+  renderSessionStats();
 }
 
 function deleteSessionEntry(index) {
+  if (!confirm('Delete this session?')) return;
   const log = loadJSON('session-log', []);
   log.splice(index, 1);
   saveJSON('session-log', log);
@@ -3133,6 +3447,7 @@ function mergeSyncState(local, cloud) {
 function refreshAllViewsAfterSync() {
   renderAfd();
   renderFitnessStats();
+  renderFitnessLog();
   renderResults();
   renderWeightChart();
   renderSessionStats();
