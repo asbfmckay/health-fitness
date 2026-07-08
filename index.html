@@ -1110,7 +1110,8 @@
   .fl-entry-vals {
     font-size: 12px;
     color: var(--text-dim);
-    margin-top: 3px;
+    margin-top: 0;
+    padding-left: 12px;
   }
 
   .fl-entry-vals span { color: var(--text-h); font-weight: 600; }
@@ -1894,11 +1895,8 @@
   <div class="tracker-card">
     <div class="fitness-log-form">
       <div class="fitness-log-date-row">
-        <div class="log-field" style="flex:0 0 auto;">
-          <label class="mini-label">Date</label>
-          <input type="date" id="fl-date">
-        </div>
-        <button class="solid-btn" onclick="addFitnessLogEntry()">Log</button>
+        <input type="date" id="fl-date" style="background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;padding:10px 10px;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text-h);outline:none;height:42px;">
+        <button class="solid-btn" onclick="addFitnessLogEntry()" style="height:42px;white-space:nowrap;">Log</button>
       </div>
       <div class="fitness-log-inputs">
         <div class="log-field">
@@ -2742,7 +2740,7 @@ function renderFitnessLog() {
     if (d.sleep !== undefined) vals.push(`Sleep <span>${formatNumber(d.sleep,1)}h</span>`);
     const editId = `fl-edit-${date}`;
     return `<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:0;padding:10px 0;">
-      <div style="display:flex;align-items:center;gap:6px;">
+      <div style="display:flex;align-items:center;gap:0;">
         <span class="le-date" style="flex:0 0 auto;">${formatDate(date)}</span>
         <span class="fl-entry-vals" style="flex:1;">${vals.join(' · ')}</span>
         <button class="cancel-btn" onclick="toggleFitnessEdit('${editId}','${date}')">Edit</button>
@@ -3083,7 +3081,7 @@ function finishSession() {
   const totalSec = Math.round(currentElapsedSec(session));
   stopTick();
 
-  if (totalSec >= 30) {
+  if (totalSec >= 5) {
     const log = loadJSON('session-log', []);
     log.push({ id: genId(), date: todayKey(), type: session.type, durationSec: totalSec });
     saveJSON('session-log', log);
