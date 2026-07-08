@@ -1086,7 +1086,7 @@
 
   .fitness-log-inputs {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
 
@@ -3133,9 +3133,15 @@ function formatDuration(totalSec) {
 }
 
 function renderSessionStats() {
-  const log = loadJSON('session-log', []);
+  let log = loadJSON('session-log', []);
   const weekDates = new Set(getWeekDates());
   const targets = getTargets();
+
+  // Ensure all sessions have IDs and save immediately — without this,
+  // the sid in onclick won't match what loadJSON returns in save/delete
+  let needsSave = false;
+  log.forEach(e => { if (!e.id) { e.id = genId(); needsSave = true; } });
+  if (needsSave) localStorage.setItem('session-log', JSON.stringify(log));
 
   const thisWeek = log.filter(e => e.type === 'workout' && weekDates.has(e.date));
   const count = thisWeek.length;
