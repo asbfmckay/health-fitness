@@ -477,6 +477,8 @@
   .img-placeholder-label { font-size: 12px; color: var(--text-dim); }
   .img-placeholder-hint { font-size: 10px; color: var(--text-dim); opacity: 0.8; }
 
+  .ex-illustration { position: relative; }
+
   .ex-illustration img {
     width: 100%;
     display: block;
@@ -485,6 +487,26 @@
   }
 
   .img-upload-input { display: none; }
+
+  .img-clear-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(23,27,46,0.65);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .img-clear-btn:active { background: rgba(23,27,46,0.9); }
 
   .ex-instructions { padding: 14px 14px 16px; }
 
@@ -2223,52 +2245,34 @@ function renderExerciseImage(card, dataUrl) {
   if (!img) {
     img = document.createElement('img');
     img.className = 'exercise-saved-image';
+    img.style.cursor = 'pointer';
+    img.title = 'Tap to replace photo';
+    img.addEventListener('click', () => {
+      const input = wrap.querySelector('.img-upload-input');
+      if (input) input.click();
+    });
     wrap.appendChild(img);
   }
   img.src = dataUrl;
 
-  let controls = wrap.querySelector('.image-controls');
-  if (!controls) {
-    controls = document.createElement('div');
-    controls.className = 'image-controls';
-    controls.style.padding = '10px 12px';
-    controls.style.display = 'flex';
-    controls.style.gap = '8px';
-    controls.style.flexWrap = 'wrap';
-    controls.style.borderTop = '1px solid var(--border)';
+  // Remove old button-based controls if they exist
+  const oldControls = wrap.querySelector('.image-controls');
+  if (oldControls) oldControls.remove();
 
-    const replaceBtn = document.createElement('button');
-    replaceBtn.type = 'button';
-    replaceBtn.textContent = 'Replace photo';
-    replaceBtn.style.padding = '8px 10px';
-    replaceBtn.style.borderRadius = '8px';
-    replaceBtn.style.border = '1px solid var(--border-md)';
-    replaceBtn.style.background = 'var(--bg-soft)';
-    replaceBtn.style.color = 'var(--text-body)';
-    replaceBtn.style.cursor = 'pointer';
-    replaceBtn.addEventListener('click', () => {
-      const input = wrap.querySelector('.img-upload-input');
-      if (input) input.click();
-    });
-
+  // Add a small X button overlaid on the bottom-right of the image
+  if (!wrap.querySelector('.img-clear-btn')) {
     const clearBtn = document.createElement('button');
+    clearBtn.className = 'img-clear-btn';
     clearBtn.type = 'button';
-    clearBtn.textContent = 'Clear photo';
-    clearBtn.style.padding = '8px 10px';
-    clearBtn.style.borderRadius = '8px';
-    clearBtn.style.border = '1px solid var(--border-md)';
-    clearBtn.style.background = 'var(--bg-soft)';
-    clearBtn.style.color = 'var(--text-body)';
-    clearBtn.style.cursor = 'pointer';
-    clearBtn.addEventListener('click', async () => {
+    clearBtn.title = 'Remove photo';
+    clearBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" width="12" height="12"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
+    clearBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
       const imageId = getExerciseImageId(card);
       await deleteExerciseImage(imageId);
       resetExerciseImage(card);
     });
-
-    controls.appendChild(replaceBtn);
-    controls.appendChild(clearBtn);
-    wrap.appendChild(controls);
+    wrap.appendChild(clearBtn);
   }
 }
 
