@@ -1263,6 +1263,27 @@
     cursor: pointer;
   }
 
+  /* ══════════ Accordions ══════════ */
+  .acc{margin-top:14px;border-top:1px solid var(--border);padding-top:4px}
+  .acc-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
+    border-radius:8px;padding:0 16px 4px;box-shadow:0 4px 16px rgba(23,27,46,0.05);border-top-width:1.5px}
+  .acc-card>.acc-sum{padding:15px 0}
+  .acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;
+    padding:11px 0;font-size:13px;font-weight:700;color:var(--text-h)}
+  .acc>summary::-webkit-details-marker{display:none}
+  .acc .chev{width:15px;height:15px;margin-left:auto;color:var(--text-dim);transition:transform .18s ease}
+  .acc[open] .chev{transform:rotate(180deg)}
+  /* ══════════ Weight header ══════════ */
+  .w-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .w-now{font-family:var(--display);font-size:30px;font-weight:800;letter-spacing:-.03em;
+    color:var(--text-h);line-height:1}
+  .w-now small{font-size:14px;font-weight:700;color:var(--text-dim);margin-left:2px}
+  .w-badges{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+  .w-badge{font-size:11px;font-weight:700;border-radius:5px;padding:4px 8px;background:var(--green-bg);
+    border:1px solid var(--green-bdr);color:var(--green);white-space:nowrap}
+  .w-badge.up{background:rgba(226,102,92,0.12);border-color:rgba(226,102,92,0.3);color:var(--chest)}
+  .w-badge.flat{background:var(--bg-soft);border-color:var(--border-md);color:var(--text-dim)}
+
   /* ══════════ Coach chat ══════════ */
   .chat-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
     border-radius:8px;box-shadow:0 4px 16px rgba(23,27,46,0.05);overflow:hidden}
@@ -1270,8 +1291,8 @@
   .chat-avatar{width:30px;height:30px;border-radius:8px;background:var(--green-deep);display:grid;
     place-items:center;flex:none}
   .chat-avatar svg{width:17px;height:17px}
-  .chat-log{padding:16px;display:flex;flex-direction:column;gap:12px;max-height:52vh;min-height:180px;
-    overflow-y:auto}
+  .chat-log{padding:16px;display:flex;flex-direction:column;gap:12px;
+    max-height:min(46vh,380px);min-height:120px;overflow-y:auto;overscroll-behavior:contain}
   .msg{max-width:88%;font-size:13.5px;line-height:1.6}
   .msg-me{align-self:flex-end;background:var(--green-deep);color:#fff;padding:10px 13px;
     border-radius:12px;border-bottom-right-radius:3px}
@@ -1294,23 +1315,25 @@
   .daysep{align-self:center;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.08em;
     text-transform:uppercase;color:var(--text-dim);background:var(--bg-soft);border:1px solid var(--border);
     border-radius:999px;padding:3px 10px}
-  .chat-compose{border-top:1.5px solid var(--border);padding:11px 12px}
+  .chat-compose{border-top:1.5px solid var(--border);padding:10px 12px;background:var(--bg-card)}
   .shot-tray{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
   .shot{position:relative;width:56px;height:56px;border-radius:7px;overflow:hidden;border:1.5px solid var(--border)}
   .shot img{width:100%;height:100%;object-fit:cover;display:block}
   .shot button{position:absolute;top:2px;right:2px;width:17px;height:17px;border:none;border-radius:5px;
     background:rgba(23,27,46,.8);color:#fff;font-size:11px;line-height:1;cursor:pointer}
-  .compose-row{display:flex;gap:8px;align-items:flex-end}
-  .cam-btn{flex:none;width:38px;height:38px;border-radius:8px;background:var(--bg-soft);
+  .compose-row{display:flex;gap:7px;align-items:flex-end}
+  @media (max-width:400px){.cam-btn,.send-btn{width:40px;height:40px}#chat-in{padding:11px 10px}}
+  .cam-btn{flex:none;width:44px;height:44px;border-radius:8px;background:var(--bg-soft);
     border:1.5px solid var(--border);display:grid;place-items:center;cursor:pointer;color:var(--text-body)}
-  .cam-btn svg{width:17px;height:17px}
-  #chat-in{flex:1;min-height:38px;max-height:130px;resize:none;padding:9px 11px;line-height:1.45;
-    background:var(--bg-soft);border:1.5px solid var(--border);border-radius:6px;
-    font-family:var(--body-f);font-size:13.5px;color:var(--text-h);outline:none}
+  .cam-btn svg{width:19px;height:19px}
+  /* 16px stops mobile browsers zooming the page when the field is focused */
+  #chat-in{flex:1;min-width:0;min-height:44px;max-height:120px;resize:none;padding:12px 12px;
+    line-height:1.4;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:8px;
+    font-family:var(--body-f);font-size:16px;color:var(--text-h);outline:none}
   #chat-in:focus{border-color:var(--lime-dark)}
-  .send-btn{flex:none;width:38px;height:38px;border-radius:8px;background:var(--lime);border:none;
+  .send-btn{flex:none;width:44px;height:44px;border-radius:8px;background:var(--lime);border:none;
     display:grid;place-items:center;cursor:pointer;color:var(--green-deep)}
-  .send-btn svg{width:17px;height:17px}
+  .send-btn svg{width:19px;height:19px}
   /* ══════════ Date bar ══════════ */
   .datebar{display:flex;align-items:center;gap:8px;margin:0 16px 12px;background:var(--bg-card);
     border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;
@@ -1942,12 +1965,17 @@
     <div class="chat-compose">
       <div class="shot-tray" id="shot-tray"></div>
       <div class="compose-row">
-        <label class="cam-btn" for="chat-cam" title="Photo">
+        <label class="cam-btn" for="chat-cam" title="Take a photo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         </label>
-        <input id="chat-cam" type="file" accept="image/*" multiple style="display:none">
-        <textarea id="chat-in" rows="1" placeholder="Log a meal, your weight, ask anything…"></textarea>
+        <input id="chat-cam" type="file" accept="image/*" capture="environment" style="display:none">
+        <label class="cam-btn" for="chat-lib" title="Choose from photos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
+        </label>
+        <input id="chat-lib" type="file" accept="image/*" multiple style="display:none">
+        <textarea id="chat-in" rows="1" placeholder="Log a meal or ask…"></textarea>
         <button class="send-btn" onclick="sendChat()" title="Send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
@@ -1962,6 +1990,39 @@
       <input type="date" id="date-pick" onchange="setViewDate(this.value)"></div>
     <button class="dnav" id="date-next" onclick="shiftViewDate(1)"><svg viewBox="0 0 24 24" fill="none"
       stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+
+  <div class="section-label">Weight</div>
+  <div class="tracker-card">
+    <div class="w-head">
+      <div>
+        <div class="w-now" id="w-now">—<small>kg</small></div>
+        <div class="tracker-sub" id="w-sub">No weigh-ins yet</div>
+      </div>
+      <div class="w-badges" id="w-badges"></div>
+    </div>
+    <div class="chart-wrap" id="weight-chart-wrap"></div>
+    <div class="log-form" style="margin-top:14px;">
+      <div class="log-field">
+        <label class="mini-label">Weight (kg)</label>
+        <input type="number" id="log-weight" step="0.1" placeholder="0.0">
+      </div>
+      <button class="icon-btn" id="weight-date-toggle" onclick="toggleWeightDate()" aria-label="Log for a different date" title="Log for a different date">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2.5" stroke="var(--text-dim)" stroke-width="1.7"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5" stroke="var(--text-dim)" stroke-width="1.7" stroke-linecap="round"/><circle cx="8.2" cy="13.3" r="1.1" fill="var(--text-dim)"/><circle cx="12" cy="13.3" r="1.1" fill="var(--text-dim)"/><circle cx="15.8" cy="13.3" r="1.1" fill="var(--text-dim)"/></svg>
+      </button>
+      <button class="solid-btn" onclick="addResultEntry()">Log</button>
+    </div>
+    <div class="log-field" id="weight-date-row" style="display:none; margin-top:10px;">
+      <label class="mini-label">Date</label>
+      <input type="date" id="log-weight-date">
+    </div>
+    <details class="acc" id="weight-acc">
+      <summary class="acc-sum"><span id="weight-acc-label">This week</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div id="results-list" class="log-list"></div>
+      <button class="ghost-btn" id="weight-more" onclick="expandWeightLog()" style="margin-top:8px;">Show more</button>
+    </details>
   </div>
 
   <div class="section-label" id="dials-label">Today</div>
@@ -2021,7 +2082,21 @@
       <div class="stat-ring-wrap" id="sleep-ring"></div>
       <div class="stat-sub" id="sleep-target-label">/ 8h</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-head"><div class="stat-label">Workouts</div></div>
+      <div class="stat-ring-wrap" id="workouts-ring"></div>
+      <div class="stat-sub" id="workouts-target-label">/ 5 this week</div>
+      <div class="stat-sub" id="workouts-time-label" style="margin-top:2px;font-weight:700;color:var(--text-h);">0m total</div>
+    </div>
   </div>
+
+  <details class="acc acc-card" id="sessions-acc">
+    <summary class="acc-sum"><span>Recent sessions</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div id="sessions-list" class="log-list"></div>
+    <button class="ghost-btn" id="sessions-more" onclick="expandSessions()" style="margin-top:8px;">Show more</button>
+  </details>
 
   <!-- Daily Fitness Log -->
   <div class="section-label">Daily Fitness Log</div>
@@ -2053,50 +2128,6 @@
     <div id="fitness-log-list" class="log-list" style="margin-top:14px;"></div>
   </div>
 
-  <!-- Training sessions -->
-  <div class="section-label">This Week — Sessions</div>
-  <div class="stat-grid" style="grid-template-columns: 1fr;">
-    <div class="stat-card">
-      <div class="stat-head">
-        <div class="stat-label">Workouts</div>
-      </div>
-      <div class="stat-ring-wrap" id="workouts-ring"></div>
-      <div class="stat-sub" id="workouts-target-label">/ 5 this week</div>
-      <div class="stat-sub" id="workouts-time-label" style="margin-top:2px; font-weight:700; color: var(--text-h);">0m total</div>
-    </div>
-  </div>
-
-  <div class="tracker-card" style="margin-top:-4px;">
-    <div class="tracker-title" style="margin-bottom:8px;">Recent Sessions</div>
-    <div id="sessions-list" class="log-list"></div>
-  </div>
-
-  <!-- Weight -->
-  <div class="section-label">Weight</div>
-  <div class="tracker-card">
-    <div class="log-form">
-      <div class="log-field">
-        <label class="mini-label">Today's weight (kg)</label>
-        <input type="number" id="log-weight" step="0.1" placeholder="0.0">
-      </div>
-      <button class="icon-btn" id="weight-date-toggle" onclick="toggleWeightDate()" aria-label="Log for a different date" title="Log for a different date">
-        <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2.5" stroke="var(--text-dim)" stroke-width="1.7"/><path d="M3.5 9.5h17M8 3v3.5M16 3v3.5" stroke="var(--text-dim)" stroke-width="1.7" stroke-linecap="round"/><circle cx="8.2" cy="13.3" r="1.1" fill="var(--text-dim)"/><circle cx="12" cy="13.3" r="1.1" fill="var(--text-dim)"/><circle cx="15.8" cy="13.3" r="1.1" fill="var(--text-dim)"/></svg>
-      </button>
-      <button class="solid-btn" onclick="addResultEntry()">Log</button>
-    </div>
-    <div class="log-field" id="weight-date-row" style="display:none; margin-top:10px;">
-      <label class="mini-label">Date</label>
-      <input type="date" id="log-weight-date">
-    </div>
-    <div class="chart-wrap" id="weight-chart-wrap"></div>
-    <div class="chart-legend">
-      <span><span class="legend-dot" style="background:var(--lime)"></span>Weight</span>
-      <span><span class="legend-dot" style="background:var(--chest)"></span>Target</span>
-    </div>
-    <div id="results-list" class="log-list"></div>
-  </div>
-
-  <!-- Alcohol-Free Days -->
   <div class="section-label">This Week — Alcohol-Free Days</div>
   <div class="tracker-card">
     <div class="tracker-top">
@@ -2110,11 +2141,6 @@
     <div class="tracker-controls">
       <button class="ghost-btn" onclick="resetWeek('afd')">Reset week</button>
     </div>
-  </div>
-
-  <div class="section-label">Check-Ups &amp; Assessments</div>
-  <div class="tracker-card">
-    <div id="checkups-list"></div>
   </div>
 
   <div class="settings-link-wrap">
@@ -2615,7 +2641,6 @@ function initTrackers() {
   initAfd();
   initFitnessStats();
   initResultsLog();
-  initCheckups();
   initTimer();
   initCoach();
   const greetingEl = document.getElementById('header-greeting');
@@ -2994,50 +3019,121 @@ function deleteResultEntry(date) {
   renderWeightChart();
 }
 
+let WEIGHT_EXPANDED = false;
+function expandWeightLog() { WEIGHT_EXPANDED = true; renderResults(); }
+function weightSeries() {
+  return loadJSON('results-log', []).slice().sort((a, b) => a.date.localeCompare(b.date));
+}
+function trendAt(list, i) {
+  const from = Math.max(0, i - 6);
+  const w = list.slice(from, i + 1).map(e => e.weight);
+  return w.reduce((x, y) => x + y, 0) / w.length;
+}
 function renderResults() {
-  const entries = loadJSON('results-log', []);
+  const all = loadJSON('results-log', []);
   const list = document.getElementById('results-list');
-  if (!entries.length) {
+  const more = document.getElementById('weight-more');
+  const label = document.getElementById('weight-acc-label');
+  if (!list) return;
+  if (!all.length) {
     list.innerHTML = '<div class="log-empty">No entries yet — log today\'s weight above.</div>';
+    if (more) more.style.display = 'none';
+    if (label) label.textContent = 'Weigh-in history';
     return;
   }
-  list.innerHTML = entries.slice(0, 10).map(e => `<div class="log-entry">
+  const shown = WEIGHT_EXPANDED ? all : all.slice(0, 7);
+  if (label) label.textContent = WEIGHT_EXPANDED ? `All weigh-ins (${all.length})` : 'Last 7 weigh-ins';
+  if (more) more.style.display = (WEIGHT_EXPANDED || all.length <= 7) ? 'none' : '';
+  list.innerHTML = shown.map((e, i) => {
+    const next = shown[i + 1];
+    const diff = next ? e.weight - next.weight : null;
+    const d = diff == null ? '' :
+      `<span style="font-size:11px;color:${diff < 0 ? 'var(--green)' : diff > 0 ? 'var(--chest)' : 'var(--text-dim)'};margin-left:8px;">${diff > 0 ? '+' : ''}${diff.toFixed(1)}</span>`;
+    return `<div class="log-entry">
       <span class="le-date">${formatDate(e.date)}</span>
-      <span class="le-val">${e.weight} kg</span>
+      <span class="le-val">${e.weight.toFixed(1)} kg${d}</span>
       <button class="le-del" onclick="deleteResultEntry('${e.date}')">✕</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
-
+function renderWeightHeader() {
+  const list = weightSeries();
+  const now = document.getElementById('w-now');
+  const sub = document.getElementById('w-sub');
+  const badges = document.getElementById('w-badges');
+  if (!now) return;
+  if (!list.length) { now.innerHTML = '—<small>kg</small>'; sub.textContent = 'No weigh-ins yet'; badges.innerHTML = ''; return; }
+  const i = list.length - 1;
+  const trend = trendAt(list, i);
+  const latest = list[i];
+  now.innerHTML = trend.toFixed(1) + '<small>kg</small>';
+  sub.textContent = `7-day trend · ${latest.weight.toFixed(1)}kg on ${formatDate(latest.date)}`;
+  const out = [];
+  if (list.length > 1) {
+    const prevIdx = Math.max(0, i - 7);
+    const change = trend - trendAt(list, prevIdx);
+    const cls = Math.abs(change) < 0.05 ? 'flat' : change < 0 ? '' : 'up';
+    out.push(`<span class="w-badge ${cls}">${change <= 0 ? '▼' : '▲'} ${Math.abs(change).toFixed(1)}kg ${list.length > 7 ? 'this week' : 'so far'}</span>`);
+  }
+  const target = getTargets().weight;
+  if (target) out.push(`<span class="w-badge flat">${Math.max(0, trend - target).toFixed(1)}kg to ${target}</span>`);
+  badges.innerHTML = out.join('');
+}
 function renderWeightChart() {
   const wrap = document.getElementById('weight-chart-wrap');
-  const entries = loadJSON('results-log', []).slice().sort((a, b) => a.date.localeCompare(b.date));
+  if (!wrap) return;
+  const all = weightSeries();
   const target = getTargets().weight;
-
-  if (entries.length < 2) {
+  if (all.length < 2) {
     wrap.innerHTML = '<div class="log-empty">Log weight on at least two days to see a trend line.</div>';
+    renderWeightHeader();
     return;
   }
-
-  const w = 460, h = 140, pad = 24;
-  const weights = entries.map(e => e.weight);
-  const minV = Math.min(...weights, target) - 1;
-  const maxV = Math.max(...weights, target) + 1;
-  const span = maxV - minV || 1;
-
-  const x = i => pad + (i / (entries.length - 1)) * (w - pad * 2);
-  const y = v => h - pad - ((v - minV) / span) * (h - pad * 2);
-
-  const linePoints = entries.map((e, i) => `${x(i)},${y(e.weight)}`).join(' ');
-  const targetY = y(target);
-  const dots = entries.map((e, i) => `<circle cx="${x(i)}" cy="${y(e.weight)}" r="3.5" fill="var(--lime-dark)" />`).join('');
-
-  wrap.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" style="overflow:visible;">
-    <line x1="${pad}" y1="${targetY}" x2="${w - pad}" y2="${targetY}" stroke="var(--chest)" stroke-width="1.5" stroke-dasharray="4,4" />
-    <polyline points="${linePoints}" fill="none" stroke="var(--lime-dark)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+  const entries = all.slice(-30);
+  const base = all.length - entries.length;
+  const W = 360, H = 168, M = { l: 38, r: 46, t: 14, b: 26 };
+  const pw = W - M.l - M.r, ph = H - M.t - M.b;
+  const trends = entries.map((_, i) => trendAt(all, base + i));
+  const pool = entries.map(e => e.weight).concat(trends).concat(target ? [target] : []);
+  let lo = Math.min(...pool), hi = Math.max(...pool);
+  const pad = Math.max((hi - lo) * 0.25, 0.5); lo -= pad; hi += pad;
+  const X = i => entries.length === 1 ? M.l + pw / 2 : M.l + (i / (entries.length - 1)) * pw;
+  const Y = v => M.t + ph - ((v - lo) / (hi - lo)) * ph;
+  const ticks = [lo + (hi - lo) * 0.12, (lo + hi) / 2, hi - (hi - lo) * 0.12];
+  const grid = ticks.map(t => `<line x1="${M.l}" x2="${M.l + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"
+      stroke="var(--border)" stroke-width="1"/>
+    <text x="${M.l - 6}" y="${(Y(t) + 3.5).toFixed(1)}" text-anchor="end" font-size="9.5"
+      fill="var(--text-dim)">${t.toFixed(1)}</text>`).join('');
+  const area = `M${X(0).toFixed(1)} ${Y(trends[0]).toFixed(1)} ` +
+    trends.map((v, i) => `L${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ') +
+    ` L${X(entries.length - 1).toFixed(1)} ${(M.t + ph).toFixed(1)} L${X(0).toFixed(1)} ${(M.t + ph).toFixed(1)} Z`;
+  const trendPath = trends.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' ');
+  const dots = entries.map((e, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(e.weight).toFixed(1)}" r="2.6"
+      fill="var(--border-md)" stroke="var(--bg-card)" stroke-width="1.5"><title>${formatDate(e.date)} · ${e.weight}kg</title></circle>`).join('');
+  const tLine = (target && target > lo && target < hi)
+    ? `<line x1="${M.l}" x2="${M.l + pw}" y1="${Y(target).toFixed(1)}" y2="${Y(target).toFixed(1)}"
+         stroke="var(--chest)" stroke-width="1.5" stroke-dasharray="4,4"/>
+       <text x="${M.l + pw + 5}" y="${(Y(target) + 3.5).toFixed(1)}" font-size="9.5" fill="var(--chest)">target</text>` : '';
+  const last = trends[trends.length - 1];
+  const xlabs = [0, entries.length - 1].filter((v, i, a) => a.indexOf(v) === i)
+    .map(i => `<text x="${X(i).toFixed(1)}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : 'end'}"
+        font-size="9.5" fill="var(--text-dim)">${formatDate(entries[i].date)}</text>`).join('');
+  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible;">
+    ${grid}${tLine}
+    <path d="${area}" fill="var(--lime)" opacity="0.16"/>
+    <path d="${trendPath}" fill="none" stroke="var(--green-deep)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}
-  </svg>`;
+    <circle cx="${X(entries.length - 1).toFixed(1)}" cy="${Y(last).toFixed(1)}" r="4.2" fill="var(--green-deep)" stroke="var(--bg-card)" stroke-width="2"/>
+    <text x="${(X(entries.length - 1) + 7).toFixed(1)}" y="${(Y(last) + 3.5).toFixed(1)}" font-size="11.5" font-weight="800" fill="var(--text-h)">${last.toFixed(1)}</text>
+    ${xlabs}
+  </svg>
+  <div class="chart-legend" style="margin-top:6px;">
+    <span><span class="legend-dot" style="background:var(--border-md)"></span>Weigh-in</span>
+    <span><span class="legend-dot" style="background:var(--green-deep)"></span>7-day trend</span>
+    <span><span class="legend-dot" style="background:var(--chest)"></span>Target</span>
+  </div>`;
+  renderWeightHeader();
 }
-
 function formatDate(iso) {
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
@@ -3046,62 +3142,10 @@ function formatDate(iso) {
 /* ══════════════════════════════════════════════════════
    5.3a — Check-ups & assessments
    ══════════════════════════════════════════════════════ */
-const DEFAULT_CHECKUPS = [
-  { id: 'c1', name: 'GP physical / general check-up', months: 12, last: null },
-  { id: 'c2', name: 'Bloodwork (cholesterol, glucose, etc.)', months: 12, last: null },
-  { id: 'c3', name: 'Blood pressure check', months: 6, last: null },
-  { id: 'c4', name: 'Dental check-up', months: 6, last: null },
-  { id: 'c5', name: 'Eye test', months: 24, last: null },
-  { id: 'c6', name: 'Mental health check-in (GP or therapist)', months: 6, last: null },
-  { id: 'c7', name: 'Skin check', months: 12, last: null }
-];
 
-function initCheckups() {
-  if (localStorage.getItem('checkups') === null) {
-    saveJSON('checkups', DEFAULT_CHECKUPS);
-  }
-  renderCheckups();
-}
 
-function checkupStatus(c) {
-  if (!c.last) return { label: 'Due', cls: 'status-due' };
-  const last = new Date(c.last + 'T00:00:00');
-  const next = new Date(last);
-  next.setMonth(next.getMonth() + c.months);
-  const now = new Date();
-  const daysToNext = Math.round((next - now) / 86400000);
-  if (daysToNext < 0) return { label: 'Overdue', cls: 'status-due' };
-  if (daysToNext <= 30) return { label: 'Due soon', cls: 'status-soon' };
-  return { label: 'OK', cls: 'status-ok' };
-}
 
-function renderCheckups() {
-  let checkups = loadJSON('checkups', DEFAULT_CHECKUPS);
-  if (!Array.isArray(checkups)) checkups = DEFAULT_CHECKUPS;
-  const container = document.getElementById('checkups-list');
-  if (!container) return;
-  container.innerHTML = checkups.map(c => {
-    const status = checkupStatus(c);
-    return `<div class="checkup-row">
-      <div>
-        <div class="checkup-name">${c.name}</div>
-        <div class="checkup-freq">Every ${c.months} months</div>
-      </div>
-      <div class="checkup-right">
-        <span class="checkup-status ${status.cls}">${status.label}</span>
-        <input type="date" class="checkup-date-input" value="${c.last || ''}" onchange="setCheckupDate('${c.id}', this.value)">
-      </div>
-    </div>`;
-  }).join('');
-}
 
-function setCheckupDate(id, value) {
-  const checkups = loadJSON('checkups', DEFAULT_CHECKUPS);
-  const c = checkups.find(x => x.id === id);
-  if (c) c.last = value || null;
-  saveJSON('checkups', checkups);
-  renderCheckups();
-}
 
 /* ══════════════════════════════════════════════════════
    Workout timer — Start / Pause / Finish, logs completed sessions
@@ -3273,6 +3317,8 @@ function formatDuration(totalSec) {
   return `${m}m`;
 }
 
+let SESSIONS_EXPANDED = false;
+function expandSessions() { SESSIONS_EXPANDED = true; renderSessionStats(); }
 function renderSessionStats() {
   let log = loadJSON('session-log', []);
   const weekDates = new Set(getWeekDates());
@@ -3304,7 +3350,9 @@ function renderSessionStats() {
     return;
   }
 
-  const recent = log.slice().reverse().slice(0, 8);
+  const recent = log.slice().reverse().slice(0, SESSIONS_EXPANDED ? 200 : 5);
+  const moreBtn = document.getElementById('sessions-more');
+  if (moreBtn) moreBtn.style.display = (SESSIONS_EXPANDED || log.length <= 5) ? 'none' : '';
   listEl.innerHTML = recent.map((e, i) => {
     if (!e.id) e.id = genId(); // safety net — should always exist after merge migration
     const sid = e.id;
@@ -3401,14 +3449,38 @@ function saveCoachConfig() {
   initCoach();
   pullSamsung(false);
 }
+function initChatInputs() {
+  // This is what was missing: the file inputs existed but nothing listened to them,
+  // so choosing a photo did nothing at all.
+  ['chat-cam', 'chat-lib'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || el.dataset.wired) return;
+    el.dataset.wired = '1';
+    el.addEventListener('change', async e => {
+      for (const f of e.target.files) {
+        if (!f.type.startsWith('image/')) continue;
+        SHOTS.push(await downscaleImage(f, 1024, 0.72));
+      }
+      e.target.value = '';
+      renderShots();
+    });
+  });
+  const ta = document.getElementById('chat-in');
+  if (ta && !ta.dataset.wired) {
+    ta.dataset.wired = '1';
+    ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
+    ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); sendChat(); } });
+  }
+}
 function initCoach() {
+  initChatInputs();
   const u = document.getElementById('coach-url'), k = document.getElementById('coach-secret');
   if (u) u.value = COACH_URL();
   if (k) k.value = COACH_SECRET();
   updateCoachUI();
   renderChat();
   renderShots();
-  if (COACH_READY()) { pullSamsung(true); }
+  if (COACH_READY()) { pullSamsung(true); pushState(true); }
 }
 function updateCoachUI() {
   const ready = COACH_READY();
@@ -3476,10 +3548,10 @@ function collectState() {
   return {
     targets: loadJSON('targets', null),
     resultsLog: loadJSON('results-log', []),
-    checkups: loadJSON('checkups', null),
     sessionLog: loadJSON('session-log', []),
     afd: scanPrefixed('afd-'),
     fitness: scanPrefixed('fitness-'),
+    chat: CHAT,
     weights, savedAt: Date.now()
   };
 }
@@ -3500,12 +3572,26 @@ function applyState(st) {
   Object.entries(st.afd || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   Object.entries(st.fitness || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   Object.entries(st.weights || {}).forEach(([k, v]) => { if (v) localStorage.setItem(k, v); });
+  if (Array.isArray(st.chat)) { CHAT = pruneChat(st.chat); saveChat(); renderChat(); }
   document.querySelectorAll('.ex-weight-input').forEach((input, i) => {
     const v = localStorage.getItem('workout-weight-' + i);
     if (v !== null && input.value !== v) input.value = v;
   });
 }
 function toArr(v) { return Array.isArray(v) ? v : []; }
+/* Messages are append-only, so union them and put them back in time order.
+   Same message from two devices is deduped on day + role + text. */
+function mergeChat(a, b) {
+  const seen = new Set(), out = [];
+  [...toArr(a), ...toArr(b)].forEach(m => {
+    if (!m || !m.content) return;
+    const k = (m.day || '') + '|' + m.role + '|' + m.content;
+    if (seen.has(k)) return;
+    seen.add(k); out.push(m);
+  });
+  out.sort((x, y) => (x.day || '').localeCompare(y.day || ''));
+  return out;
+}
 function mergeState(local, cloud) {
   if (!cloud) return local;
   if (!local) return cloud;
@@ -3541,10 +3627,10 @@ function mergeState(local, cloud) {
   return {
     targets: localNewer ? (local.targets || cloud.targets) : (cloud.targets || local.targets),
     resultsLog: byDate(local.resultsLog, cloud.resultsLog),
-    checkups: (toArr(local.checkups).length ? local.checkups : cloud.checkups),
     sessionLog: sessions(),
     afd: afd(local.afd, cloud.afd),
     fitness: perDay(local.fitness, cloud.fitness),
+    chat: mergeChat(local.chat, cloud.chat),
     weights: Object.assign({}, cloud.weights || {}, local.weights || {}),
     savedAt: Date.now()
   };
@@ -3574,6 +3660,9 @@ async function pushState(silent) {
     if (note && !silent) { note.textContent = 'Back-up failed — ' + (err.message || 'unknown'); note.style.color = 'var(--chest)'; }
   }
 }
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && COACH_READY()) { pullSamsung(true); pushState(true); }
+});
 let pushTimer = null;
 function queueCloudPush() {   // name kept: saveJSON() and the weight inputs call it
   if (!COACH_READY()) return;
@@ -3582,7 +3671,7 @@ function queueCloudPush() {   // name kept: saveJSON() and the weight inputs cal
 }
 function refreshAllViews() {
   renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults();
-  renderWeightChart(); renderSessionStats(); renderCheckups(); refreshSettingsFields();
+  renderWeightChart(); renderSessionStats(); refreshSettingsFields();
 }
 function refreshSettingsFields() {
   const t = getTargets();
@@ -3701,7 +3790,7 @@ function coachState() {
   const days = {};
   getFitnessLogDates().slice(0, 30).forEach(d => { days[d] = getFitnessData(d); });
   return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 60),
-    sessions: loadJSON('session-log', []).slice(-30), checkups: loadJSON('checkups', []),
+    sessions: loadJSON('session-log', []).slice(-30),
     today: todayKey(), profile: loadJSON('coach-profile', null) };
 }
 /* the coach can hand back a structured update; it must never touch watch-owned fields */
