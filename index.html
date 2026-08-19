@@ -1264,6 +1264,8 @@
   }
 
   /* ══════════ Accordions ══════════ */
+  .stat-card.span2{grid-column:1 / -1}
+  .stat-card.span2 .acc{text-align:left}
   .acc{margin-top:14px;border-top:1px solid var(--border);padding-top:4px}
   .acc-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
     border-radius:8px;padding:0 16px 4px;box-shadow:0 4px 16px rgba(23,27,46,0.05);border-top-width:1.5px}
@@ -1322,14 +1324,18 @@
   .shot button{position:absolute;top:2px;right:2px;width:17px;height:17px;border:none;border-radius:5px;
     background:rgba(23,27,46,.8);color:#fff;font-size:11px;line-height:1;cursor:pointer}
   .compose-row{display:flex;gap:7px;align-items:flex-end}
-  @media (max-width:400px){.cam-btn,.send-btn{width:40px;height:40px}#chat-in{padding:11px 10px}}
+  @media (max-width:400px){.cam-btn,.send-btn{width:40px;height:40px}
+    #chat-in{height:40px;min-height:40px;padding:9px 10px}}
   .cam-btn{flex:none;width:44px;height:44px;border-radius:8px;background:var(--bg-soft);
     border:1.5px solid var(--border);display:grid;place-items:center;cursor:pointer;color:var(--text-body)}
   .cam-btn svg{width:19px;height:19px}
   /* 16px stops mobile browsers zooming the page when the field is focused */
-  #chat-in{flex:1;min-width:0;min-height:44px;max-height:120px;resize:none;padding:12px 12px;
-    line-height:1.4;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:8px;
-    font-family:var(--body-f);font-size:16px;color:var(--text-h);outline:none}
+  /* 16px on the field itself stops mobile browsers zooming on focus; the placeholder
+     is styled down separately so it does not shout. */
+  #chat-in{flex:1;min-width:0;height:44px;min-height:44px;max-height:120px;resize:none;
+    padding:11px 12px;line-height:20px;background:var(--bg-soft);border:1.5px solid var(--border);
+    border-radius:8px;font-family:var(--body-f);font-size:16px;color:var(--text-h);outline:none}
+  #chat-in::placeholder{font-size:13px;color:var(--text-dim)}
   #chat-in:focus{border-color:var(--lime-dark)}
   .send-btn{flex:none;width:44px;height:44px;border-radius:8px;background:var(--lime);border:none;
     display:grid;place-items:center;cursor:pointer;color:var(--green-deep)}
@@ -2082,21 +2088,20 @@
       <div class="stat-ring-wrap" id="sleep-ring"></div>
       <div class="stat-sub" id="sleep-target-label">/ 8h</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card span2">
       <div class="stat-head"><div class="stat-label">Workouts</div></div>
       <div class="stat-ring-wrap" id="workouts-ring"></div>
       <div class="stat-sub" id="workouts-target-label">/ 5 this week</div>
       <div class="stat-sub" id="workouts-time-label" style="margin-top:2px;font-weight:700;color:var(--text-h);">0m total</div>
+      <details class="acc" id="sessions-acc">
+        <summary class="acc-sum"><span>Recent sessions</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div id="sessions-list" class="log-list"></div>
+        <button class="ghost-btn" id="sessions-more" onclick="expandSessions()" style="margin-top:8px;">Show more</button>
+      </details>
     </div>
   </div>
-
-  <details class="acc acc-card" id="sessions-acc">
-    <summary class="acc-sum"><span>Recent sessions</span>
-      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-    <div id="sessions-list" class="log-list"></div>
-    <button class="ghost-btn" id="sessions-more" onclick="expandSessions()" style="margin-top:8px;">Show more</button>
-  </details>
 
   <!-- Daily Fitness Log -->
   <div class="section-label">Daily Fitness Log</div>
@@ -2125,7 +2130,13 @@
         </div>
       </div>
     </div>
-    <div id="fitness-log-list" class="log-list" style="margin-top:14px;"></div>
+    <details class="acc" id="fl-acc">
+      <summary class="acc-sum"><span id="fl-acc-label">Last 7 days</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div id="fitness-log-list" class="log-list"></div>
+      <button class="ghost-btn" id="fl-more" onclick="expandFitnessLog()" style="margin-top:8px;">Show more</button>
+    </details>
   </div>
 
   <div class="section-label">This Week — Alcohol-Free Days</div>
@@ -2553,7 +2564,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   // otherwise the lock screen is already visible — bootApp() fires after PIN
 });
 
+/* One-off: the three days logged in chat before the app could store them.
+   Runs once ever, and never overwrites a day that already has data. */
+const SEED_ID = 'seed-aug2026-done';
+function seedHistory() {
+  if (localStorage.getItem(SEED_ID)) return;
+  const rows = [
+    { date: '2026-08-17', weight: 107.2, kcalIn: 2370, protein: 148, veg: 2, steps: 3180, sleep: 7,
+      note: 'Weet-Bix breakfast, eggs + sourdough lunchbox, Cobb salad out. Chilli oil corrected to ~50 cal from the label.' },
+    { date: '2026-08-18', weight: 107.0, kcalIn: 2709, protein: 145, veg: 2, steps: 6414, sleep: 3.5,
+      note: 'Travel day, 6am flight on 3h30m sleep. Caesar wrap, battered fish and chips.' },
+    { date: '2026-08-19', weight: 106.3, kcalIn: 1730, protein: 77, veg: 0, sleep: 6.1,
+      note: 'Packed lunchbox, no veg in the bag. Dinner not logged.' }
+  ];
+  rows.forEach(r => {
+    const existing = loadJSON('fitness-' + r.date, null);
+    if (existing && Object.keys(existing).length) return;   // never clobber real data
+    applyDayRow(r);
+  });
+  const list = loadJSON('results-log', []);
+  list.sort((a, b) => b.date.localeCompare(a.date));
+  localStorage.setItem('results-log', JSON.stringify(list));
+  localStorage.setItem(SEED_ID, '1');
+}
+
 async function bootApp() {
+  seedHistory();
   enableWeightPersistence();
   enableDragAndDrop();
   await restoreSavedImages();
@@ -2886,10 +2922,17 @@ function getFitnessLogDates() {
   return out.sort((a, b) => b.localeCompare(a));
 }
 
+let FL_EXPANDED = false;
+function expandFitnessLog() { FL_EXPANDED = true; renderFitnessLog(); }
 function renderFitnessLog() {
   const listEl = document.getElementById('fitness-log-list');
   if (!listEl) return;
-  const dates = getFitnessLogDates().slice(0, 30);
+  const all = getFitnessLogDates();
+  const dates = FL_EXPANDED ? all.slice(0, 120) : all.slice(0, 7);
+  const moreBtn = document.getElementById('fl-more');
+  if (moreBtn) moreBtn.style.display = (FL_EXPANDED || all.length <= 7) ? 'none' : '';
+  const lbl = document.getElementById('fl-acc-label');
+  if (lbl) lbl.textContent = FL_EXPANDED ? `All days (${all.length})` : 'Last 7 days';
   if (!dates.length) {
     listEl.innerHTML = '<div class="log-empty">No fitness data logged yet.</div>';
     return;
@@ -3076,7 +3119,7 @@ function renderWeightHeader() {
     out.push(`<span class="w-badge ${cls}">${change <= 0 ? '▼' : '▲'} ${Math.abs(change).toFixed(1)}kg ${list.length > 7 ? 'this week' : 'so far'}</span>`);
   }
   const target = getTargets().weight;
-  if (target) out.push(`<span class="w-badge flat">${Math.max(0, trend - target).toFixed(1)}kg to ${target}</span>`);
+  if (target) out.push(`<span class="w-badge flat">${Math.max(0, trend - target).toFixed(1)}kg to ${target}kg</span>`);
   badges.innerHTML = out.join('');
 }
 function renderWeightChart() {
@@ -3121,7 +3164,7 @@ function renderWeightChart() {
   wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible;">
     ${grid}${tLine}
     <path d="${area}" fill="var(--lime)" opacity="0.16"/>
-    <path d="${trendPath}" fill="none" stroke="var(--green-deep)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${trendPath}" fill="none" stroke="var(--green-deep)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}
     <circle cx="${X(entries.length - 1).toFixed(1)}" cy="${Y(last).toFixed(1)}" r="4.2" fill="var(--green-deep)" stroke="var(--bg-card)" stroke-width="2"/>
     <text x="${(X(entries.length - 1) + 7).toFixed(1)}" y="${(Y(last) + 3.5).toFixed(1)}" font-size="11.5" font-weight="800" fill="var(--text-h)">${last.toFixed(1)}</text>
@@ -3468,11 +3511,13 @@ function initChatInputs() {
   const ta = document.getElementById('chat-in');
   if (ta && !ta.dataset.wired) {
     ta.dataset.wired = '1';
-    ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
+    ta.addEventListener('input', () => { ta.style.height = 'auto';
+      ta.style.height = Math.max(ta.offsetHeight, Math.min(120, ta.scrollHeight)) + 'px'; });
     ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); sendChat(); } });
   }
 }
 function initCoach() {
+  loadChat();
   initChatInputs();
   const u = document.getElementById('coach-url'), k = document.getElementById('coach-secret');
   if (u) u.value = COACH_URL();
@@ -3686,8 +3731,13 @@ function refreshSettingsFields() {
    CHAT
    ══════════════════════════════════════════════════════ */
 let CHAT = [], SHOTS = [], SHOW_ALL_CHAT = false;
+function loadChat() {
+  // Without this the array starts empty on every page load and the day's
+  // conversation looks like it was thrown away.
+  CHAT = pruneChat(loadJSON('coach-chat', []) || []);
+}
 function pruneChat(list) {
-  const today = todayKey(), cut = new Date(); cut.setDate(cut.getDate() - 60);
+  const today = todayKey(), cut = new Date(); cut.setDate(cut.getDate() - 180);
   const cutISO = `${cut.getFullYear()}-${String(cut.getMonth()+1).padStart(2,'0')}-${String(cut.getDate()).padStart(2,'0')}`;
   // Photos are dropped from anything older than today: localStorage is ~5MB and a
   // meal photo is ~100KB, so keeping them fills it in a fortnight and writes then
@@ -3763,7 +3813,7 @@ async function sendChat() {
   if (!text && !SHOTS.length) return;
   const images = SHOTS.slice();
   CHAT.push({ role: 'user', day: todayKey(), content: text || '(photo)', images });
-  SHOTS = []; renderShots(); ta.value = ''; ta.style.height = 'auto';
+  SHOTS = []; renderShots(); ta.value = ''; ta.style.height = '';
   saveChat(); renderChat();
   if (!COACH_READY()) return;   // draft kept; the OFFLINE chip explains why nothing came back
   typingOn(true);
@@ -3771,7 +3821,7 @@ async function sendChat() {
     const res = await fetch(COACH_URL() + '/chat', {
       method: 'POST', headers: coachHeaders(),
       body: JSON.stringify({
-        messages: CHAT.slice(-20).map(m => ({ role: m.role, content: m.content })),
+        messages: CHAT.slice(-40).map(m => ({ role: m.role, content: m.content })),
         state: coachState(), images, viewDate: VIEW_DATE
       })
     });
@@ -3788,28 +3838,39 @@ async function sendChat() {
 function coachState() {
   const t = getTargets();
   const days = {};
-  getFitnessLogDates().slice(0, 30).forEach(d => { days[d] = getFitnessData(d); });
-  return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 60),
+  getFitnessLogDates().slice(0, 60).forEach(d => { days[d] = getFitnessData(d); });
+  return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 120),
     sessions: loadJSON('session-log', []).slice(-30),
     today: todayKey(), profile: loadJSON('coach-profile', null) };
 }
 /* the coach can hand back a structured update; it must never touch watch-owned fields */
 function applyCoachPatch(p) {
-  if (p.entry && p.entry.date) {
-    const d = getFitnessData(p.entry.date);
-    ['kcalIn', 'protein', 'veg', 'note'].forEach(k => { if (p.entry[k] != null) d[k] = p.entry[k]; });
-    saveFitnessDataForDate(p.entry.date, d);
-    if (p.entry.weight != null) {
-      const entries = loadJSON('results-log', []);
-      const i = entries.findIndex(e => e.date === p.entry.date);
-      const e = { date: p.entry.date, weight: p.entry.weight };
-      if (i >= 0) entries[i] = e; else entries.push(e);
-      entries.sort((a, b) => b.date.localeCompare(a.date));
-      saveJSON('results-log', entries);
-    }
+  // Accepts either a single {entry} or {entries:[...]} — a handover covering several
+  // days has to be able to log all of them in one go.
+  const rows = [].concat(p.entries || [], p.entry ? [p.entry] : []).filter(e => e && e.date);
+  rows.forEach(row => applyDayRow(row));
+  if (rows.length) {
+    const list = loadJSON('results-log', []);
+    list.sort((a, b) => b.date.localeCompare(a.date));
+    saveJSON('results-log', list);
   }
   if (p.profile) saveJSON('coach-profile', Object.assign(loadJSON('coach-profile', {}) || {}, p.profile));
   refreshAllViews();
+}
+/* one day. Watch-owned fields are only written when the day has none of its own,
+   so a handover can seed history without stamping on anything the watch reported. */
+function applyDayRow(row) {
+  const d = getFitnessData(row.date);
+  ['kcalIn', 'protein', 'veg', 'note'].forEach(k => { if (row[k] != null) d[k] = row[k]; });
+  ['steps', 'active', 'kcal', 'sleep'].forEach(k => { if (row[k] != null && d[k] == null) d[k] = row[k]; });
+  saveFitnessDataForDate(row.date, d);
+  if (row.weight != null) {
+    const list = loadJSON('results-log', []);
+    const i = list.findIndex(e => e.date === row.date);
+    const e = { date: row.date, weight: row.weight };
+    if (i >= 0) list[i] = e; else list.push(e);
+    localStorage.setItem('results-log', JSON.stringify(list));
+  }
 }
 </script>
 </body>
