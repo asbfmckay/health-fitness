@@ -3137,9 +3137,12 @@ function renderWeightChart() {
   const W = 360, H = 168, M = { l: 38, r: 46, t: 14, b: 26 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
   const trends = entries.map((_, i) => trendAt(all, base + i));
-  const pool = entries.map(e => e.weight).concat(trends).concat(target ? [target] : []);
+  // Scale to the weigh-ins only. Folding a goal 16kg away into the range flattens
+  // the line into a meaningless streak across the top of the box.
+  const pool = entries.map(e => e.weight).concat(trends);
   let lo = Math.min(...pool), hi = Math.max(...pool);
-  const pad = Math.max((hi - lo) * 0.25, 0.5); lo -= pad; hi += pad;
+  const pad = Math.max((hi - lo) * 0.3, 0.4); lo -= pad; hi += pad;
+  const targetInView = target && target > lo && target < hi;
   const X = i => entries.length === 1 ? M.l + pw / 2 : M.l + (i / (entries.length - 1)) * pw;
   const Y = v => M.t + ph - ((v - lo) / (hi - lo)) * ph;
   const ticks = [lo + (hi - lo) * 0.12, (lo + hi) / 2, hi - (hi - lo) * 0.12];
@@ -3153,10 +3156,15 @@ function renderWeightChart() {
   const trendPath = trends.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' ');
   const dots = entries.map((e, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(e.weight).toFixed(1)}" r="2.6"
       fill="var(--border-md)" stroke="var(--bg-card)" stroke-width="1.5"><title>${formatDate(e.date)} · ${e.weight}kg</title></circle>`).join('');
-  const tLine = (target && target > lo && target < hi)
+  // In range: draw the line. Out of range: a marker on the bottom edge, so you can see
+  // the goal exists without it eating the whole y-axis.
+  const tLine = targetInView
     ? `<line x1="${M.l}" x2="${M.l + pw}" y1="${Y(target).toFixed(1)}" y2="${Y(target).toFixed(1)}"
          stroke="var(--chest)" stroke-width="1.5" stroke-dasharray="4,4"/>
-       <text x="${M.l + pw + 5}" y="${(Y(target) + 3.5).toFixed(1)}" font-size="9.5" fill="var(--chest)">target</text>` : '';
+       <text x="${M.l + pw + 5}" y="${(Y(target) + 3.5).toFixed(1)}" font-size="9.5" fill="var(--chest)">target</text>`
+    : (target ? `<line x1="${M.l}" x2="${M.l + pw}" y1="${(M.t + ph).toFixed(1)}" y2="${(M.t + ph).toFixed(1)}"
+         stroke="var(--chest)" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.55"/>
+       <text x="${M.l + pw + 5}" y="${(M.t + ph + 3.5).toFixed(1)}" font-size="9" fill="var(--chest)">${target}kg ↓</text>` : '');
   const last = trends[trends.length - 1];
   const xlabs = [0, entries.length - 1].filter((v, i, a) => a.indexOf(v) === i)
     .map(i => `<text x="${X(i).toFixed(1)}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : 'end'}"
@@ -3173,7 +3181,7 @@ function renderWeightChart() {
   <div class="chart-legend" style="margin-top:6px;">
     <span><span class="legend-dot" style="background:var(--border-md)"></span>Weigh-in</span>
     <span><span class="legend-dot" style="background:var(--green-deep)"></span>7-day trend</span>
-    <span><span class="legend-dot" style="background:var(--chest)"></span>Target</span>
+    <span><span class="legend-dot" style="background:var(--chest)"></span>${targetInView ? 'Target' : 'Target (below chart)'}</span>
   </div>`;
   renderWeightHeader();
 }
@@ -3861,6 +3869,15 @@ function applyCoachPatch(p) {
    so a handover can seed history without stamping on anything the watch reported. */
 function applyDayRow(row) {
   const d = getFitnessData(row.date);
+  // Older worker prompts called eaten calories "kcal", which collides with the watch's
+  // burned figure. If a patch looks like food (protein / veg / note present) and carries
+  // kcal but no kcalIn, read it as calories EATEN. Without this the value is silently
+  // dropped and the dial never moves.
+  if (row.kcalIn == null && row.kcal != null &&
+      (row.protein != null || row.veg != null || row.note != null)) {
+    row = Object.assign({}, row, { kcalIn: row.kcal });
+    delete row.kcal;
+  }
   ['kcalIn', 'protein', 'veg', 'note'].forEach(k => { if (row[k] != null) d[k] = row[k]; });
   ['steps', 'active', 'kcal', 'sleep'].forEach(k => { if (row[k] != null && d[k] == null) d[k] = row[k]; });
   saveFitnessDataForDate(row.date, d);
