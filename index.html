@@ -1299,6 +1299,8 @@
   .msg-me{align-self:flex-end;background:var(--green-deep);color:#fff;padding:10px 13px;
     border-radius:12px;border-bottom-right-radius:3px}
   .msg-c{align-self:flex-start;color:var(--text-body);max-width:100%}
+  .msg-sys{align-self:flex-start;font-size:11.5px;font-weight:600;color:var(--green);
+    background:var(--green-bg);border:1px solid var(--green-bdr);border-radius:6px;padding:5px 9px}
   .msg-c .who{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:0.08em;
     text-transform:uppercase;color:var(--text-dim);margin-bottom:5px}
   .msg-c b{color:var(--text-h);font-weight:700}
@@ -2808,6 +2810,7 @@ function saveFitnessValue(key, value) {
 }
 
 function saveFitnessDataForDate(date, data) {
+  data._ts = Date.now();          // recency marker used by the merge
   saveJSON('fitness-' + date, data);
 }
 
@@ -3568,6 +3571,7 @@ async function pullSamsung(silent) {
       // The watch owns these four. Everything else on the day is left alone.
       const d = getFitnessData(j.date);
       ['steps', 'active', 'kcal', 'sleep'].forEach(k => { if (j[k] != null) d[k] = j[k]; });
+      d._watch = true;    // from here on the coach must not overwrite these
       saveFitnessDataForDate(j.date, d);
       if (j.weight != null) {
         const entries = loadJSON('results-log', []);
@@ -3664,10 +3668,12 @@ function mergeState(local, cloud) {
   const perDay = (l, c) => {
     const keys = new Set([...Object.keys(l || {}), ...Object.keys(c || {})]), out = {};
     keys.forEach(k => {
-      const a = (l || {})[k] || {}, b = (c || {})[k] || {}, m = {};
-      new Set([...Object.keys(a), ...Object.keys(b)]).forEach(f => {
-        m[f] = a[f] !== undefined && b[f] !== undefined ? Math.max(a[f], b[f]) : (a[f] !== undefined ? a[f] : b[f]);
-      });
+      const a = (l || {})[k] || {}, b = (c || {})[k] || {};
+      const aT = a._ts || (localNewer ? 1 : 0), bT = b._ts || (localNewer ? 0 : 1);
+      // whichever copy of the day was written last wins the whole day
+      const win = aT >= bT ? a : b, lose = aT >= bT ? b : a;
+      const m = Object.assign({}, lose, win);
+      m._ts = Math.max(aT, bT);
       out[k] = m;
     });
     return out;
@@ -3769,7 +3775,9 @@ function md(t) {
 function bubble(m) {
   return m.role === 'user'
     ? `<div class="msg msg-me">${(m.images || []).length ? `<div class="msg-shots">${m.images.map(s => `<img src="${s}">`).join('')}</div>` : ''}${md(m.content).replace(/<\/?p>/g, '')}</div>`
-    : `<div class="msg msg-c"><div class="who">Coach</div>${md(m.content)}</div>`;
+    : m.system
+      ? `<div class="msg msg-sys">${md(m.content).replace(/<\/?p>/g, '')}</div>`
+      : `<div class="msg msg-c"><div class="who">Coach</div>${md(m.content)}</div>`;
 }
 function renderChat() {
   const box = document.getElementById('chat-log');
@@ -3837,7 +3845,14 @@ async function sendChat() {
     if (!res.ok) throw new Error('worker ' + res.status);
     const j = await res.json();
     CHAT.push({ role: 'assistant', day: todayKey(), content: j.reply || '(no reply)' });
-    if (j.patch) applyCoachPatch(j.patch);
+    // Say out loud what landed on the dials. A patch that quietly does nothing is
+    // the worst failure mode there is — it looks like it worked.
+    if (j.patch) {
+      const applied = applyCoachPatch(j.patch);
+      CHAT.push({ role: 'assistant', day: todayKey(), system: true,
+        content: applied.length ? '✓ Logged — ' + applied.join('; ')
+                                : '⚠ The coach sent an update but nothing changed on the dials.' });
+    }
   } catch (err) {
     CHAT.push({ role: 'assistant', day: todayKey(), content: "Couldn't reach the coach — " + err.message + '. Your message is saved; try again when you have signal.' });
   } finally { typingOn(false); saveChat(); renderChat(); }
@@ -3853,10 +3868,11 @@ function coachState() {
 }
 /* the coach can hand back a structured update; it must never touch watch-owned fields */
 function applyCoachPatch(p) {
+  const applied = [];
   // Accepts either a single {entry} or {entries:[...]} — a handover covering several
   // days has to be able to log all of them in one go.
   const rows = [].concat(p.entries || [], p.entry ? [p.entry] : []).filter(e => e && e.date);
-  rows.forEach(row => applyDayRow(row));
+  rows.forEach(row => applied.push(...applyDayRow(row)));
   if (rows.length) {
     const list = loadJSON('results-log', []);
     list.sort((a, b) => b.date.localeCompare(a.date));
@@ -3864,6 +3880,7 @@ function applyCoachPatch(p) {
   }
   if (p.profile) saveJSON('coach-profile', Object.assign(loadJSON('coach-profile', {}) || {}, p.profile));
   refreshAllViews();
+  return applied;
 }
 /* one day. Watch-owned fields are only written when the day has none of its own,
    so a handover can seed history without stamping on anything the watch reported. */
@@ -3878,8 +3895,17 @@ function applyDayRow(row) {
     row = Object.assign({}, row, { kcalIn: row.kcal });
     delete row.kcal;
   }
-  ['kcalIn', 'protein', 'veg', 'note'].forEach(k => { if (row[k] != null) d[k] = row[k]; });
-  ['steps', 'active', 'kcal', 'sleep'].forEach(k => { if (row[k] != null && d[k] == null) d[k] = row[k]; });
+  const changed = [];
+  const NAME = { kcalIn: 'cal', protein: 'g protein', veg: ' veg serves', steps: ' steps', sleep: 'h sleep' };
+  ['kcalIn', 'protein', 'veg', 'note'].forEach(k => {
+    if (row[k] != null && d[k] !== row[k]) { d[k] = row[k]; if (NAME[k]) changed.push(row[k] + NAME[k]); }
+  });
+  ['steps', 'active', 'kcal', 'sleep'].forEach(k => {
+    const locked = d._watch;                       // Samsung owns the day once it has posted
+    if (row[k] != null && !locked && d[k] !== row[k]) {
+      d[k] = row[k]; if (NAME[k]) changed.push(row[k] + NAME[k]);
+    }
+  });
   saveFitnessDataForDate(row.date, d);
   if (row.weight != null) {
     const list = loadJSON('results-log', []);
@@ -3887,7 +3913,9 @@ function applyDayRow(row) {
     const e = { date: row.date, weight: row.weight };
     if (i >= 0) list[i] = e; else list.push(e);
     localStorage.setItem('results-log', JSON.stringify(list));
+    changed.push(row.weight + 'kg');
   }
+  return changed;
 }
 </script>
 </body>
