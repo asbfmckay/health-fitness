@@ -1299,6 +1299,7 @@
   .msg-me{align-self:flex-end;background:var(--green-deep);color:#fff;padding:10px 13px;
     border-radius:12px;border-bottom-right-radius:3px}
   .msg-c{align-self:flex-start;color:var(--text-body);max-width:100%}
+  .msg-sys.warn{color:#8a5a12;background:#fdf3e3;border-color:#f0cfa0}
   .msg-sys{align-self:flex-start;font-size:11.5px;font-weight:600;color:var(--green);
     background:var(--green-bg);border:1px solid var(--green-bdr);border-radius:6px;padding:5px 9px}
   .msg-c .who{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:0.08em;
@@ -2105,6 +2106,16 @@
     </div>
   </div>
 
+  <details class="acc acc-card" id="recipes-acc">
+    <summary class="acc-sum"><span id="recipes-label">Saved meals</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div id="recipes-list" class="log-list"></div>
+    <div class="tip-box" style="margin-bottom:14px;">Tell the coach <b>“save 4 Weet-Bix with skim milk
+      and a drizzle of honey as Standard Breakfast”</b>, then later just <b>“had my Standard Breakfast”</b>
+      and it logs the numbers for you.</div>
+  </details>
+
   <!-- Daily Fitness Log -->
   <div class="section-label">Daily Fitness Log</div>
   <div class="tracker-card">
@@ -2254,6 +2265,17 @@
       <button class="ghost-btn" onclick="pushState(false)">Back up</button>
     </div>
     <div id="coach-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
+    <details class="acc" id="diag-acc">
+      <summary class="acc-sum"><span>Diagnostics — last coach reply</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">Exactly what the worker sent
+        back last time. If <b>patch</b> is null the coach did not attach a data update.</div>
+      <pre id="diag-body" style="white-space:pre-wrap;word-break:break-word;font-size:10.5px;
+        background:var(--bg-soft);border:1px solid var(--border);border-radius:6px;padding:10px;
+        max-height:240px;overflow:auto;margin-bottom:12px;">Nothing yet.</pre>
+      <button class="ghost-btn" onclick="showDiag()" style="margin-bottom:12px;">Refresh</button>
+    </details>
     <div class="tip-box" style="margin-top:12px;">Steps, active minutes, calories burned and sleep arrive from <strong>Samsung Health</strong> via Health Connect, posted by MacroDroid on your phone. Everything else — weight, food, sessions — backs up through the same worker, so phone and computer stay in step.</div>
   </div>
 
@@ -3371,6 +3393,64 @@ function formatDuration(totalSec) {
   return `${m}m`;
 }
 
+/* ══════════ Saved meals ══════════
+   Named meals the coach can store once and reuse. Kept in the same state backup
+   as everything else, so they follow you between phone and laptop. */
+function getRecipes() { return loadJSON('recipes', []) || []; }
+function saveRecipes(list) { saveJSON('recipes', list); }
+function upsertRecipe(r) {
+  if (!r || !r.name) return null;
+  const list = getRecipes();
+  const key = String(r.name).trim().toLowerCase();
+  const i = list.findIndex(x => String(x.name).trim().toLowerCase() === key);
+  const row = Object.assign({}, i >= 0 ? list[i] : {}, r, { name: String(r.name).trim() });
+  if (i >= 0) list[i] = row; else list.push(row);
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  saveRecipes(list);
+  return row;
+}
+function deleteRecipe(name) {
+  const key = String(name).trim().toLowerCase();
+  saveRecipes(getRecipes().filter(r => String(r.name).trim().toLowerCase() !== key));
+  renderRecipes();
+}
+function logRecipe(name) {
+  const r = getRecipes().find(x => String(x.name).trim().toLowerCase() === String(name).trim().toLowerCase());
+  if (!r) return;
+  const d = getFitnessData(viewDate());
+  // meals add to the day rather than replacing it
+  ['kcalIn', 'protein', 'veg'].forEach(k => { if (r[k] != null) d[k] = (d[k] || 0) + r[k]; });
+  d.note = (d.note ? d.note + '; ' : '') + r.name;
+  saveFitnessDataForDate(viewDate(), d);
+  refreshAllViews();
+  CHAT.push({ role: 'assistant', day: todayKey(), system: true,
+    content: '✓ Added ' + r.name + ' — ' + [r.kcalIn != null ? r.kcalIn + 'cal' : null,
+      r.protein != null ? r.protein + 'g protein' : null,
+      r.veg ? r.veg + ' veg' : null].filter(Boolean).join(', ') });
+  saveChat(); renderChat();
+}
+function renderRecipes() {
+  const el = document.getElementById('recipes-list');
+  if (!el) return;
+  const list = getRecipes();
+  const lbl = document.getElementById('recipes-label');
+  if (lbl) lbl.textContent = list.length ? `Saved meals (${list.length})` : 'Saved meals';
+  if (!list.length) { el.innerHTML = '<div class="log-empty">Nothing saved yet.</div>'; return; }
+  el.innerHTML = list.map(r => {
+    const bits = [r.kcalIn != null ? formatNumber(r.kcalIn, 0) + ' cal' : null,
+                  r.protein != null ? formatNumber(r.protein, 0) + 'g' : null,
+                  r.veg ? formatNumber(r.veg, 1) + ' veg' : null].filter(Boolean).join(' · ');
+    const nm = r.name.replace(/'/g, "\\'");
+    return `<div class="log-entry" style="align-items:center;">
+      <span style="flex:1;min-width:0;">
+        <span style="font-weight:700;color:var(--text-h);font-size:13px;">${r.name}</span>
+        <span class="le-date" style="display:block;text-transform:none;">${bits}</span>
+      </span>
+      <button class="ghost-btn" onclick="logRecipe('${nm}')">Add</button>
+      <button class="le-del" onclick="deleteRecipe('${nm}')">✕</button>
+    </div>`;
+  }).join('');
+}
 let SESSIONS_EXPANDED = false;
 function expandSessions() { SESSIONS_EXPANDED = true; renderSessionStats(); }
 function renderSessionStats() {
@@ -3498,6 +3578,7 @@ function coachHeaders() {
   return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + COACH_SECRET() };
 }
 function saveCoachConfig() {
+  COACH_VERIFIED = null;
   localStorage.setItem('coach-url', JSON.stringify(document.getElementById('coach-url').value.trim().replace(/\/$/, '')));
   localStorage.setItem('coach-secret', JSON.stringify(document.getElementById('coach-secret').value.trim()));
   initCoach();
@@ -3538,14 +3619,27 @@ function initCoach() {
   renderShots();
   if (COACH_READY()) { pullSamsung(true); pushState(true); }
 }
+let COACH_VERIFIED = null;   // null = untested, true = a real call succeeded, false = failed
 function updateCoachUI() {
-  const ready = COACH_READY();
+  const ready = COACH_READY() && COACH_VERIFIED !== false;
   [['coach-status', 'coach-sub'], ['chat-status', null]].forEach(([sid, subid]) => {
     const st = document.getElementById(sid);
-    if (st) { st.textContent = ready ? 'LINKED' : 'OFFLINE'; st.classList.toggle('linked', ready); }
+    const label = !COACH_READY() ? 'OFFLINE' : COACH_VERIFIED === true ? 'LINKED'
+                : COACH_VERIFIED === false ? 'ERROR' : 'CHECKING';
+    if (st) { st.textContent = label; st.classList.toggle('linked', COACH_VERIFIED === true); }
     const sub = subid && document.getElementById(subid);
-    if (sub) sub.textContent = ready ? 'Connected' : (COACH_URL() ? 'Shared secret missing' : 'Not connected');
+    if (sub) sub.textContent = !COACH_URL() ? 'Not connected'
+      : !COACH_SECRET() ? 'Shared secret missing'
+      : COACH_VERIFIED === true ? 'Connected'
+      : COACH_VERIFIED === false ? (COACH_LAST_ERR || 'Could not reach the worker')
+      : 'Checking…';
   });
+}
+function showDiag() {
+  const el = document.getElementById('diag-body');
+  if (!el) return;
+  el.textContent = LAST_REPLY ? JSON.stringify(LAST_REPLY, null, 1)
+    : 'Nothing yet — send the coach a message first.';
 }
 function renderCoachLastSync() {
   const el = document.getElementById('coach-last-sync');
@@ -3566,6 +3660,7 @@ async function pullSamsung(silent) {
     const res = await fetch(COACH_URL() + '/health/latest', { headers: coachHeaders() });
     if (res.status === 401) throw new Error('shared secret rejected');
     if (!res.ok) throw new Error('HTTP ' + res.status);
+    COACH_VERIFIED = true; COACH_LAST_ERR = '';
     const j = await res.json();
     if (j && j.date) {
       // The watch owns these four. Everything else on the day is left alone.
@@ -3591,8 +3686,21 @@ async function pullSamsung(silent) {
     }
     updateCoachUI();
   } catch (err) {
-    if (note && !silent) { note.textContent = 'Sync failed — ' + (err.message || 'check connection'); note.style.color = 'var(--chest)'; }
+    COACH_VERIFIED = false;
+    COACH_LAST_ERR = explainFetchError(err);
+    updateCoachUI();
+    if (note && !silent) { note.textContent = COACH_LAST_ERR; note.style.color = 'var(--chest)'; }
   }
+}
+/* "Failed to fetch" tells you nothing. Name the two things it actually means. */
+function explainFetchError(err) {
+  const m = String(err && err.message || err);
+  if (/failed to fetch|networkerror|load failed/i.test(m)) {
+    return 'Blocked before it reached the worker. Usually ALLOW_ORIGIN in Cloudflare not matching ' +
+           (location.origin === 'null' ? 'a page opened from disk' : location.origin) + ' — set it to * and redeploy.';
+  }
+  if (/401/.test(m)) return 'Shared secret rejected by the worker.';
+  return m;
 }
 
 /* ---------- state backup: phone ⇄ computer ---------- */
@@ -3609,6 +3717,7 @@ function collectState() {
     afd: scanPrefixed('afd-'),
     fitness: scanPrefixed('fitness-'),
     chat: CHAT,
+    recipes: getRecipes(),
     weights, savedAt: Date.now()
   };
 }
@@ -3630,6 +3739,7 @@ function applyState(st) {
   Object.entries(st.fitness || {}).forEach(([k, v]) => localStorage.setItem(k, JSON.stringify(v)));
   Object.entries(st.weights || {}).forEach(([k, v]) => { if (v) localStorage.setItem(k, v); });
   if (Array.isArray(st.chat)) { CHAT = pruneChat(st.chat); saveChat(); renderChat(); }
+  if (Array.isArray(st.recipes)) localStorage.setItem('recipes', JSON.stringify(st.recipes));
   document.querySelectorAll('.ex-weight-input').forEach((input, i) => {
     const v = localStorage.getItem('workout-weight-' + i);
     if (v !== null && input.value !== v) input.value = v;
@@ -3690,6 +3800,7 @@ function mergeState(local, cloud) {
     afd: afd(local.afd, cloud.afd),
     fitness: perDay(local.fitness, cloud.fitness),
     chat: mergeChat(local.chat, cloud.chat),
+    recipes: (toArr(local.recipes).length >= toArr(cloud.recipes).length ? local.recipes : cloud.recipes),
     weights: Object.assign({}, cloud.weights || {}, local.weights || {}),
     savedAt: Date.now()
   };
@@ -3729,7 +3840,7 @@ function queueCloudPush() {   // name kept: saveJSON() and the weight inputs cal
   pushTimer = setTimeout(() => pushState(true), 2500);
 }
 function refreshAllViews() {
-  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults();
+  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes();
   renderWeightChart(); renderSessionStats(); refreshSettingsFields();
 }
 function refreshSettingsFields() {
@@ -3744,7 +3855,7 @@ function refreshSettingsFields() {
 /* ══════════════════════════════════════════════════════
    CHAT
    ══════════════════════════════════════════════════════ */
-let CHAT = [], SHOTS = [], SHOW_ALL_CHAT = false;
+let CHAT = [], SHOTS = [], SHOW_ALL_CHAT = false, COACH_LAST_ERR = '', LAST_REPLY = null;
 function loadChat() {
   // Without this the array starts empty on every page load and the day's
   // conversation looks like it was thrown away.
@@ -3776,7 +3887,7 @@ function bubble(m) {
   return m.role === 'user'
     ? `<div class="msg msg-me">${(m.images || []).length ? `<div class="msg-shots">${m.images.map(s => `<img src="${s}">`).join('')}</div>` : ''}${md(m.content).replace(/<\/?p>/g, '')}</div>`
     : m.system
-      ? `<div class="msg msg-sys">${md(m.content).replace(/<\/?p>/g, '')}</div>`
+      ? `<div class="msg msg-sys${m.warn ? ' warn' : ''}">${md(m.content).replace(/<\/?p>/g, '')}</div>`
       : `<div class="msg msg-c"><div class="who">Coach</div>${md(m.content)}</div>`;
 }
 function renderChat() {
@@ -3838,23 +3949,30 @@ async function sendChat() {
       method: 'POST', headers: coachHeaders(),
       body: JSON.stringify({
         messages: CHAT.slice(-40).map(m => ({ role: m.role, content: m.content })),
-        state: coachState(), images, viewDate: VIEW_DATE
+        state: coachState(), images, viewDate: viewDate()
       })
     });
     if (res.status === 401) throw new Error('shared secret rejected by the worker');
     if (!res.ok) throw new Error('worker ' + res.status);
+    COACH_VERIFIED = true; COACH_LAST_ERR = '';
     const j = await res.json();
     CHAT.push({ role: 'assistant', day: todayKey(), content: j.reply || '(no reply)' });
     // Say out loud what landed on the dials. A patch that quietly does nothing is
     // the worst failure mode there is — it looks like it worked.
+    LAST_REPLY = j;
+    if (!j.patch) {
+      CHAT.push({ role: 'assistant', day: todayKey(), system: true, warn: true,
+        content: 'ⓘ No data update came back with that reply — nothing was written to the dials.' });
+    }
     if (j.patch) {
       const applied = applyCoachPatch(j.patch);
       CHAT.push({ role: 'assistant', day: todayKey(), system: true,
         content: applied.length ? '✓ Logged — ' + applied.join('; ')
-                                : '⚠ The coach sent an update but nothing changed on the dials.' });
+                                : '⚠ The coach sent an update but nothing changed. Target day: ' + patchDays(j.patch) });
     }
   } catch (err) {
-    CHAT.push({ role: 'assistant', day: todayKey(), content: "Couldn't reach the coach — " + err.message + '. Your message is saved; try again when you have signal.' });
+    COACH_VERIFIED = false; COACH_LAST_ERR = explainFetchError(err);
+    CHAT.push({ role: 'assistant', day: todayKey(), content: "Couldn't reach the coach.\n\n" + COACH_LAST_ERR + "\n\nYour message is saved." });
   } finally { typingOn(false); saveChat(); renderChat(); }
 }
 /* what the coach is allowed to see */
@@ -3863,28 +3981,49 @@ function coachState() {
   const days = {};
   getFitnessLogDates().slice(0, 60).forEach(d => { days[d] = getFitnessData(d); });
   return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 120),
-    sessions: loadJSON('session-log', []).slice(-30),
+    sessions: loadJSON('session-log', []).slice(-30), recipes: getRecipes(),
     today: todayKey(), profile: loadJSON('coach-profile', null) };
 }
 /* the coach can hand back a structured update; it must never touch watch-owned fields */
+function patchDays(p) {
+  const rows = [].concat((p && p.entries) || [], (p && p.entry) ? [p.entry] : []);
+  return rows.map(r => r && r.date).filter(Boolean).join(', ') || 'none given';
+}
 function applyCoachPatch(p) {
   const applied = [];
   // Accepts either a single {entry} or {entries:[...]} — a handover covering several
   // days has to be able to log all of them in one go.
-  const rows = [].concat(p.entries || [], p.entry ? [p.entry] : []).filter(e => e && e.date);
-  rows.forEach(row => applied.push(...applyDayRow(row)));
+  const rows = [].concat(p.entries || [], p.entry ? [p.entry] : [])
+    .filter(e => e && typeof e === 'object' && Object.keys(e).length);
+  rows.forEach(row => {
+    const before = applied.length;
+    applied.push(...applyDayRow(row));
+    if (applied.length > before) {
+      const when = /^\d{4}-\d{2}-\d{2}$/.test(row.date || '') ? row.date : todayKey();
+      if (when !== viewDate()) applied.push('(on ' + formatDate(when) + ')');
+    }
+  });
   if (rows.length) {
     const list = loadJSON('results-log', []);
     list.sort((a, b) => b.date.localeCompare(a.date));
     saveJSON('results-log', list);
   }
+  (p.recipes || []).forEach(r => { const row = upsertRecipe(r); if (row) applied.push('saved “' + row.name + '”'); });
+  if (p.logRecipes) [].concat(p.logRecipes).forEach(n => logRecipe(n));
   if (p.profile) saveJSON('coach-profile', Object.assign(loadJSON('coach-profile', {}) || {}, p.profile));
+  renderRecipes();
   refreshAllViews();
   return applied;
 }
 /* one day. Watch-owned fields are only written when the day has none of its own,
    so a handover can seed history without stamping on anything the watch reported. */
 function applyDayRow(row) {
+  // Guard against the coach guessing a date. Anything not a real YYYY-MM-DD, or more
+  // than a year out, becomes today — otherwise the write lands on a day you never look at.
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(row.date || '') ||
+      Math.abs(new Date(row.date + 'T00:00:00') - new Date(todayKey() + 'T00:00:00')) > 366 * 864e5) {
+    row = Object.assign({}, row, { date: todayKey() });
+  }
   const d = getFitnessData(row.date);
   // Older worker prompts called eaten calories "kcal", which collides with the watch's
   // burned figure. If a patch looks like food (protein / veg / note present) and carries
