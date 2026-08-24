@@ -2071,6 +2071,7 @@
       </div>
       <div class="stat-ring-wrap" id="steps-ring"></div>
       <div class="stat-sub" id="steps-target-label">/ 10,000</div>
+      <input type="number" class="stat-input" id="steps-input" placeholder="Log steps" min="0">
     </div>
     <div class="stat-card">
       <div class="stat-head">
@@ -2078,6 +2079,7 @@
       </div>
       <div class="stat-ring-wrap" id="active-ring"></div>
       <div class="stat-sub" id="active-target-label">/ 30 min</div>
+      <input type="number" class="stat-input" id="active-input" placeholder="Log min" min="0">
     </div>
     <div class="stat-card">
       <div class="stat-head">
@@ -2085,6 +2087,7 @@
       </div>
       <div class="stat-ring-wrap" id="kcal-ring"></div>
       <div class="stat-sub" id="kcal-target-label">/ 2,400</div>
+      <input type="number" class="stat-input" id="kcal-input" placeholder="Log burned" min="0">
     </div>
     <div class="stat-card">
       <div class="stat-head">
@@ -2092,6 +2095,7 @@
       </div>
       <div class="stat-ring-wrap" id="sleep-ring"></div>
       <div class="stat-sub" id="sleep-target-label">/ 8h</div>
+      <input type="number" class="stat-input" id="sleep-input" placeholder="Log hours" min="0" step="0.1">
     </div>
     <div class="stat-card span2">
       <div class="stat-head"><div class="stat-label">Workouts</div></div>
@@ -2216,6 +2220,23 @@
       <div class="log-field">
         <label class="mini-label">Active minutes target</label>
         <input type="number" id="set-active-target" min="0" step="5">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Watch reports calories burned as</label>
+        <select id="set-burn-mode" style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);
+          border-radius:6px;padding:9px 10px;font-family:var(--body-f);font-size:13px;color:var(--text-h);outline:none;">
+          <option value="active">Active calories only (Samsung Health default)</option>
+          <option value="total">Total daily burn</option>
+        </select>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:6px;" id="rest-note"></div>
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Height (cm)</label>
+        <input type="number" id="set-height" min="100" max="230" step="1">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Birth year</label>
+        <input type="number" id="set-birth" min="1920" max="2020" step="1">
       </div>
       <div class="log-field">
         <label class="mini-label">Calories burned target</label>
@@ -2746,6 +2767,23 @@ function getTargets() {
 }
 
 function initSettings() {
+  const bm = document.getElementById('set-burn-mode');
+  if (bm) {
+    bm.value = loadJSON('burn-mode', 'active');
+    bm.addEventListener('change', () => { saveJSON('burn-mode', bm.value); renderFitnessStats(); renderRestNote(); });
+  }
+  const body = loadJSON('body', { heightCm: 186, birthYear: 1992 });
+  [['set-height', 'heightCm'], ['set-birth', 'birthYear']].forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = body[key];
+    el.addEventListener('change', () => {
+      const b = loadJSON('body', { heightCm: 186, birthYear: 1992 });
+      b[key] = parseFloat(el.value) || b[key];
+      saveJSON('body', b); renderFitnessStats(); renderRestNote();
+    });
+  });
+  renderRestNote();
   const targets = getTargets();
   const fields = {
     'set-kcalIn-target': 'kcalIn',
@@ -2771,6 +2809,14 @@ function initSettings() {
   });
 }
 
+function renderRestNote() {
+  const el = document.getElementById('rest-note');
+  if (!el) return;
+  const mode = loadJSON('burn-mode', 'active');
+  el.textContent = mode === 'active'
+    ? `Resting burn is calculated at ${formatNumber(restingBurn(), 0)} cal/day and added to whatever the watch reports.`
+    : 'The watch figure is used as-is, with nothing added.';
+}
 function refreshAllTargetDisplays() {
   renderAfd();
   renderFitnessStats();
@@ -2852,7 +2898,7 @@ function saveFitnessDataForDate(date, data) {
 
 function initFitnessStats() {
   // only the three nutrition dials take typed input; the watch owns the rest
-  ['kcalIn', 'protein', 'veg'].forEach(k => {
+  ['kcalIn', 'protein', 'veg', 'steps', 'active', 'kcal', 'sleep'].forEach(k => {
     const el = document.getElementById(k + '-input');
     if (!el) return;
     el.addEventListener('change', () => {
@@ -2885,11 +2931,30 @@ function renderFitnessStats() {
   });
   renderEnergy(data, targets);
 }
+/* Mifflin-St Jeor. Samsung Health's "calories burned" is usually ACTIVE calories only —
+   the movement on top of simply being alive. Subtracting intake from active calories alone
+   would say you are in a 1,500 calorie deficit every day, which is nonsense. So when the
+   watch reports active calories we add resting burn back on. */
+function restingBurn() {
+  const p = loadJSON('body', { heightCm: 186, birthYear: 1992 });
+  const w = (loadJSON('results-log', [])[0] || {}).weight || 106;
+  const age = new Date().getFullYear() - (p.birthYear || 1992);
+  return Math.round(10 * w + 6.25 * (p.heightCm || 186) - 5 * age + 5);
+}
 function renderEnergy(data, targets) {
-  const inK = data.kcalIn, out = data.kcal;
+  const inK = data.kcalIn;
+  const mode = loadJSON('burn-mode', 'active');
+  const rest = restingBurn();
+  // data.kcal is whatever the watch says; turn it into a whole-day figure
+  const out = data.kcal != null
+    ? (mode === 'active' ? data.kcal + rest : data.kcal)
+    : null;
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set('bal-in', inK ? formatNumber(inK, 0) : '—');
   set('bal-out', out ? formatNumber(out, 0) : '—');
+  const oLbl = document.querySelector('#bal-out')?.previousElementSibling;
+  if (oLbl) oLbl.textContent = out == null ? 'Out'
+    : (mode === 'active' ? 'Out (' + formatNumber(rest, 0) + ' rest + move)' : 'Out (total)');
   const bar = document.getElementById('bal-bar');
   const net = (inK != null && out != null) ? inK - out : null;
   if (bar) {
@@ -2899,8 +2964,9 @@ function renderEnergy(data, targets) {
   }
   const netEl = document.getElementById('bal-net');
   if (netEl) {
-    netEl.textContent = net == null ? 'Log food and let the watch report burn'
-      : net < 0 ? formatNumber(-net, 0) + ' cal deficit' : formatNumber(net, 0) + ' cal surplus';
+    netEl.textContent = net == null ? 'Log food and your watch\'s calories burned'
+      : (net < 0 ? formatNumber(-net, 0) + ' cal deficit' : formatNumber(net, 0) + ' cal surplus')
+        + (data.kcal != null ? '' : '');
     netEl.style.color = net == null ? 'var(--text-dim)' : net < 0 ? 'var(--green)' : 'var(--chest)';
   }
 }
