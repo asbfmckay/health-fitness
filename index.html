@@ -1360,7 +1360,9 @@
   .dlabel input{position:absolute;opacity:0;inset:0;width:100%;height:100%;border:none;padding:0}
   .stat-card.owned .stat-sub em{font-style:normal;color:var(--lime-dark);font-weight:700}
   .balance-row{display:flex;align-items:center;gap:12px}
-  .balance-half{flex:1;text-align:center}
+  .balance-half{flex:1;min-width:0;text-align:center}
+  .balance-half .mini-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    letter-spacing:.03em;font-size:9px}
   .balance-num{font-size:20px;font-weight:800;color:var(--text-h);letter-spacing:-.02em}
   .balance-bar{height:9px;border-radius:5px;background:var(--bg-soft);overflow:hidden;margin-top:12px;display:flex}
   .balance-bar i{display:block;height:100%}
@@ -2953,8 +2955,13 @@ function renderEnergy(data, targets) {
   set('bal-in', inK ? formatNumber(inK, 0) : '—');
   set('bal-out', out ? formatNumber(out, 0) : '—');
   const oLbl = document.querySelector('#bal-out')?.previousElementSibling;
-  if (oLbl) oLbl.textContent = out == null ? 'Out'
-    : (mode === 'active' ? 'Out (' + formatNumber(rest, 0) + ' rest + move)' : 'Out (total)');
+  if (oLbl) {
+    oLbl.textContent = out == null ? 'Out'
+      : (mode === 'active' ? 'Out (' + formatNumber(rest, 0) + '+)' : 'Out (total)');
+    oLbl.title = out == null ? '' : (mode === 'active'
+      ? formatNumber(rest, 0) + ' cal resting burn plus what the watch measured'
+      : 'Whole-day figure straight from the watch');
+  }
   const bar = document.getElementById('bal-bar');
   const net = (inK != null && out != null) ? inK - out : null;
   if (bar) {
