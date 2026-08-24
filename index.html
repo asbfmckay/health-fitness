@@ -1324,6 +1324,8 @@
   .shot-tray{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
   .shot{position:relative;width:56px;height:56px;border-radius:7px;overflow:hidden;border:1.5px solid var(--border)}
   .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .shot-kb{position:absolute;bottom:0;left:0;right:0;font-size:8.5px;font-weight:700;
+    text-align:center;color:#fff;background:rgba(23,27,46,.72);padding:1px 0;letter-spacing:.02em}
   .shot button{position:absolute;top:2px;right:2px;width:17px;height:17px;border:none;border-radius:5px;
     background:rgba(23,27,46,.8);color:#fff;font-size:11px;line-height:1;cursor:pointer}
   .compose-row{display:flex;gap:7px;align-items:flex-end}
@@ -2256,6 +2258,18 @@
       <input type="text" id="coach-url" placeholder="https://health-coach.andrew-bronnia.workers.dev">
     </div>
     <div class="log-field" style="margin-top:10px;">
+      <label class="mini-label">Photo quality sent to the coach</label>
+      <select id="photo-quality" onchange="setPhotoQuality(this.value)"
+        style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:6px;
+        padding:9px 10px;font-family:var(--body-f);font-size:13px;color:var(--text-h);outline:none;">
+        <option value="low">Low — smallest, fine for a plate of food</option>
+        <option value="standard">Standard — recommended</option>
+        <option value="label">Label — only for reading nutrition panels</option>
+      </select>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">Photos are the expensive part of
+        the API bill. Standard is about 590 tokens each; Label is four times that, so switch back after.</div>
+    </div>
+    <div class="log-field" style="margin-top:10px;">
       <label class="mini-label">Shared secret</label>
       <input type="password" id="coach-secret" placeholder="SHARED_SECRET" autocomplete="off">
     </div>
@@ -2685,7 +2699,7 @@ function loadJSON(key, fallback) {
   } catch { return fallback; }
 }
 
-const CLOUD_NO_SYNC_KEYS = new Set(['coach-url', 'coach-secret', 'coach-last-sync', 'coach-chat']);
+const CLOUD_NO_SYNC_KEYS = new Set(['coach-url', 'coach-secret', 'coach-last-sync', 'coach-chat', 'photo-quality']);
 
 function saveJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
@@ -3592,9 +3606,11 @@ function initChatInputs() {
     if (!el || el.dataset.wired) return;
     el.dataset.wired = '1';
     el.addEventListener('change', async e => {
+      const p = photoPreset();
       for (const f of e.target.files) {
         if (!f.type.startsWith('image/')) continue;
-        SHOTS.push(await downscaleImage(f, 1024, 0.72));
+        if (SHOTS.length >= MAX_SHOTS) break;   // every extra image is another bill
+        SHOTS.push(await downscaleImage(f, p.max, p.q));
       }
       e.target.value = '';
       renderShots();
@@ -3614,6 +3630,8 @@ function initCoach() {
   const u = document.getElementById('coach-url'), k = document.getElementById('coach-secret');
   if (u) u.value = COACH_URL();
   if (k) k.value = COACH_SECRET();
+  const pq = document.getElementById('photo-quality');
+  if (pq) pq.value = loadJSON('photo-quality', 'standard');
   updateCoachUI();
   renderChat();
   renderShots();
@@ -3910,12 +3928,30 @@ function renderChat() {
   updateCoachUI();
 }
 function toggleChatHistory() { SHOW_ALL_CHAT = !SHOW_ALL_CHAT; renderChat(); }
+function shotKB(dataUrl) { return Math.round((dataUrl.length * 0.75) / 1024); }
 function renderShots() {
   const t = document.getElementById('shot-tray');
   if (!t) return;
-  t.innerHTML = SHOTS.map((s, i) => `<div class="shot"><img src="${s}"><button onclick="dropShot(${i})">×</button></div>`).join('');
+  // show the size on each one — the cost should never be invisible
+  t.innerHTML = SHOTS.map((s, i) =>
+    `<div class="shot"><img src="${s}"><button onclick="dropShot(${i})">×</button>
+      <span class="shot-kb">${shotKB(s)}KB</span></div>`).join('');
 }
 function dropShot(i) { SHOTS.splice(i, 1); renderShots(); }
+/* Vision cost is roughly (width × height) / 750 tokens, so pixels are the bill.
+   Measured on a 12MP phone photo:
+     640px  q0.60 →  44 KB, ~410 tokens
+     768px  q0.60 →  56 KB, ~590 tokens   ← default, ample for identifying food
+    1568px q0.80 → 216 KB, ~2460 tokens   ← only worth it for reading small print   */
+const PHOTO_PRESETS = {
+  low:      { max: 640,  q: 0.60, label: 'Low — 640px, ~410 tokens' },
+  standard: { max: 768,  q: 0.60, label: 'Standard — 768px, ~590 tokens' },
+  label:    { max: 1568, q: 0.80, label: 'Label — 1568px, ~2,460 tokens' }
+};
+function photoPreset() { return PHOTO_PRESETS[loadJSON('photo-quality', 'standard')] || PHOTO_PRESETS.standard; }
+function setPhotoQuality(v) { saveJSON('photo-quality', v); renderShots(); }
+const MAX_SHOTS = 4;
+
 function downscaleImage(file, max, q) {
   return new Promise(res => {
     const img = new Image(), fr = new FileReader();
