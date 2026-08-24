@@ -3960,6 +3960,10 @@ async function sendChat() {
     // Say out loud what landed on the dials. A patch that quietly does nothing is
     // the worst failure mode there is — it looks like it worked.
     LAST_REPLY = j;
+    if (j.note) {
+      CHAT.push({ role: 'assistant', day: todayKey(), system: true, warn: !j.patch,
+        content: (j.patch ? 'ⓘ ' : '⚠ ') + j.note.charAt(0).toUpperCase() + j.note.slice(1) + '.' });
+    }
     if (!j.patch) {
       CHAT.push({ role: 'assistant', day: todayKey(), system: true, warn: true,
         content: 'ⓘ No data update came back with that reply — nothing was written to the dials.' });
