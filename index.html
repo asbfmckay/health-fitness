@@ -2365,7 +2365,13 @@
     </div>
     <div class="log-field" style="margin-top:10px;">
       <label class="mini-label">Shared secret</label>
-      <input type="password" id="coach-secret" placeholder="SHARED_SECRET" autocomplete="off">
+      <div style="display:flex; gap:6px; align-items:stretch;">
+        <input type="password" id="coach-secret" placeholder="SHARED_SECRET" autocomplete="off" style="flex:1;">
+        <button class="ghost-btn" type="button" onclick="toggleSecret()" id="secret-eye"
+                style="padding:0 12px; white-space:nowrap;">Show</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">This is the only place it is
+        readable — Cloudflare will not show it back to you once saved.</div>
     </div>
     <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
       <button class="solid-btn" onclick="saveCoachConfig()">Save</button>
@@ -2384,7 +2390,7 @@
         max-height:240px;overflow:auto;margin-bottom:12px;">Nothing yet.</pre>
       <button class="ghost-btn" onclick="showDiag()" style="margin-bottom:12px;">Refresh</button>
     </details>
-    <div class="tip-box" style="margin-top:12px;">Steps, active minutes, calories burned and sleep arrive from <strong>Samsung Health</strong> via Health Connect, posted by MacroDroid on your phone. Everything else — weight, food, sessions — backs up through the same worker, so phone and computer stay in step.</div>
+    <div class="tip-box" style="margin-top:12px;">Steps, active minutes, calories burned and sleep arrive from <strong>Samsung Health</strong> via Health Connect, posted by the <strong>Health Connect Webhook</strong> app on your phone. Everything else — weight, food, sessions — backs up through the same worker, so phone and computer stay in step.</div>
   </div>
 
   <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('hf')">Done</button>
@@ -3906,7 +3912,7 @@ function deleteSessionEntry(sid) {
 /* ══════════════════════════════════════════════════════
    COACH + SAMSUNG HEALTH — replaces Fitbit and the old cloud sync.
    One worker does three jobs: Claude chat, the Samsung Health inbox
-   that MacroDroid posts into, and the phone-computer state backup.
+   that the Health Connect Webhook app posts into, and the phone-computer state backup.
    The API key lives on the worker; this file is public.
    ══════════════════════════════════════════════════════ */
 const COACH_URL = () => loadJSON('coach-url', '');
@@ -3914,6 +3920,13 @@ const COACH_SECRET = () => loadJSON('coach-secret', '');
 const COACH_READY = () => !!COACH_URL() && !!COACH_SECRET();
 function coachHeaders() {
   return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + COACH_SECRET() };
+}
+/* Cloudflare never shows a secret back, so this field is the only copy he can read. */
+function toggleSecret() {
+  const i = document.getElementById('coach-secret'), b = document.getElementById('secret-eye');
+  const shown = i.type === 'text';
+  i.type = shown ? 'password' : 'text';
+  b.textContent = shown ? 'Show' : 'Hide';
 }
 function saveCoachConfig() {
   COACH_VERIFIED = null;
