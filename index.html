@@ -2376,6 +2376,7 @@
     <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
       <button class="solid-btn" onclick="saveCoachConfig()">Save</button>
       <button class="ghost-btn" onclick="pullSamsung(false)">Sync now</button>
+      <button class="ghost-btn" onclick="clearWatchDay()">Clear watch data</button>
       <button class="ghost-btn" onclick="pushState(false)">Back up</button>
     </div>
     <div id="coach-note" style="font-size:11.5px; margin-top:8px; color:var(--text-dim);"></div>
@@ -4007,6 +4008,28 @@ function renderCoachLastSync() {
 }
 
 /* ---------- Samsung Health inbox ---------- */
+/* Wipe the watch-owned figures for the day being viewed, on the phone AND in the
+   worker, then pull them back fresh. The escape hatch for a total that has gone wrong
+   — without it a bad figure is stuck, because a sync only ever raises these. */
+async function clearWatchDay() {
+  const date = viewDate();
+  const note = document.getElementById('coach-note');
+  const d = getFitnessData(date);
+  ['steps', 'active', 'kcal', 'sleep'].forEach(k => delete d[k]);
+  delete d._watch;
+  saveFitnessDataForDate(date, d);
+  refreshAllViews();
+  if (note) { note.textContent = 'Cleared ' + formatDate(date) + ' — re-syncing…'; note.style.color = 'var(--text-dim)'; }
+  if (COACH_READY()) {
+    try {
+      await fetch(COACH_URL() + '/health/reset?date=' + date, { headers: coachHeaders() });
+    } catch { /* the phone copy is cleared regardless */ }
+  }
+  if (note) {
+    note.textContent = 'Cleared ' + formatDate(date) + '. Run a sync in Health Connect Webhook, then tap Sync now.';
+    note.style.color = 'var(--green)';
+  }
+}
 async function pullSamsung(silent) {
   const note = document.getElementById('coach-note');
   if (!COACH_READY()) { updateCoachUI(); return; }
