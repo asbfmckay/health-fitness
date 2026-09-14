@@ -39,6 +39,10 @@
     --cardio:#f2a53f;
     --shoulders:#5cbd8a;
 
+    /* Ring colours darkened where they fell below 3:1 against the card, for use as
+       chart fills. The rings keep the originals — thick strokes read fine. */
+    --c-steps:#9c78d6; --c-active:#4fa377; --c-kcal:#c28432; --c-sleep:#4f8fdb;
+    --c-kcalIn:#e2665c; --c-protein:#5c7a1f; --c-veg:#37a0ab;
     --accent-bg: var(--green-bg);
     --accent-border: var(--green-bdr);
     --tag-active-bg: rgba(203,229,88,0.28);
@@ -1263,6 +1267,46 @@
     cursor: pointer;
   }
 
+  /* ══════════ History sheet ══════════ */
+  .hist-scrim{position:fixed;inset:0;background:rgba(23,27,46,0.45);z-index:900;
+    display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+  .hist-scrim.open{display:flex}
+  .hist-sheet{background:var(--bg-card);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;
+    border-radius:14px 14px 0 0;padding:18px 16px 26px;box-shadow:0 -8px 40px rgba(23,27,46,0.28)}
+  @media (min-width:560px){.hist-scrim{align-items:center}
+    .hist-sheet{border-radius:14px;max-height:86vh}}
+  .hist-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+  .hist-title{font-family:var(--display);font-size:19px;font-weight:800;color:var(--text-h);
+    letter-spacing:-0.01em}
+  .hist-sub{font-size:12px;color:var(--text-dim);margin-top:3px}
+  .hist-x{margin-left:auto;flex:none;width:32px;height:32px;border-radius:8px;border:1px solid var(--border-md);
+    background:var(--bg-soft);color:var(--text-body);display:grid;place-items:center;cursor:pointer}
+  .hist-x svg{width:15px;height:15px}
+  .hist-range{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:var(--bg-soft);
+    border:1.5px solid var(--border);border-radius:8px;padding:4px;margin-bottom:14px}
+  .hist-rbtn{padding:8px 4px;border-radius:6px;border:none;background:transparent;color:var(--text-dim);
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    cursor:pointer;transition:all .15s ease}
+  .hist-rbtn.active{background:var(--green-deep);color:var(--lime);box-shadow:0 2px 8px rgba(23,27,46,.25)}
+  .hist-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+  .hist-stat{background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:10px 8px;
+    text-align:center}
+  .hist-stat b{display:block;font-size:17px;font-weight:800;color:var(--text-h);letter-spacing:-0.02em}
+  .hist-stat span{display:block;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--text-dim);margin-top:4px}
+  .hist-chart svg{width:100%;height:auto;display:block;overflow:visible}
+  .hist-tip{font-size:12px;color:var(--text-body);text-align:center;min-height:20px;margin-top:8px;
+    font-weight:600}
+  .hist-tip b{color:var(--text-h)}
+  .hist-key{display:inline-flex;align-items:center;gap:5px;margin-left:10px;color:var(--text-dim);
+    font-weight:600;white-space:nowrap}
+  .hist-dash{width:15px;height:0;border-top:1.5px dashed var(--text-dim);display:inline-block}
+  .hist-empty{text-align:center;color:var(--text-dim);font-size:12.5px;padding:30px 10px;font-style:italic}
+  .stat-ring-wrap{cursor:pointer}
+  .stat-ring-wrap:active{opacity:.7}
+  .ring-hint{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--text-dim);opacity:.75}
+
   /* ══════════ Accordions ══════════ */
   .stat-card.span2{grid-column:1 / -1}
   .stat-card.span2 .acc{text-align:left}
@@ -1511,6 +1555,33 @@
   <div class="lock-error-msg" id="lock-error"></div>
 </div>
 <!-- ══════════ End lock screen ══════════ -->
+<div class="hist-scrim" id="hist-scrim" onclick="closeHistory(event)">
+  <div class="hist-sheet" onclick="event.stopPropagation()">
+    <div class="hist-top">
+      <div>
+        <div class="hist-title" id="hist-title">Steps</div>
+        <div class="hist-sub" id="hist-sub"></div>
+      </div>
+      <button class="hist-x" onclick="closeHistory()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="hist-range" id="hist-range">
+      <button class="hist-rbtn active" data-range="week">Week</button>
+      <button class="hist-rbtn" data-range="month">Month</button>
+      <button class="hist-rbtn" data-range="year">Year</button>
+    </div>
+    <div class="hist-stats" id="hist-stats"></div>
+    <div class="hist-chart" id="hist-chart"></div>
+    <div class="hist-tip" id="hist-tip"></div>
+    <details class="acc" id="hist-table-acc">
+      <summary class="acc-sum"><span>Table view</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div id="hist-table" class="log-list"></div>
+    </details>
+  </div>
+</div>
 
 <div class="hero-band">
 <div class="page-header">
@@ -2870,13 +2941,13 @@ function resetWeek(type) {
 /* kcal = calories BURNED (owned by the watch). kcalIn = calories EATEN.
    Keeping the old key name means every existing logged day still reads correctly. */
 const FITNESS_METRICS = [
-  { key: 'steps',   unit: '',     decimals: 0, colour: 'var(--arms)',      owned: true },
-  { key: 'active',  unit: ' min', decimals: 0, colour: 'var(--shoulders)', owned: true },
-  { key: 'kcal',    unit: '',     decimals: 0, colour: 'var(--cardio)',    owned: true },
-  { key: 'sleep',   unit: 'h',    decimals: 1, colour: 'var(--back)',      owned: true },
-  { key: 'kcalIn',  unit: '',     decimals: 0, colour: 'var(--chest)',     ceiling: true },
-  { key: 'protein', unit: 'g',    decimals: 0, colour: 'var(--green)' },
-  { key: 'veg',     unit: '',     decimals: 1, colour: 'var(--core)' }
+  { key: 'steps',   name: 'Steps',           unit: '',     decimals: 0, colour: 'var(--arms)',      chart: 'var(--c-steps)',   owned: true },
+  { key: 'active',  name: 'Active Minutes',  unit: ' min', decimals: 0, colour: 'var(--shoulders)', chart: 'var(--c-active)',  owned: true },
+  { key: 'kcal',    name: 'Calories Burned', unit: '',     decimals: 0, colour: 'var(--cardio)',    chart: 'var(--c-kcal)',    owned: true },
+  { key: 'sleep',   name: 'Sleep',           unit: 'h',    decimals: 1, colour: 'var(--back)',      chart: 'var(--c-sleep)',   owned: true },
+  { key: 'kcalIn',  name: 'Calories In',     unit: '',     decimals: 0, colour: 'var(--chest)',     chart: 'var(--c-kcalIn)',  ceiling: true },
+  { key: 'protein', name: 'Protein',         unit: 'g',    decimals: 0, colour: 'var(--green)',     chart: 'var(--c-protein)' },
+  { key: 'veg',     name: 'Veg Serves',      unit: '',     decimals: 1, colour: 'var(--core)',      chart: 'var(--c-veg)' }
 ];
 
 function todayFitnessData() {
@@ -2910,6 +2981,8 @@ function initFitnessStats() {
       renderFitnessStats(); renderFitnessLog();
     });
   });
+  document.querySelectorAll('.hist-rbtn').forEach(b =>
+    b.addEventListener('click', () => setHistRange(b.dataset.range)));
   renderDateBar();
   renderFitnessStats();
   renderFitnessLog();
@@ -2928,7 +3001,11 @@ function renderFitnessStats() {
     const labelEl = document.getElementById(m.key + '-target-label');
     // calories in is a ceiling, not a goal — a full ring should not read as success
     const over = m.ceiling && value > target;
-    if (ringEl) ringEl.innerHTML = makeRingSVG(pct, formatNumber(value, m.decimals), over ? 'var(--chest)' : m.colour);
+    if (ringEl) {
+      ringEl.innerHTML = makeRingSVG(pct, formatNumber(value, m.decimals), over ? 'var(--chest)' : m.colour);
+      ringEl.onclick = () => openHistory(m.key);
+      ringEl.title = 'Tap for history';
+    }
     if (labelEl) labelEl.textContent = '/ ' + formatNumber(target, m.decimals) + (m.key === 'sleep' ? 'h' : m.unit);
   });
   renderEnergy(data, targets);
@@ -3538,6 +3615,180 @@ function renderRecipes() {
     </div>`;
   }).join('');
 }
+
+/* ══════════════════════════════════════════════════════
+   DIAL HISTORY — tap a ring to see that metric over time.
+   Week and month are one bar per day; a year is one bar per month
+   (the average of the days that actually have data, so a half-logged
+   month is not shown as a low month).
+   ══════════════════════════════════════════════════════ */
+let HIST_KEY = null, HIST_RANGE = 'week';
+
+function isoOffset(days) {
+  const d = new Date(viewDate() + 'T00:00:00');
+  d.setDate(d.getDate() - days);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function metricDef(key) { return FITNESS_METRICS.find(m => m.key === key); }
+
+/* one row per bar: {label, value, n, date} — value null where nothing was logged */
+function histSeries(key, range) {
+  const out = [];
+  if (range === 'year') {
+    const base = new Date(viewDate() + 'T00:00:00');
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(base.getFullYear(), base.getMonth() - i, 1);
+      const pre = `fitness-${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-`;
+      const vals = [];
+      for (let j = 0; j < localStorage.length; j++) {
+        const k = localStorage.key(j);
+        if (k && k.startsWith(pre)) {
+          const v = (loadJSON(k, {}) || {})[key];
+          if (typeof v === 'number') vals.push(v);
+        }
+      }
+      out.push({
+        label: d.toLocaleDateString(undefined, { month: 'short' }),
+        full: d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+        value: vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null,
+        n: vals.length
+      });
+    }
+    return out;
+  }
+  const days = range === 'week' ? 7 : 30;
+  for (let i = days - 1; i >= 0; i--) {
+    const iso = isoOffset(i);
+    const v = (loadJSON('fitness-' + iso, {}) || {})[key];
+    const d = new Date(iso + 'T00:00:00');
+    out.push({
+      label: range === 'week' ? d.toLocaleDateString(undefined, { weekday: 'narrow' })
+                              : String(d.getDate()),
+      full: d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }),
+      date: iso,
+      value: typeof v === 'number' ? v : null,
+      n: typeof v === 'number' ? 1 : 0
+    });
+  }
+  return out;
+}
+
+function openHistory(key) {
+  HIST_KEY = key;
+  HIST_RANGE = 'week';
+  document.querySelectorAll('.hist-rbtn').forEach(b => b.classList.toggle('active', b.dataset.range === 'week'));
+  document.getElementById('hist-scrim').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderHistory();
+}
+function closeHistory(ev) {
+  if (ev && ev.target && !ev.target.classList.contains('hist-scrim')) return;
+  document.getElementById('hist-scrim').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function setHistRange(r) {
+  HIST_RANGE = r;
+  document.querySelectorAll('.hist-rbtn').forEach(b => b.classList.toggle('active', b.dataset.range === r));
+  renderHistory();
+}
+
+function renderHistory() {
+  const m = metricDef(HIST_KEY);
+  if (!m) return;
+  const rows = histSeries(HIST_KEY, HIST_RANGE);
+  const target = getTargets()[HIST_KEY];
+  const fmtV = v => formatNumber(v, m.decimals) + (m.key === 'sleep' ? 'h' : m.unit);
+  const logged = rows.filter(r => r.value != null);
+
+  document.getElementById('hist-title').textContent = m.name;
+  document.getElementById('hist-sub').textContent =
+    HIST_RANGE === 'week' ? 'Last 7 days' : HIST_RANGE === 'month' ? 'Last 30 days' : 'Last 12 months';
+
+  // summary — the numbers you actually want, not decoration
+  const avg = logged.length ? logged.reduce((a, b) => a + b.value, 0) / logged.length : null;
+  const best = logged.length ? (m.ceiling ? Math.min(...logged.map(r => r.value))
+                                          : Math.max(...logged.map(r => r.value))) : null;
+  const hit = target ? logged.filter(r => m.ceiling ? r.value <= target : r.value >= target).length : 0;
+  document.getElementById('hist-stats').innerHTML = `
+    <div class="hist-stat"><b>${avg != null ? fmtV(avg) : '—'}</b><span>Average</span></div>
+    <div class="hist-stat"><b>${best != null ? fmtV(best) : '—'}</b><span>${m.ceiling ? 'Lowest' : 'Best'}</span></div>
+    <div class="hist-stat"><b>${target ? hit + '/' + logged.length : '—'}</b><span>On target</span></div>`;
+
+  const chart = document.getElementById('hist-chart');
+  const tip = document.getElementById('hist-tip');
+  if (!logged.length) {
+    chart.innerHTML = '<div class="hist-empty">Nothing logged in this period yet.</div>';
+    tip.textContent = '';
+    document.getElementById('hist-table').innerHTML = '<div class="log-empty">No data.</div>';
+    return;
+  }
+
+  const W = 360, H = 190, M = { l: 38, r: 14, t: 12, b: 26 };
+  const pw = W - M.l - M.r, ph = H - M.t - M.b;
+  const peak = Math.max(...logged.map(r => r.value), target || 0);
+  const hi = peak * 1.12 || 1;
+  const band = pw / rows.length;
+  const bw = Math.max(3, Math.min(26, band - (rows.length > 14 ? 2 : 6)));   // 2px surface gap
+  const X = i => M.l + band * i + band / 2;
+  const Y = v => M.t + ph - (v / hi) * ph;
+
+  const ticks = [0, hi / 2, hi].map(t => `
+    <line x1="${M.l}" x2="${M.l + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"
+      stroke="var(--border)" stroke-width="1"/>
+    <text x="${M.l - 6}" y="${(Y(t) + 3.5).toFixed(1)}" text-anchor="end" font-size="9.5"
+      fill="var(--text-dim)">${formatNumber(t, m.decimals)}</text>`).join('');
+
+  const bars = rows.map((r, i) => {
+    if (r.value == null) return '';
+    const y = Y(r.value), h = Math.max(2, M.t + ph - y), x = X(i) - bw / 2;
+    const rad = Math.min(4, bw / 2, h);            // 4px rounded data-end
+    const over = m.ceiling && target && r.value > target;
+    return `<path d="M${x.toFixed(1)} ${(y + h).toFixed(1)} L${x.toFixed(1)} ${(y + rad).toFixed(1)}
+      Q${x.toFixed(1)} ${y.toFixed(1)} ${(x + rad).toFixed(1)} ${y.toFixed(1)}
+      L${(x + bw - rad).toFixed(1)} ${y.toFixed(1)} Q${(x + bw).toFixed(1)} ${y.toFixed(1)}
+      ${(x + bw).toFixed(1)} ${(y + rad).toFixed(1)} L${(x + bw).toFixed(1)} ${(y + h).toFixed(1)} Z"
+      fill="${over ? 'var(--chest)' : m.chart}"/>`;
+  }).join('');
+
+  // generous hit areas — the whole column, not the bar
+  const hits = rows.map((r, i) => `<rect x="${(X(i) - band / 2).toFixed(1)}" y="${M.t}"
+      width="${band.toFixed(1)}" height="${ph}" fill="transparent" style="cursor:pointer"
+      data-i="${i}"><title>${r.full}${r.value != null ? ' · ' + fmtV(r.value) : ' · no data'}</title></rect>`).join('');
+
+  const tLine = target && target <= hi ? `
+    <line x1="${M.l}" x2="${M.l + pw}" y1="${Y(target).toFixed(1)}" y2="${Y(target).toFixed(1)}"
+      stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="4,4"/>` : '';
+
+  const step = rows.length > 14 ? Math.ceil(rows.length / 10) : 1;
+  const xlabs = rows.map((r, i) => (i % step === 0 || i === rows.length - 1)
+    ? `<text x="${X(i).toFixed(1)}" y="${H - 7}" text-anchor="middle" font-size="9"
+        fill="var(--text-dim)">${r.label}</text>` : '').join('');
+
+  chart.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"
+      aria-label="${m.name}, ${HIST_RANGE}">${ticks}${tLine}${bars}${xlabs}${hits}</svg>`;
+  const legend = target ? `<span class="hist-key"><i class="hist-dash"></i>target ${fmtV(target)}</span>` : '';
+  const baseTip = avg != null
+    ? `Average <b>${fmtV(avg)}</b> across ${logged.length} logged ${logged.length === 1 ? 'entry' : 'entries'} ${legend}`
+    : '';
+  tip.innerHTML = baseTip;
+
+  chart.querySelectorAll('rect[data-i]').forEach(el => {
+    const show = () => {
+      const r = rows[+el.dataset.i];
+      tip.innerHTML = r.value == null ? `<span style="color:var(--text-dim)">${r.full} — nothing logged</span>`
+        : `${r.full} — <b>${fmtV(r.value)}</b>` + (HIST_RANGE === 'year' ? ` <span style="color:var(--text-dim)">(${r.n} days)</span>` : '');
+    };
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('touchstart', show, { passive: true });
+    el.addEventListener('mouseleave', () => { tip.innerHTML = baseTip; });
+  });
+
+  // table view — identity never rests on colour alone
+  document.getElementById('hist-table').innerHTML = rows.slice().reverse().map(r =>
+    `<div class="log-entry"><span class="le-date">${r.full}</span>
+      <span class="le-val">${r.value != null ? fmtV(r.value) : '—'}</span></div>`).join('');
+}
+
 let SESSIONS_EXPANDED = false;
 function expandSessions() { SESSIONS_EXPANDED = true; renderSessionStats(); }
 function renderSessionStats() {
@@ -4043,6 +4294,26 @@ function typingOn(on) {
   if (on) { const d = document.createElement('div'); d.className = 'typing'; d.innerHTML = '<i></i><i></i><i></i>';
     box.appendChild(d); box.scrollTop = box.scrollHeight; }
 }
+/* One silent retry when the coach narrates a log but omits the fenced block.
+   Nothing is shown for this turn; only the resulting patch matters. */
+async function reaskForPatch(prevReply) {
+  try {
+    const msgs = CHAT.slice(-40).map(m => ({ role: m.role, content: m.content }));
+    msgs.push({ role: 'assistant', content: prevReply || '' });
+    msgs.push({ role: 'user', content:
+      'Your last reply described logging or saving something but contained no fenced json block, '
+      + 'so nothing was written. Resend ONLY the fenced json block for exactly what you said you '
+      + 'logged or saved. No prose, no apology, no commentary — the block alone.' });
+    const res = await fetch(COACH_URL() + '/chat', {
+      method: 'POST', headers: coachHeaders(),
+      body: JSON.stringify({ messages: msgs, state: coachState(), images: [], viewDate: viewDate() })
+    });
+    if (!res.ok) return null;
+    const j = await res.json();
+    LAST_REPLY = j;
+    return j.patch || null;
+  } catch { return null; }
+}
 async function sendChat() {
   const ta = document.getElementById('chat-in');
   const text = ta.value.trim();
@@ -4074,8 +4345,17 @@ async function sendChat() {
         content: (j.patch ? 'ⓘ ' : '⚠ ') + j.note.charAt(0).toUpperCase() + j.note.slice(1) + '.' });
     }
     if (!j.patch) {
-      CHAT.push({ role: 'assistant', day: todayKey(), system: true, warn: true,
-        content: 'ⓘ No data update came back with that reply — nothing was written to the dials.' });
+      // The coach sometimes describes a save in prose and forgets the block. Prose
+      // writes nothing, so rather than leave a false confirmation sitting there,
+      // ask once for the block on its own and apply that.
+      if (/\b(logg(ed|ing)|saved|sav(ing)?|added|updated|recorded)\b/i.test(j.reply || '')) {
+        const fix = await reaskForPatch(j.reply);
+        if (fix) j.patch = fix;
+      }
+      if (!j.patch) {
+        CHAT.push({ role: 'assistant', day: todayKey(), system: true, warn: true,
+          content: 'ⓘ No data update came back with that reply — nothing was written to the dials. Ask again and it should land.' });
+      }
     }
     if (j.patch) {
       const applied = applyCoachPatch(j.patch);
