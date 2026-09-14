@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#171b2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Health">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Health &amp; Fitness</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5.5' fill='%23171b2e'/%3E%3Crect x='8.94' y='11.05' width='6.12' height='1.9' rx='0.27' fill='%23cbe558'/%3E%3Crect x='4.86' y='7.58' width='2.45' height='8.84' rx='0.95' fill='%23cbe558'/%3E%3Crect x='16.69' y='7.58' width='2.45' height='8.84' rx='0.95' fill='%23cbe558'/%3E%3Crect x='7.44' y='9.28' width='1.63' height='5.44' rx='0.54' fill='%23cbe558'/%3E%3Crect x='14.92' y='9.28' width='1.63' height='5.44' rx='0.54' fill='%23cbe558'/%3E%3C/svg%3E">
@@ -593,8 +599,8 @@
     width: 100%;
     max-width: 488px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
     background: var(--bg-soft);
     border: 1.5px solid var(--border);
     border-radius: 8px;
@@ -602,7 +608,10 @@
   }
 
   .page-btn {
-    padding: 9px 4px;
+    padding: 9px 2px;
+    letter-spacing: 0;
+    white-space: nowrap;
+    font-size: 10.5px;
     border-radius: 6px;
     border: none;
     background: transparent;
@@ -1308,6 +1317,37 @@
     text-transform:uppercase;color:var(--text-dim);opacity:.75}
 
   /* ══════════ Accordions ══════════ */
+  .wk-card{padding:6px 16px 16px;}
+  .wk-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    margin-top:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+  .wk-arrow{padding:2px 12px;font-size:20px;line-height:1.3;min-width:40px;}
+  .wk-arrow[disabled]{opacity:.35;pointer-events:none;}
+  .wk-range{font-size:13.5px;font-weight:700;color:var(--text-h);text-align:center;flex:1;}
+  .wk-hero{text-align:center;padding:14px 0 6px;}
+  .wk-hero-num{font-size:34px;font-weight:800;color:var(--text-h);line-height:1.1;}
+  .wk-hero-sub{font-size:11.5px;color:var(--text-dim);margin-top:3px;}
+  .wk-eta{font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.45;}
+  .wk-row{display:flex;align-items:center;gap:10px;padding:7px 0;}
+  .wk-row-name{font-size:12.5px;color:var(--text-h);width:92px;flex:none;}
+  .wk-track{flex:1;height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
+  .wk-fill{height:100%;border-radius:4px;}
+  .wk-val{font-size:12.5px;font-weight:700;color:var(--text-h);width:76px;flex:none;text-align:right;}
+  .wk-sub-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--text-dim);margin:14px 0 2px;padding-top:12px;border-top:1px solid var(--border)}
+  .wk-note{font-size:11.5px;color:var(--text-dim);margin-top:10px;line-height:1.45;}
+  .wk-read{font-size:13px;line-height:1.55;color:var(--text-h);white-space:pre-wrap;}
+  .wk-read:empty{display:none;}
+  /* The one action on this page, so it should look like it. */
+  .wk-read-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+    margin:12px 0 14px;padding:12px 14px;font-size:13.5px;
+    box-shadow:0 2px 8px rgba(23,27,46,.08)}
+  .wk-read-btn svg{width:17px;height:17px;flex:none}
+  .wk-read-btn[disabled]{opacity:.6}
+  /* Once the read is there, asking again is a secondary act — step it back so the
+     words he came for are the loudest thing in the card. */
+  .wk-read-btn.again{background:var(--bg-soft);color:var(--text-body);
+    border:1.5px solid var(--border);box-shadow:none;font-size:12.5px;padding:9px 14px}
+  @media (max-width:360px){ .wk-row-name{width:76px} .wk-val{width:66px} }
   .stat-card.span2{grid-column:1 / -1}
   .stat-card.span2 .acc{text-align:left}
   .acc{margin-top:14px;border-top:1px solid var(--border);padding-top:4px}
@@ -1389,6 +1429,18 @@
   .send-btn{flex:none;width:44px;height:44px;border-radius:8px;background:var(--lime);border:none;
     display:grid;place-items:center;cursor:pointer;color:var(--green-deep)}
   .send-btn svg{width:19px;height:19px}
+  /* ══════════ Coach as a full page ══════════
+     On its own tab the chat should fill the screen with the compose bar pinned to
+     the bottom, the way a messaging app does — not sit in a 46vh box with the page
+     scrolling underneath it. */
+  .vis-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;
+    overflow:hidden;clip:rect(0 0 0 0)}
+  .chat-full{display:flex;flex-direction:column;margin:0 16px;
+    height:calc(100dvh - var(--chrome, 190px));min-height:320px}
+  .chat-full .chat-log{flex:1;max-height:none;min-height:0}
+  .chat-full .chat-compose{position:sticky;bottom:0;
+    padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  #page-coach{padding-bottom:16px}
   /* ══════════ Date bar ══════════ */
   .datebar{display:flex;align-items:center;gap:8px;margin:0 16px 12px;background:var(--bg-card);
     border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;
@@ -1604,8 +1656,10 @@
 
 <div class="page-nav-wrap">
   <div class="page-nav">
-    <button class="page-btn active" data-page="hf" onclick="showPage('hf')">Health &amp; Fitness</button>
+    <button class="page-btn active" data-page="coach" onclick="showPage('coach')">Coach</button>
+    <button class="page-btn" data-page="hf" onclick="showPage('hf')">Health</button>
     <button class="page-btn" data-page="workout" onclick="showPage('workout')">Workout</button>
+    <button class="page-btn" data-page="review" onclick="showPage('review')">Review</button>
   </div>
 </div>
 
@@ -2032,9 +2086,9 @@
 <!-- ══════════════════════════════════════════════════════
      5.1 FITNESS — STEPS, ACTIVE MINUTES, CALORIES, SLEEP, WEIGHT, AFD
      ══════════════════════════════════════════════════════ -->
-<div id="page-hf" class="page-section active">
+<div id="page-coach" class="page-section active">
 
-  <div class="chat-card">
+  <div class="chat-card chat-full">
     <div class="chat-top">
       <div class="chat-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg></div>
@@ -2053,12 +2107,12 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         </label>
-        <input id="chat-cam" type="file" accept="image/*" capture="environment" style="display:none">
+        <input id="chat-cam" type="file" accept="image/*" capture="environment" class="vis-hidden">
         <label class="cam-btn" for="chat-lib" title="Choose from photos">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
         </label>
-        <input id="chat-lib" type="file" accept="image/*" multiple style="display:none">
+        <input id="chat-lib" type="file" accept="image/*" multiple class="vis-hidden">
         <textarea id="chat-in" rows="1" placeholder="Log a meal or ask…"></textarea>
         <button class="send-btn" onclick="sendChat()" title="Send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2066,6 +2120,47 @@
       </div>
     </div>
   </div>
+
+</div><!-- /page-coach -->
+
+<div id="page-review" class="page-section">
+
+  <div class="section-label" id="week-label">This week</div>
+  <div class="acc-card wk-card">
+    <div class="wk-nav">
+      <button class="ghost-btn wk-arrow" onclick="stepWeek(-1)" aria-label="Previous week">‹</button>
+      <div class="wk-range" id="wk-range">—</div>
+      <button class="ghost-btn wk-arrow" onclick="stepWeek(1)" aria-label="Next week" id="wk-next">›</button>
+    </div>
+
+    <div class="wk-hero">
+      <div class="wk-hero-num" id="wk-trend">—</div>
+      <div class="wk-hero-sub" id="wk-trend-sub">trend weight, week on week</div>
+      <div class="wk-eta" id="wk-eta"></div>
+    </div>
+
+    <div id="wk-bars"></div>
+
+    <div class="wk-sub-label">Training</div>
+    <div id="wk-train"></div>
+
+    <div class="wk-sub-label">Food groups · daily average</div>
+    <div id="wk-fg"></div>
+
+    <div class="wk-sub-label">Coach's read on the week</div>
+    <div id="wk-read" class="wk-read"></div>
+    <button class="solid-btn wk-read-btn" id="wk-read-btn" onclick="getWeekRead()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg>
+      <span id="wk-read-label">Get the coach's read</span></button>
+  </div>
+
+  <div class="tip-box" style="margin:14px 16px 16px;">The week is where this is decided — a single
+    day is mostly water and timing. Arrows step back through previous weeks.</div>
+</div><!-- /page-review -->
+
+<div id="page-hf" class="page-section">
 
   <div class="datebar">
     <button class="dnav" onclick="shiftViewDate(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -2183,6 +2278,11 @@
         <button class="ghost-btn" id="sessions-more" onclick="expandSessions()" style="margin-top:8px;">Show more</button>
       </details>
     </div>
+  </div>
+
+  <div class="section-label">Food groups</div>
+  <div class="acc-card wk-card">
+    <div id="fg-bars"></div>
   </div>
 
   <details class="acc acc-card" id="recipes-acc">
@@ -2406,6 +2506,16 @@ function showDay(id, btn) {
   btn.classList.add('active');
 }
 
+/* The compose bar can only sit on the bottom edge if the chat knows how much of the
+   screen the header and tab bar are using. Measured rather than guessed, because the
+   header height changes with the greeting text. */
+function sizeChat() {
+  const head = document.querySelector('.page-header');
+  const nav = document.querySelector('.page-nav-wrap');
+  const chrome = (head ? head.offsetHeight : 0) + (nav ? nav.offsetHeight : 0) + 28;
+  document.documentElement.style.setProperty('--chrome', chrome + 'px');
+}
+window.addEventListener('resize', sizeChat);
 function showPage(id) {
   document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.page-btn').forEach(el => el.classList.remove('active'));
@@ -2413,6 +2523,10 @@ function showPage(id) {
   const btn = document.querySelector(`.page-btn[data-page="${id}"]`);
   if (btn) btn.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'instant' });
+  if (id === 'coach') { sizeChat(); const box = document.getElementById('chat-log');
+    if (box) box.scrollTop = box.scrollHeight; }
+  if (id === 'review') renderWeek();
+  if (id === 'hf') renderFoodGroups();
 }
 
 function toggleEx(topEl) {
@@ -2765,10 +2879,12 @@ function renderDateBar() {
   if (dl) dl.textContent = isToday ? 'Today' : long;
 }
 
-function todayKey() {
-  const d = new Date();
+/* Local-calendar date key. toISOString() is UTC and in Sydney that rolls the date
+   back a day for most of the evening. */
+function isoOf(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
+function todayKey() { return isoOf(new Date()); }
 
 function getWeekKey(d = new Date()) {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -2818,11 +2934,19 @@ function initTrackers() {
   initResultsLog();
   initTimer();
   initCoach();
+  renderWeek();
+  renderFoodGroups();
   const greetingEl = document.getElementById('header-greeting');
   if (greetingEl) {
     const hour = new Date().getHours();
     const part = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
     greetingEl.textContent = `Good ${part}, Andrew`;
+  }
+  sizeChat();
+  // Installable app rather than a browser tab. Only over https — on file:// this is
+  // simply skipped rather than throwing.
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }
 
@@ -2947,6 +3071,44 @@ function resetWeek(type) {
    ══════════════════════════════════════════════════════ */
 /* kcal = calories BURNED (owned by the watch). kcalIn = calories EATEN.
    Keeping the old key name means every existing logged day still reads correctly. */
+/* Food groups. Serves, in the Australian Dietary Guidelines sense. The coach fills
+   these in from whatever he logs, so they cost him no extra tapping — a group he has
+   to remember to record is a group that stays at zero. */
+const FOOD_GROUPS = [
+  { key: 'veg',     name: 'Vegetables',  target: 5,   colour: 'var(--c-veg)' },
+  { key: 'fruit',   name: 'Fruit',       target: 2,   colour: 'var(--c-kcalIn)' },
+  { key: 'protein', name: 'Protein',     target: 3,   colour: 'var(--c-protein)' },
+  { key: 'grains',  name: 'Grains',      target: 6,   colour: 'var(--c-kcal)' },
+  { key: 'dairy',   name: 'Dairy',       target: 2.5, colour: 'var(--c-sleep)' },
+  { key: 'fats',    name: 'Healthy fats', target: 2,  colour: 'var(--c-active)' }
+];
+function dayGroups(date) {
+  const d = getFitnessData(date) || {};
+  const g = Object.assign({}, d.groups || {});
+  // Veg has its own dial and predates food groups — keep the two in step rather than
+  // making him log the same salad twice.
+  if (g.veg == null && d.veg != null) g.veg = d.veg;
+  return g;
+}
+function renderGroupBars(el, vals, note) {
+  if (!el) return;
+  el.innerHTML = FOOD_GROUPS.map(g => {
+    const v = vals[g.key];
+    const pct = v == null ? 0 : Math.max(2, Math.min(100, Math.round((v / g.target) * 100)));
+    return '<div class="wk-row">'
+      + '<div class="wk-row-name">' + g.name + '</div>'
+      + '<div class="wk-track"><div class="wk-fill" style="width:' + pct + '%;background:' + g.colour + '"></div></div>'
+      + '<div class="wk-val">' + (v == null ? '—' : formatNumber(v, 1) + ' / ' + g.target) + '</div>'
+      + '</div>';
+  }).join('') + (note ? '<div class="wk-note">' + note + '</div>' : '');
+}
+function renderFoodGroups() {
+  const vals = dayGroups(viewDate());
+  const any = FOOD_GROUPS.some(g => vals[g.key] != null);
+  renderGroupBars(document.getElementById('fg-bars'), vals,
+    any ? 'Serves, filled in by the coach from what you log.'
+        : 'Nothing logged yet — these fill in as you tell the coach what you ate.');
+}
 const FITNESS_METRICS = [
   { key: 'steps',   name: 'Steps',           unit: '',     decimals: 0, colour: 'var(--arms)',      chart: 'var(--c-steps)',   owned: true },
   { key: 'active',  name: 'Active Minutes',  unit: ' min', decimals: 0, colour: 'var(--shoulders)', chart: 'var(--c-active)',  owned: true },
@@ -3567,6 +3729,39 @@ function formatDuration(totalSec) {
 /* ══════════ Saved meals ══════════
    Named meals the coach can store once and reuse. Kept in the same state backup
    as everything else, so they follow you between phone and laptop. */
+/* Blood results and supplements. Deliberately no tab of their own — they live in the
+   chat, and this is just the memory behind it so the coach can compare a new panel
+   against the last one instead of asking him to re-type his history. */
+function getLabs() { return loadJSON('labs', []) || []; }
+function upsertLab(r) {
+  if (!r || !r.marker || r.value == null) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date || '')) r = Object.assign({}, r, { date: todayKey() });
+  const list = getLabs();
+  const key = String(r.marker).trim().toLowerCase();
+  const i = list.findIndex(x => String(x.marker).trim().toLowerCase() === key && x.date === r.date);
+  const row = Object.assign({}, i >= 0 ? list[i] : {}, r, { marker: String(r.marker).trim() });
+  if (i >= 0) list[i] = row; else list.push(row);
+  list.sort((a, b) => b.date.localeCompare(a.date) || a.marker.localeCompare(b.marker));
+  saveJSON('labs', list.slice(0, 400));
+  return row;
+}
+function getSupps() { return loadJSON('supplements', []) || []; }
+function upsertSupp(r) {
+  if (!r || !r.name) return null;
+  const list = getSupps();
+  const key = String(r.name).trim().toLowerCase();
+  const i = list.findIndex(x => String(x.name).trim().toLowerCase() === key);
+  if (r.stopped) {                       // "I've stopped taking the iron"
+    if (i >= 0) { list.splice(i, 1); saveJSON('supplements', list); return { name: r.name, stopped: true }; }
+    return null;
+  }
+  const row = Object.assign({}, i >= 0 ? list[i] : { since: todayKey() }, r,
+                            { name: String(r.name).trim() });
+  if (i >= 0) list[i] = row; else list.push(row);
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  saveJSON('supplements', list);
+  return row;
+}
 function getRecipes() { return loadJSON('recipes', []) || []; }
 function saveRecipes(list) { saveJSON('recipes', list); }
 function upsertRecipe(r) {
@@ -3957,8 +4152,9 @@ function initChatInputs() {
   const ta = document.getElementById('chat-in');
   if (ta && !ta.dataset.wired) {
     ta.dataset.wired = '1';
-    ta.addEventListener('input', () => { ta.style.height = 'auto';
-      ta.style.height = Math.max(ta.offsetHeight, Math.min(120, ta.scrollHeight)) + 'px'; });
+    const grow = () => { ta.style.height = 'auto';
+      ta.style.height = Math.min(120, Math.max(44, ta.scrollHeight)) + 'px'; };
+    ta.addEventListener('input', grow);
     ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); sendChat(); } });
   }
 }
@@ -4187,6 +4383,10 @@ function mergeState(local, cloud) {
     savedAt: Date.now()
   };
 }
+/* Every back-up is a KV write, and the free tier allows 1,000 a day. Skip the write
+   entirely when nothing has changed since the last one — switching tabs, or the app
+   regaining focus, should not cost anything. */
+let LAST_PUSHED = '';
 async function pushState(silent) {
   if (!COACH_READY()) return;
   const note = document.getElementById('coach-note');
@@ -4201,10 +4401,16 @@ async function pushState(silent) {
     const merged = mergeState(local, cloud);
     applyState(merged);
     refreshAllViews();
+    const body = JSON.stringify(merged);
+    if (body === LAST_PUSHED) {          // nothing moved — do not spend a write
+      if (note && !silent) { note.textContent = 'Already up to date'; note.style.color = 'var(--green)'; }
+      return;
+    }
     const res = await fetch(COACH_URL() + '/state', {
-      method: 'PUT', headers: coachHeaders(), body: JSON.stringify(merged)
+      method: 'PUT', headers: coachHeaders(), body
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
+    LAST_PUSHED = body;
     saveJSON('coach-last-sync', Date.now());
     renderCoachLastSync();
     if (note && !silent) { note.textContent = 'Backed up'; note.style.color = 'var(--green)'; }
@@ -4215,14 +4421,242 @@ async function pushState(silent) {
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden && COACH_READY()) { pullSamsung(true); pushState(true); }
 });
+
 let pushTimer = null;
 function queueCloudPush() {   // name kept: saveJSON() and the weight inputs call it
   if (!COACH_READY()) return;
   clearTimeout(pushTimer);
   pushTimer = setTimeout(() => pushState(true), 2500);
 }
+/* ── Weekly review ───────────────────────────────────────────────────────────
+   A week is where weight loss is actually decided — a day is noise. Everything
+   here is computed on the phone from data already held, so opening it costs
+   nothing; only the coach's written read spends an API call, once per week. */
+let WEEK_OFFSET = 0;                       // 0 = the week containing today
+
+function mondayOf(d) {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));   // Monday-start
+  return x;
+}
+function currentWeekStart() {
+  const m = mondayOf(new Date());
+  m.setDate(m.getDate() + WEEK_OFFSET * 7);
+  return m;
+}
+function stepWeek(n) {
+  const next = WEEK_OFFSET + n;
+  if (next > 0) return;                    // no future weeks
+  WEEK_OFFSET = next;
+  renderWeek();
+}
+/* Trend weight = mean of the weigh-ins in a window. A single Monday reading against
+   a single Monday reading is two pieces of water retention being subtracted. */
+function trendWeight(endDate, days) {
+  const end = new Date(endDate + 'T00:00:00');
+  const start = new Date(end); start.setDate(start.getDate() - (days - 1));
+  const vals = loadJSON('results-log', [])
+    .filter(e => e && e.weight != null && e.date >= isoOf(start) && e.date <= isoOf(end))
+    .map(e => e.weight);
+  return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+}
+function weekStats(monday) {
+  const dates = [];
+  for (let i = 0; i < 7; i++) { const d = new Date(monday); d.setDate(d.getDate() + i); dates.push(isoOf(d)); }
+  const today = todayKey();
+  const rows = dates.filter(d => d <= today).map(d => Object.assign({ date: d }, getFitnessData(d)));
+  // partial days show on the dials but must stay out of averages, or today's
+  // half-eaten total drags the week down every time you look at it.
+  const full = rows.filter(r => !r.partial);
+  const mean = (list, k) => {
+    const v = list.map(r => r[k]).filter(x => typeof x === 'number');
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+  };
+  // Same filter the Training block uses — otherwise the summary line and the bars
+  // disagree about how many workouts happened, which is worse than either being wrong.
+  const sessions = loadJSON('session-log', [])
+    .filter(x => x && x.type === 'workout' && x.date >= dates[0] && x.date <= dates[6]);
+  return {
+    dates, start: dates[0], end: dates[6],
+    logged: full.filter(r => r.kcalIn != null).length,
+    kcalIn: mean(full, 'kcalIn'), protein: mean(full, 'protein'), veg: mean(full, 'veg'),
+    steps: mean(full, 'steps'), sleep: mean(full, 'sleep'), active: mean(full, 'active'),
+    burned: mean(full, 'kcal'),
+    workouts: sessions.length,
+    trend: trendWeight(dates.filter(d => d <= today).slice(-1)[0] || dates[6], 7),
+    prevTrend: (() => {
+      const prev = new Date(monday); prev.setDate(prev.getDate() - 1);
+      return trendWeight(isoOf(prev), 7);
+    })()
+  };
+}
+function renderWeek() {
+  const monday = currentWeekStart();
+  const st = weekStats(monday);
+  const t = getTargets();
+  const fmtD = d => new Date(d + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  const label = document.getElementById('week-label');
+  if (label) label.textContent = WEEK_OFFSET === 0 ? 'This week' : 'Week in review';
+  const range = document.getElementById('wk-range');
+  if (range) range.textContent = fmtD(st.start) + ' – ' + fmtD(st.end);
+  const nextBtn = document.getElementById('wk-next');
+  if (nextBtn) nextBtn.disabled = WEEK_OFFSET >= 0;
+
+  // Hero: the only weight number worth reacting to.
+  const numEl = document.getElementById('wk-trend');
+  const subEl = document.getElementById('wk-trend-sub');
+  const etaEl = document.getElementById('wk-eta');
+  let delta = null;
+  if (st.trend != null && st.prevTrend != null) delta = st.trend - st.prevTrend;
+  if (numEl) {
+    // A change that rounds to nothing must not print as "−0.0kg" — that reads as a
+    // loss when it is a flat week, and flat is worth saying in its own words.
+    const flat = delta != null && Math.abs(delta) < 0.05;
+    numEl.textContent = delta == null ? '—'
+      : flat ? 'No change'
+      : (delta > 0 ? '+' : '−') + Math.abs(delta).toFixed(1) + 'kg';
+    numEl.style.color = (delta == null || flat) ? 'var(--text-h)'
+      : delta < 0 ? 'var(--lime-dark)' : delta > 0.15 ? 'var(--c-kcalIn)' : 'var(--text-h)';
+  }
+  if (subEl) {
+    subEl.textContent = delta == null
+      ? (st.trend != null ? 'trend ' + st.trend.toFixed(1) + 'kg — need last week to compare'
+                          : 'no weigh-ins this week')
+      : (Math.abs(delta) < 0.05
+          ? 'trend weight flat this week · holding at '
+          : 'trend weight, week on week · now ')
+        + st.trend.toFixed(1) + 'kg';
+  }
+  // Projection. Honest about uncertainty: one week is not a rate.
+  if (etaEl) {
+    const goal = t.weight || 90;
+    const toGo = st.trend != null ? st.trend - goal : null;
+    if (toGo != null && toGo > 0 && delta != null && delta < -0.05) {
+      const weeks = Math.ceil(toGo / Math.abs(delta));
+      const when = new Date(); when.setDate(when.getDate() + weeks * 7);
+      etaEl.textContent = toGo.toFixed(1) + 'kg to ' + goal + 'kg. Hold this week’s pace and that is '
+        + weeks + ' week' + (weeks === 1 ? '' : 's') + ' — around '
+        + when.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })
+        + '. One week is not a rate, so treat it as a direction, not a date.';
+    } else if (toGo != null && toGo > 0) {
+      etaEl.textContent = toGo.toFixed(1) + 'kg to ' + goal + 'kg.';
+    } else etaEl.textContent = '';
+  }
+
+  // Averages against target. Magnitude against a reference — a short bar each,
+  // one series, so no legend; the row name carries identity.
+  const maintenance = (loadJSON('coach-profile', {}) || {}).maintenance || 2590;
+  const defs = [
+    { k: 'kcalIn',  name: 'Calories in', target: t.kcalIn || 2000, dec: 0, colour: 'var(--c-kcalIn)', ceiling: true },
+    { k: 'protein', name: 'Protein',     target: t.protein || 150, dec: 0, unit: 'g', colour: 'var(--c-protein)' },
+    { k: 'veg',     name: 'Veg serves',  target: t.veg || 5,       dec: 1, colour: 'var(--c-veg)' },
+    { k: 'steps',   name: 'Steps',       target: t.steps || 5000,  dec: 0, colour: 'var(--c-steps)' },
+    { k: 'active',  name: 'Active',      target: t.active || 30,   dec: 0, unit: 'm', colour: 'var(--c-active)' },
+    { k: 'sleep',   name: 'Sleep',       target: t.sleep || 8,     dec: 1, unit: 'h', colour: 'var(--c-sleep)' }
+  ];
+  const bars = document.getElementById('wk-bars');
+  if (bars) {
+    bars.innerHTML = defs.map(d => {
+      const v = st[d.k];
+      const pct = v == null ? 0 : Math.max(2, Math.min(100, Math.round((v / d.target) * 100)));
+      const over = d.ceiling && v != null && v > d.target;
+      const shown = v == null ? '—' : formatNumber(v, d.dec) + (d.unit || '');
+      return '<div class="wk-row">'
+        + '<div class="wk-row-name">' + d.name + '</div>'
+        + '<div class="wk-track"><div class="wk-fill" style="width:' + pct + '%;background:'
+        + (over ? 'var(--c-kcalIn)' : d.colour) + '"></div></div>'
+        + '<div class="wk-val">' + shown + '</div></div>';
+    }).join('')
+      + '<div class="wk-note">' + st.logged + ' of 7 days logged'
+      + (st.workouts ? ' · ' + st.workouts + ' workout' + (st.workouts === 1 ? '' : 's') : '')
+      + (st.kcalIn != null
+          ? ' · averaging ' + formatNumber(maintenance - st.kcalIn, 0) + ' cal/day under maintenance'
+          : '')
+      + '. Part-days are left out of these averages.</div>';
+  }
+  // Food groups across the week: the daily bars answer "today", this answers
+  // "is this actually how I eat" — which is the question that changes shopping.
+  // Training. The Workout tab tracks the session you are in; this answers whether the
+  // training actually happened across the week, which is the question that matters.
+  const sess = loadJSON('session-log', [])
+    .filter(e => e && e.type === 'workout' && e.date >= st.start && e.date <= st.end);
+  const secs = sess.reduce((a, e) => a + (e.durationSec || 0), 0);
+  const wTarget = t.workouts || 5;
+  const trainEl = document.getElementById('wk-train');
+  if (trainEl) {
+    const rows = [
+      { name: 'Sessions', v: sess.length, target: wTarget, dec: 0, colour: 'var(--lime-dark)' },
+      { name: 'Time', v: Math.round(secs / 60), target: wTarget * 30, dec: 0, unit: 'm', colour: 'var(--c-active)' },
+      { name: 'Active mins', v: st.active, target: (t.active || 30) , dec: 0, unit: 'm', colour: 'var(--c-steps)', perDay: true }
+    ];
+    trainEl.innerHTML = rows.map(r => {
+      const pct = r.v == null ? 0 : Math.max(2, Math.min(100, Math.round((r.v / r.target) * 100)));
+      return '<div class="wk-row"><div class="wk-row-name">' + r.name + '</div>'
+        + '<div class="wk-track"><div class="wk-fill" style="width:' + pct + '%;background:' + r.colour + '"></div></div>'
+        + '<div class="wk-val">' + (r.v == null ? '—' : formatNumber(r.v, r.dec) + (r.unit || '')) + '</div></div>';
+    }).join('')
+      + '<div class="wk-note">'
+      + (sess.length
+          ? sess.slice(-4).map(e => (e.name || 'Session') + ' · ' + formatDuration(e.durationSec || 0)).join(' · ')
+          : 'No sessions logged this week.')
+      + ' · Active mins is a daily average from your watch.</div>';
+  }
+
+  const gAvg = {};
+  FOOD_GROUPS.forEach(g => {
+    const vals = st.dates.filter(d => d <= todayKey())
+      .map(d => dayGroups(d)[g.key]).filter(x => typeof x === 'number');
+    gAvg[g.key] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+  });
+  renderGroupBars(document.getElementById('wk-fg'), gAvg,
+    FOOD_GROUPS.some(g => gAvg[g.key] != null) ? '' : 'Nothing logged for this week yet.');
+
+  const cached = loadJSON('week-read-' + st.start, '');
+  const readEl = document.getElementById('wk-read');
+  if (readEl) readEl.textContent = cached || '';
+  setReadBtn(cached ? 'again' : 'idle');
+}
+/* Three states, one place — so the label and the styling can never drift apart. */
+function setReadBtn(state) {
+  const btn = document.getElementById('wk-read-btn');
+  const label = document.getElementById('wk-read-label');
+  if (!btn || !label) return;
+  btn.disabled = state === 'busy';
+  btn.classList.toggle('again', state === 'again');
+  label.textContent = state === 'busy' ? 'Reading your week…'
+                    : state === 'again' ? 'Ask again'
+                    : 'Get the coach\u2019s read';
+}
+async function getWeekRead() {
+  const st = weekStats(currentWeekStart());
+  const readEl = document.getElementById('wk-read');
+  if (!COACH_READY()) { if (readEl) readEl.textContent = 'Connect the coach in Settings first.'; return; }
+  setReadBtn('busy');
+  if (readEl) readEl.textContent = '';
+  try {
+    const res = await fetch(COACH_URL() + '/chat', {
+      method: 'POST', headers: coachHeaders(),
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: 'Give me the weekly review for ' + st.start + ' to ' + st.end + '.' }],
+        state: Object.assign(coachState(), { weekReview: { start: st.start, end: st.end } }),
+        images: [], viewDate: st.end
+      })
+    });
+    if (!res.ok) throw new Error('worker ' + res.status);
+    const j = await res.json();
+    const text = (j.reply || '').trim() || 'No reply came back.';
+    saveJSON('week-read-' + st.start, text);
+    if (readEl) readEl.textContent = text;
+    if (j.patch) applyCoachPatch(j.patch);
+  } catch (err) {
+    if (readEl) readEl.textContent = 'Could not reach the coach. ' + explainFetchError(err);
+  } finally {
+    setReadBtn('again');
+  }
+}
 function refreshAllViews() {
-  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes();
+  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes(); renderWeek(); renderFoodGroups();
   renderWeightChart(); renderSessionStats(); refreshSettingsFields();
 }
 function refreshSettingsFields() {
@@ -4363,6 +4797,7 @@ async function sendChat() {
   SHOTS = []; renderShots(); ta.value = ''; ta.style.height = '';
   saveChat(); renderChat();
   if (!COACH_READY()) return;   // draft kept; the OFFLINE chip explains why nothing came back
+  const due = reviewDue();
   typingOn(true);
   try {
     const res = await fetch(COACH_URL() + '/chat', {
@@ -4376,6 +4811,8 @@ async function sendChat() {
     if (!res.ok) throw new Error('worker ' + res.status);
     COACH_VERIFIED = true; COACH_LAST_ERR = '';
     const j = await res.json();
+    // A reply came back with a review outstanding, so that day has now had its wrap.
+    if (due) saveJSON('last-review', due);
     CHAT.push({ role: 'assistant', day: todayKey(), content: j.reply || '(no reply)' });
     // Say out loud what landed on the dials. A patch that quietly does nothing is
     // the worst failure mode there is — it looks like it worked.
@@ -4415,7 +4852,26 @@ function coachState() {
   getFitnessLogDates().slice(0, 60).forEach(d => { days[d] = getFitnessData(d); });
   return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 120),
     sessions: loadJSON('session-log', []).slice(-30), recipes: getRecipes(),
-    today: todayKey(), profile: loadJSON('coach-profile', null) };
+    today: todayKey(), reviewDue: reviewDue(), labs: getLabs().slice(0, 120),
+    supplements: getSupps(), profile: loadJSON('coach-profile', null) };
+}
+/* Which day still owes him a full review. Today once it is past 8pm; otherwise the most
+   recent finished day he never got one for — so an evening missed surfaces next morning
+   as a wrap of THAT day rather than being silently skipped. Capped at 3 days so a week
+   away does not produce a pile of stale reviews. */
+function reviewDue() {
+  const seen = loadJSON('last-review', '');
+  const now = new Date();
+  const today = todayKey();
+  if (now.getHours() >= 20 && seen < today) return today;
+  for (let i = 1; i <= 3; i++) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const key = isoOf(d);
+    if (seen >= key) break;
+    const data = getFitnessData(key);
+    if (data && Object.keys(data).some(k => k !== '_ts' && data[k] != null)) return key;
+  }
+  return null;
 }
 /* the coach can hand back a structured update; it must never touch watch-owned fields */
 function patchDays(p) {
@@ -4442,6 +4898,11 @@ function applyCoachPatch(p) {
     saveJSON('results-log', list);
   }
   (p.recipes || []).forEach(r => { const row = upsertRecipe(r); if (row) applied.push('saved “' + row.name + '”'); });
+  (p.labs || []).forEach(r => { const row = upsertLab(r); if (row) applied.push(row.marker + ' ' + row.value + (row.unit || '')); });
+  (p.supplements || []).forEach(r => {
+    const row = upsertSupp(r);
+    if (row) applied.push(row.stopped ? 'stopped ' + row.name : 'taking ' + row.name + (row.dose ? ' ' + row.dose : ''));
+  });
   if (p.logRecipes) [].concat(p.logRecipes).forEach(n => logRecipe(n));
   if (p.profile) saveJSON('coach-profile', Object.assign(loadJSON('coach-profile', {}) || {}, p.profile));
   renderRecipes();
@@ -4469,6 +4930,11 @@ function applyDayRow(row) {
   }
   const changed = [];
   const NAME = { kcalIn: 'cal', protein: 'g protein', veg: ' veg serves', steps: ' steps', sleep: 'h sleep' };
+  if (row.groups && typeof row.groups === 'object') {
+    d.groups = Object.assign({}, d.groups || {}, row.groups);
+    if (row.groups.veg != null) d.veg = row.groups.veg;   // the dial and the group are one number
+    changed.push('food groups');
+  }
   ['kcalIn', 'protein', 'veg', 'note'].forEach(k => {
     if (row[k] != null && d[k] !== row[k]) { d[k] = row[k]; if (NAME[k]) changed.push(row[k] + NAME[k]); }
   });
