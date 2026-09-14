@@ -1337,6 +1337,21 @@
   .wk-note{font-size:11.5px;color:var(--text-dim);margin-top:10px;line-height:1.45;}
   .wk-read{font-size:13px;line-height:1.55;color:var(--text-h);white-space:pre-wrap;}
   .wk-read:empty{display:none;}
+  /* A placeholder showing a real recorded figure should not look like empty state. */
+  #fl-steps.has-val::placeholder, #fl-active.has-val::placeholder,
+  #fl-kcal.has-val::placeholder, #fl-sleep.has-val::placeholder{
+    color:var(--text-h);opacity:1;font-weight:700}
+  .rec-item{border-bottom:1px solid var(--border)}
+  .rec-item:last-child{border-bottom:none}
+  .rec-top{display:flex;align-items:center;gap:8px;padding:10px 0}
+  .rec-name{flex:1;min-width:0;display:flex;align-items:center;gap:7px;text-align:left;
+    background:none;border:none;padding:0;cursor:pointer;font-family:var(--body-f);color:inherit}
+  .rec-title{font-weight:700;color:var(--text-h);font-size:13px}
+  .rec-chev{width:14px;height:14px;flex:none;color:var(--text-dim);transition:transform .15s}
+  .rec-item.open .rec-chev{transform:rotate(90deg)}
+  .rec-detail{display:none;font-size:12px;line-height:1.55;color:var(--text-body);
+    background:var(--bg-soft);border-radius:6px;padding:9px 11px;margin:0 0 10px 21px}
+  .rec-item.open .rec-detail{display:block}
   /* The one action on this page, so it should look like it. */
   .wk-read-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
     margin:12px 0 14px;padding:12px 14px;font-size:13.5px;
@@ -2139,6 +2154,7 @@
       <div class="wk-eta" id="wk-eta"></div>
     </div>
 
+    <div class="wk-sub-label" style="border-top:none;padding-top:0;margin-top:4px;">Daily average</div>
     <div id="wk-bars"></div>
 
     <div class="wk-sub-label">Training</div>
@@ -2281,7 +2297,7 @@
   </div>
 
   <div class="section-label">Food groups</div>
-  <div class="acc-card wk-card">
+  <div class="acc-card wk-card" style="padding:14px 16px 16px;">
     <div id="fg-bars"></div>
   </div>
 
@@ -3106,8 +3122,10 @@ function renderFoodGroups() {
   const vals = dayGroups(viewDate());
   const any = FOOD_GROUPS.some(g => vals[g.key] != null);
   renderGroupBars(document.getElementById('fg-bars'), vals,
-    any ? 'Serves, filled in by the coach from what you log.'
-        : 'Nothing logged yet — these fill in as you tell the coach what you ate.');
+    !any ? 'Nothing logged yet — these fill in as you tell the coach what you ate.'
+    : FOOD_GROUPS.every(g => vals[g.key] != null)
+        ? 'Serves, filled in by the coach from what you log.'
+        : 'Only the groups tagged so far. Tell the coach what else you ate and the rest fill in.');
 }
 const FITNESS_METRICS = [
   { key: 'steps',   name: 'Steps',           unit: '',     decimals: 0, colour: 'var(--arms)',      chart: 'var(--c-steps)',   owned: true },
@@ -3156,7 +3174,31 @@ function initFitnessStats() {
   renderFitnessStats();
   renderFitnessLog();
   const dateEl = document.getElementById('fl-date');
-  if (dateEl) { dateEl.value = todayKey(); dateEl.max = todayKey(); }
+  if (dateEl) {
+    dateEl.value = todayKey(); dateEl.max = todayKey();
+    // Changing the date used to leave the four boxes blank, so the form looked like
+    // that day held nothing even when it was fully logged. Show what is already there.
+    dateEl.addEventListener('change', fillFitnessLogForm);
+  }
+  fillFitnessLogForm();
+}
+/* Put the selected day's existing figures into the form as placeholders — greyed, so
+   they read as "this is what is recorded" rather than as something you just typed.
+   Typing over one still only saves what you typed. */
+function fillFitnessLogForm() {
+  const dateEl = document.getElementById('fl-date');
+  if (!dateEl) return;
+  const d = getFitnessData(dateEl.value || todayKey()) || {};
+  const map = { 'fl-steps': ['steps', 0], 'fl-active': ['active', 0],
+                'fl-kcal': ['kcal', 0], 'fl-sleep': ['sleep', 1] };
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const [key, dec] = map[id];
+    el.value = '';
+    el.placeholder = d[key] != null ? formatNumber(d[key], dec) : '—';
+    el.classList.toggle('has-val', d[key] != null);
+  });
 }
 
 function renderFitnessStats() {
@@ -3802,20 +3844,47 @@ function renderRecipes() {
   const lbl = document.getElementById('recipes-label');
   if (lbl) lbl.textContent = list.length ? `Saved meals (${list.length})` : 'Saved meals';
   if (!list.length) { el.innerHTML = '<div class="log-empty">Nothing saved yet.</div>'; return; }
-  el.innerHTML = list.map(r => {
+  el.innerHTML = list.map((r, i) => {
     const bits = [r.kcalIn != null ? formatNumber(r.kcalIn, 0) + ' cal' : null,
-                  r.protein != null ? formatNumber(r.protein, 0) + 'g' : null,
+                  r.protein != null ? formatNumber(r.protein, 0) + 'g protein' : null,
                   r.veg ? formatNumber(r.veg, 1) + ' veg' : null].filter(Boolean).join(' · ');
-    const nm = r.name.replace(/'/g, "\\'");
-    return `<div class="log-entry" style="align-items:center;">
-      <span style="flex:1;min-width:0;">
-        <span style="font-weight:700;color:var(--text-h);font-size:13px;">${r.name}</span>
-        <span class="le-date" style="display:block;text-transform:none;">${bits}</span>
-      </span>
-      <button class="ghost-btn" onclick="logRecipe('${nm}')">Add</button>
-      <button class="le-del" onclick="deleteRecipe('${nm}')">✕</button>
+    // What it actually IS. "390 cal · 13g" does not tell you which breakfast this was,
+    // which makes a saved meal impossible to verify or correct months later.
+    const groups = r.groups ? FOOD_GROUPS
+      .filter(g => r.groups[g.key]) 
+      .map(g => g.name.toLowerCase() + ' ' + formatNumber(r.groups[g.key], 1)).join(' · ') : '';
+    const detail = [r.note ? esc(r.note) : '', groups].filter(Boolean).join('<br>')
+      || 'No ingredients recorded — tell the coach to save it again with the detail.';
+    return `<div class="rec-item" id="rec-${i}">
+      <div class="rec-top">
+        <button class="rec-name" onclick="toggleRecipe(${i})" aria-expanded="false">
+          <svg class="rec-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          <span>
+            <span class="rec-title">${esc(r.name)}</span>
+            <span class="le-date" style="display:block;text-transform:none;">${bits}</span>
+          </span>
+        </button>
+        <button class="ghost-btn" onclick="logRecipeAt(${i})">Add</button>
+        <button class="le-del" onclick="deleteRecipeAt(${i})">✕</button>
+      </div>
+      <div class="rec-detail">${detail}</div>
     </div>`;
   }).join('');
+}
+function esc(t) {
+  return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+/* Index rather than name, so a meal with an apostrophe in it cannot break the handler. */
+function recipeAt(i) { return getRecipes()[i]; }
+function logRecipeAt(i) { const r = recipeAt(i); if (r) logRecipe(r.name); }
+function deleteRecipeAt(i) { const r = recipeAt(i); if (r) deleteRecipe(r.name); }
+function toggleRecipe(i) {
+  const row = document.getElementById('rec-' + i);
+  if (!row) return;
+  const open = row.classList.toggle('open');
+  const btn = row.querySelector('.rec-name');
+  if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
 }
 
 /* ══════════════════════════════════════════════════════
@@ -4571,7 +4640,8 @@ function renderWeek() {
       + '<div class="wk-note">' + st.logged + ' of 7 days logged'
       + (st.workouts ? ' · ' + st.workouts + ' workout' + (st.workouts === 1 ? '' : 's') : '')
       + (st.kcalIn != null
-          ? ' · averaging ' + formatNumber(maintenance - st.kcalIn, 0) + ' cal/day under maintenance'
+          ? ' · averaging ' + formatNumber(Math.abs(maintenance - st.kcalIn), 0) + ' cal/day '
+            + (st.kcalIn > maintenance ? 'OVER' : 'under') + ' maintenance'
           : '')
       + '. Part-days are left out of these averages.</div>';
   }
@@ -4609,8 +4679,15 @@ function renderWeek() {
       .map(d => dayGroups(d)[g.key]).filter(x => typeof x === 'number');
     gAvg[g.key] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
   });
+  // Only vegetables existed before food groups were added, so older days have one bar
+  // and five dashes. Say that, rather than letting it read as a broken chart.
+  const gotAny = FOOD_GROUPS.some(g => gAvg[g.key] != null);
+  const gotAll = FOOD_GROUPS.every(g => gAvg[g.key] != null);
   renderGroupBars(document.getElementById('wk-fg'), gAvg,
-    FOOD_GROUPS.some(g => gAvg[g.key] != null) ? '' : 'Nothing logged for this week yet.');
+    !gotAny ? 'Nothing logged for this week yet.'
+    : !gotAll ? 'Only the groups the coach has tagged so far. Days logged before food groups '
+              + 'existed carry vegetables alone — ask the coach to fill in a past day and it will.'
+    : '');
 
   const cached = loadJSON('week-read-' + st.start, '');
   const readEl = document.getElementById('wk-read');
@@ -4656,7 +4733,7 @@ async function getWeekRead() {
   }
 }
 function refreshAllViews() {
-  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes(); renderWeek(); renderFoodGroups();
+  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes(); renderWeek(); renderFoodGroups(); fillFitnessLogForm();
   renderWeightChart(); renderSessionStats(); refreshSettingsFields();
 }
 function refreshSettingsFields() {
