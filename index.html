@@ -4015,14 +4015,18 @@ async function clearWatchDay() {
   const date = viewDate();
   const note = document.getElementById('coach-note');
   const d = getFitnessData(date);
-  ['steps', 'active', 'kcal', 'sleep'].forEach(k => delete d[k]);
-  delete d._watch;
+  // Set to null rather than delete. The phone/computer merge is a field-level union,
+  // so a key that is simply absent here gets refilled from the other device's copy —
+  // the clear would undo itself seconds later. An explicit null overwrites instead.
+  ['steps', 'active', 'kcal', 'sleep'].forEach(k => { d[k] = null; });
+  d._watch = false;
   saveFitnessDataForDate(date, d);
   refreshAllViews();
   if (note) { note.textContent = 'Cleared ' + formatDate(date) + ' — re-syncing…'; note.style.color = 'var(--text-dim)'; }
   if (COACH_READY()) {
     try {
       await fetch(COACH_URL() + '/health/reset?date=' + date, { headers: coachHeaders() });
+      await pushState(true);        // publish the cleared day before anything pulls it back
     } catch { /* the phone copy is cleared regardless */ }
   }
   if (note) {
