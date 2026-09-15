@@ -3285,10 +3285,20 @@ function renderEnergy(data, targets) {
   // says which it sent; trust that over the manual setting, because adding resting burn
   // to a total double counts it and adding nothing to an active figure understates the
   // day by about 2,000 calories. The setting still decides when the watch says nothing.
-  const mode = data.burnKind || loadJSON('burn-mode', 'active');
+  let mode = data.burnKind || loadJSON('burn-mode', 'active');
   const rest = restingBurn();
-  const out = data.kcal != null
-    ? (mode === 'active' ? data.kcal + rest : data.kcal)
+  // Samsung often writes Total Energy for only part of a day — 180 cal covering fifteen
+  // minutes. Taken at face value that says he burned 180 calories in 24 hours, which is
+  // impossible: lying still costs about 2,061. Anything below resting burn is a fragment,
+  // not a day, so fall back to the resting estimate and say so.
+  // Samsung writes only fragments of Total Energy into Health Connect — its own app can
+  // show 1,358 for the day while Health Connect holds 180. A "total" below resting burn
+  // is therefore not a total at all; the safest reading is that it is movement on top of
+  // resting, so add it to the resting estimate rather than throwing it away.
+  const partialBurn = mode === 'total' && data.kcal != null && data.kcal < rest;
+  if (partialBurn) mode = 'estimate';
+  const out = mode === 'estimate' ? rest + data.kcal
+    : data.kcal != null ? (mode === 'active' ? data.kcal + rest : data.kcal)
     : null;
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set('bal-in', inK != null ? formatNumber(inK, 0) : '—');
@@ -3296,11 +3306,17 @@ function renderEnergy(data, targets) {
   const oLbl = document.querySelector('#bal-out')?.previousElementSibling;
   if (oLbl) {
     oLbl.textContent = out == null ? 'Out'
+      : mode === 'estimate' ? 'Out (est.)'
       : (mode === 'active' ? 'Out (' + formatNumber(rest, 0) + '+)' : 'Out (total)');
     if (out != null && data.burnKind) oLbl.dataset.auto = '1';
-    oLbl.title = out == null ? '' : (mode === 'active'
-      ? formatNumber(rest, 0) + ' cal resting burn plus what the watch measured'
-      : 'Whole-day figure straight from the watch');
+    oLbl.title = out == null ? ''
+      : mode === 'estimate'
+        ? 'Health Connect holds only ' + formatNumber(data.kcal, 0) + ' cal — far below a day of '
+          + 'resting burn, so it is a fragment of the day rather than a total. Counted as '
+          + 'movement on top of the ' + formatNumber(rest, 0) + ' cal resting estimate.'
+      : mode === 'active'
+        ? formatNumber(rest, 0) + ' cal resting burn plus what the watch measured'
+        : 'Whole-day figure straight from the watch';
   }
   const bar = document.getElementById('bal-bar');
   const net = (inK != null && out != null) ? inK - out : null;
