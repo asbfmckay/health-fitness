@@ -3274,9 +3274,12 @@ function restingBurn() {
 }
 function renderEnergy(data, targets) {
   const inK = data.kcalIn;
-  const mode = loadJSON('burn-mode', 'active');
+  // Samsung sometimes reports Active Energy and sometimes only Total. The worker now
+  // says which it sent; trust that over the manual setting, because adding resting burn
+  // to a total double counts it and adding nothing to an active figure understates the
+  // day by about 2,000 calories. The setting still decides when the watch says nothing.
+  const mode = data.burnKind || loadJSON('burn-mode', 'active');
   const rest = restingBurn();
-  // data.kcal is whatever the watch says; turn it into a whole-day figure
   const out = data.kcal != null
     ? (mode === 'active' ? data.kcal + rest : data.kcal)
     : null;
@@ -3287,6 +3290,7 @@ function renderEnergy(data, targets) {
   if (oLbl) {
     oLbl.textContent = out == null ? 'Out'
       : (mode === 'active' ? 'Out (' + formatNumber(rest, 0) + '+)' : 'Out (total)');
+    if (out != null && data.burnKind) oLbl.dataset.auto = '1';
     oLbl.title = out == null ? '' : (mode === 'active'
       ? formatNumber(rest, 0) + ' cal resting burn plus what the watch measured'
       : 'Whole-day figure straight from the watch');
@@ -4381,6 +4385,9 @@ async function pullSamsung(silent) {
       // The watch owns these four. Everything else on the day is left alone.
       const d = getFitnessData(j.date);
       ['steps', 'active', 'kcal', 'sleep'].forEach(k => { if (j[k] != null) d[k] = j[k]; });
+      // Whether that burn figure is active-only or a whole-day total decides whether
+      // resting burn gets added to it. Guessing wrong is a 2,000 calorie error.
+      if (j.burnKind) d.burnKind = j.burnKind;
       d._watch = true;    // from here on the coach must not overwrite these
       saveFitnessDataForDate(j.date, d);
       if (j.weight != null) {
