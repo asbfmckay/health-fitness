@@ -3205,15 +3205,20 @@ function renderFitnessStats() {
   const data = todayFitnessData();
   const targets = getTargets();
   FITNESS_METRICS.forEach(m => {
-    const value = data[m.key] || 0;
+    // "0" and "nothing recorded" are different facts and must not look identical.
+    // A zero here used to mean either, which made every gap look like a logging failure.
+    const raw = data[m.key];
+    const has = raw != null;
+    const value = has ? raw : 0;
     const target = targets[m.key] || 1;
-    const pct = Math.min(100, Math.round((value / target) * 100));
+    const pct = has ? Math.min(100, Math.round((value / target) * 100)) : 0;
     const ringEl = document.getElementById(m.key + '-ring');
     const labelEl = document.getElementById(m.key + '-target-label');
     // calories in is a ceiling, not a goal — a full ring should not read as success
-    const over = m.ceiling && value > target;
+    const over = m.ceiling && has && value > target;
     if (ringEl) {
-      ringEl.innerHTML = makeRingSVG(pct, formatNumber(value, m.decimals), over ? 'var(--chest)' : m.colour);
+      ringEl.innerHTML = makeRingSVG(pct, has ? formatNumber(value, m.decimals) : '—',
+                                     over ? 'var(--chest)' : m.colour);
       ringEl.onclick = () => openHistory(m.key);
       ringEl.title = 'Tap for history';
     }
@@ -3240,8 +3245,8 @@ function renderEnergy(data, targets) {
     ? (mode === 'active' ? data.kcal + rest : data.kcal)
     : null;
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('bal-in', inK ? formatNumber(inK, 0) : '—');
-  set('bal-out', out ? formatNumber(out, 0) : '—');
+  set('bal-in', inK != null ? formatNumber(inK, 0) : '—');
+  set('bal-out', out != null ? formatNumber(out, 0) : '—');
   const oLbl = document.querySelector('#bal-out')?.previousElementSibling;
   if (oLbl) {
     oLbl.textContent = out == null ? 'Out'
