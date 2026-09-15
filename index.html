@@ -1450,8 +1450,15 @@
      scrolling underneath it. */
   .vis-hidden{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;
     overflow:hidden;clip:rect(0 0 0 0)}
-  .chat-full{display:flex;flex-direction:column;margin:0 16px;
-    height:calc(100dvh - var(--chrome, 190px));min-height:320px}
+  .chat-full{display:flex;flex-direction:column;margin:0 16px;min-height:240px}
+  /* Coach fills the screen exactly, so nothing behind it can scroll. */
+  body.coach-open{overflow:hidden}
+  body.coach-open #page-coach{padding-bottom:0}
+  /* The greeting is worth 80px of chat on a phone. Keep the logo row, drop the rest
+     while Coach is open — the tab bar already says where you are. */
+  body.coach-open .page-title,
+  body.coach-open .page-rule{display:none}
+  body.coach-open .page-header{padding-bottom:6px}
   .chat-full .chat-log{flex:1;max-height:none;min-height:0}
   .chat-full .chat-compose{position:sticky;bottom:0;
     padding-bottom:calc(10px + env(safe-area-inset-bottom))}
@@ -2534,16 +2541,25 @@ function showDay(id, btn) {
   btn.classList.add('active');
 }
 
-/* The compose bar can only sit on the bottom edge if the chat knows how much of the
-   screen the header and tab bar are using. Measured rather than guessed, because the
-   header height changes with the greeting text. */
+/* Measure where the chat card actually starts and give it exactly the rest of the
+   screen. Adding up header and nav heights was a guess that left the compose bar a
+   little past the bottom edge, so the whole page scrolled to reach it.
+   visualViewport is the one that shrinks when the keyboard opens — innerHeight does not
+   on Android, which is why a typed message used to push the send button out of reach. */
 function sizeChat() {
-  const head = document.querySelector('.page-header');
-  const nav = document.querySelector('.page-nav-wrap');
-  const chrome = (head ? head.offsetHeight : 0) + (nav ? nav.offsetHeight : 0) + 28;
-  document.documentElement.style.setProperty('--chrome', chrome + 'px');
+  const card = document.querySelector('.chat-full');
+  if (!card || !document.getElementById('page-coach').classList.contains('active')) return;
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const top = card.getBoundingClientRect().top + (window.scrollY || 0);
+  const gap = 10;                       // breathing room under the compose bar
+  card.style.height = Math.max(240, vh - top - gap) + 'px';
 }
 window.addEventListener('resize', sizeChat);
+window.addEventListener('orientationchange', () => setTimeout(sizeChat, 150));
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', sizeChat);
+  window.visualViewport.addEventListener('scroll', sizeChat);
+}
 function showPage(id) {
   document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.page-btn').forEach(el => el.classList.remove('active'));
@@ -2551,8 +2567,15 @@ function showPage(id) {
   const btn = document.querySelector(`.page-btn[data-page="${id}"]`);
   if (btn) btn.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'instant' });
-  if (id === 'coach') { sizeChat(); const box = document.getElementById('chat-log');
-    if (box) box.scrollTop = box.scrollHeight; }
+  document.body.classList.toggle('coach-open', id === 'coach');
+  if (id === 'coach') {
+    // Two frames: one for the class to apply, one for layout to settle before measuring.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      sizeChat();
+      const box = document.getElementById('chat-log');
+      if (box) box.scrollTop = box.scrollHeight;
+    }));
+  }
   if (id === 'review') renderWeek();
   if (id === 'hf') renderFoodGroups();
 }
@@ -2971,7 +2994,8 @@ function initTrackers() {
     const part = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
     greetingEl.textContent = `Good ${part}, Andrew`;
   }
-  sizeChat();
+  document.body.classList.add('coach-open');   // Coach is the landing tab
+  requestAnimationFrame(() => requestAnimationFrame(sizeChat));
   // Installable app rather than a browser tab. Only over https — on file:// this is
   // simply skipped rather than throwing.
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
