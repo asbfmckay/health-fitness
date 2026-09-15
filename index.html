@@ -2956,6 +2956,7 @@ function genId() {
 }
 
 function initTrackers() {
+  repairFutureDays();     // before any render, or the first paint shows the stranded state
   initSettings();
   initAfd();
   initFitnessStats();
@@ -3153,6 +3154,29 @@ function todayFitnessData() {
   return loadJSON('fitness-' + viewDate(), {});
 }
 
+/* Days already written to a future date are stranded — nothing displays them. Fold each
+   one back into today, field by field, taking only what today does not already hold so a
+   real figure is never overwritten by a stray one. Runs once per future day found. */
+function repairFutureDays() {
+  const today = todayKey();
+  let moved = [];
+  Object.keys(localStorage).forEach(k => {
+    if (!k.startsWith('fitness-')) return;
+    const date = k.slice(8);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date <= today) return;
+    const src = loadJSON(k, {}) || {};
+    const dst = getFitnessData(today) || {};
+    ['kcalIn', 'protein', 'veg', 'note'].forEach(f => {
+      if (src[f] != null && dst[f] == null) dst[f] = src[f];
+    });
+    if (src.groups) dst.groups = Object.assign({}, src.groups, dst.groups || {});
+    saveFitnessDataForDate(today, dst);
+    localStorage.removeItem(k);
+    moved.push(date);
+  });
+  if (moved.length) console.log('[health] moved food logged to ' + moved.join(', ') + ' back to ' + today);
+  return moved;
+}
 function getFitnessData(date) {
   return loadJSON('fitness-' + date, {});
 }
@@ -5033,12 +5057,14 @@ function applyCoachPatch(p) {
 /* one day. Watch-owned fields are only written when the day has none of its own,
    so a handover can seed history without stamping on anything the watch reported. */
 function applyDayRow(row) {
-  // Guard against the coach guessing a date. Anything not a real YYYY-MM-DD, or more
-  // than a year out, becomes today — otherwise the write lands on a day you never look at.
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(row.date || '') ||
-      Math.abs(new Date(row.date + 'T00:00:00') - new Date(todayKey() + 'T00:00:00')) > 366 * 864e5) {
-    row = Object.assign({}, row, { date: todayKey() });
-  }
+  // Guard against the coach guessing a date. Anything not a real YYYY-MM-DD, more than a
+  // year out, or IN THE FUTURE becomes today. The future case is the one that bit: a meal
+  // logged to tomorrow disappears from the dials entirely — they read today, today is
+  // empty, and it looks exactly like the logging failed.
+  const bad = !/^\d{4}-\d{2}-\d{2}$/.test(row.date || '')
+    || row.date > todayKey()
+    || Math.abs(new Date(row.date + 'T00:00:00') - new Date(todayKey() + 'T00:00:00')) > 366 * 864e5;
+  if (bad) row = Object.assign({}, row, { date: todayKey() });
   const d = getFitnessData(row.date);
   // Older worker prompts called eaten calories "kcal", which collides with the watch's
   // burned figure. If a patch looks like food (protein / veg / note present) and carries
