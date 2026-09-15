@@ -3250,7 +3250,10 @@ function renderFitnessStats() {
   FITNESS_METRICS.forEach(m => {
     // "0" and "nothing recorded" are different facts and must not look identical.
     // A zero here used to mean either, which made every gap look like a logging failure.
-    const raw = data[m.key];
+    let raw = data[m.key];
+    // Calories Burned is a whole-day dial with a whole-day target, so it must show the
+    // whole day — not the activity fragment the watch happened to record.
+    if (m.key === 'kcal') raw = dayBurn(data).total;
     const has = raw != null;
     const value = has ? raw : 0;
     const target = targets[m.key] || 1;
@@ -3265,7 +3268,17 @@ function renderFitnessStats() {
       ringEl.onclick = () => openHistory(m.key);
       ringEl.title = 'Tap for history';
     }
-    if (labelEl) labelEl.textContent = '/ ' + formatNumber(target, m.decimals) + (m.key === 'sleep' ? 'h' : m.unit);
+    if (labelEl) {
+      let txt = '/ ' + formatNumber(target, m.decimals) + (m.key === 'sleep' ? 'h' : m.unit);
+      if (m.key === 'kcal' && has) {
+        const b = dayBurn(data);
+        // Name where the number came from, so a large total built on a small measurement
+        // is never mistaken for a large measurement.
+        txt += b.measuredOnly ? ' · from watch'
+             : ' · ' + formatNumber(b.activity, 0) + ' active + ' + formatNumber(b.rest, 0) + ' resting';
+      }
+      labelEl.textContent = txt;
+    }
   });
   renderEnergy(data, targets);
 }
@@ -3279,27 +3292,27 @@ function restingBurn() {
   const age = new Date().getFullYear() - (p.birthYear || 1992);
   return Math.round(10 * w + 6.25 * (p.heightCm || 186) - 5 * age + 5);
 }
+/* What a day's burn actually was. ONE function, because the Calories Burned dial and
+   the Energy tile were working it out separately and showing different numbers for the
+   same day — 180 on one, 2,248 on the other. */
+function dayBurn(data) {
+  const rest = restingBurn();
+  const raw = data.kcal;
+  // Samsung sometimes reports Active Energy, sometimes only Total. The worker says which,
+  // and that beats the manual setting: adding resting burn to a real total double counts
+  // it, and not adding it to an active figure understates the day by about 2,000.
+  let mode = data.burnKind || loadJSON('burn-mode', 'active');
+  // But Samsung writes only FRAGMENTS of Total Energy into Health Connect — its own app
+  // shows 1,358 while Health Connect holds 180. A "total" below resting burn is therefore
+  // a piece of the day, not a day, so read it as movement on top of resting.
+  if (mode === 'total' && raw != null && raw < rest) mode = 'estimate';
+  const total = raw == null ? null : (mode === 'total' ? raw : raw + rest);
+  return { total, activity: raw, rest, mode, measuredOnly: mode === 'total' };
+}
 function renderEnergy(data, targets) {
   const inK = data.kcalIn;
-  // Samsung sometimes reports Active Energy and sometimes only Total. The worker now
-  // says which it sent; trust that over the manual setting, because adding resting burn
-  // to a total double counts it and adding nothing to an active figure understates the
-  // day by about 2,000 calories. The setting still decides when the watch says nothing.
-  let mode = data.burnKind || loadJSON('burn-mode', 'active');
-  const rest = restingBurn();
-  // Samsung often writes Total Energy for only part of a day — 180 cal covering fifteen
-  // minutes. Taken at face value that says he burned 180 calories in 24 hours, which is
-  // impossible: lying still costs about 2,061. Anything below resting burn is a fragment,
-  // not a day, so fall back to the resting estimate and say so.
-  // Samsung writes only fragments of Total Energy into Health Connect — its own app can
-  // show 1,358 for the day while Health Connect holds 180. A "total" below resting burn
-  // is therefore not a total at all; the safest reading is that it is movement on top of
-  // resting, so add it to the resting estimate rather than throwing it away.
-  const partialBurn = mode === 'total' && data.kcal != null && data.kcal < rest;
-  if (partialBurn) mode = 'estimate';
-  const out = mode === 'estimate' ? rest + data.kcal
-    : data.kcal != null ? (mode === 'active' ? data.kcal + rest : data.kcal)
-    : null;
+  const burn = dayBurn(data);
+  const mode = burn.mode, rest = burn.rest, out = burn.total;
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set('bal-in', inK != null ? formatNumber(inK, 0) : '—');
   set('bal-out', out != null ? formatNumber(out, 0) : '—');
