@@ -3171,10 +3171,17 @@ function repairFutureDays() {
     });
     if (src.groups) dst.groups = Object.assign({}, src.groups, dst.groups || {});
     saveFitnessDataForDate(today, dst);
-    localStorage.removeItem(k);
+    // Do NOT delete the key. The phone/computer merge is a field-level union, so a day
+    // that simply vanishes here is restored from the other device's copy within seconds.
+    // An explicit set of nulls overwrites instead, and survives the round trip.
+    saveFitnessDataForDate(date, { kcalIn: null, protein: null, veg: null,
+                                   note: null, groups: null, _movedTo: today });
     moved.push(date);
   });
-  if (moved.length) console.log('[health] moved food logged to ' + moved.join(', ') + ' back to ' + today);
+  if (moved.length) {
+    console.log('[health] moved food logged to ' + moved.join(', ') + ' back to ' + today);
+    if (typeof COACH_READY === 'function' && COACH_READY()) pushState(true);
+  }
   return moved;
 }
 function getFitnessData(date) {
@@ -3361,7 +3368,11 @@ function getFitnessLogDates() {
     const k = localStorage.key(i);
     if (k && k.startsWith('fitness-')) {
       const date = k.replace('fitness-', '');
-      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) out.push(date);
+      // Future dates are always wrong, and a repaired one is an empty shell. Neither
+      // belongs in a log of days you actually lived.
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date > todayKey()) continue;
+      const d = loadJSON(k, {}) || {};
+      if (Object.keys(d).some(f => !f.startsWith('_') && d[f] != null)) out.push(date);
     }
   }
   return out.sort((a, b) => b.localeCompare(a));
