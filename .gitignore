@@ -1,0 +1,9 @@
+# Working files that are not part of the deployed site.
+# Without this, every screenshot and superseded copy shows up in GitHub Desktop
+# as an uncommitted change and the real changes get lost in the noise.
+Claude outputs/
+
+# Windows / editor litter
+Thumbs.db
+desktop.ini
+*.bak

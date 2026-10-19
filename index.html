@@ -1154,6 +1154,26 @@
   .connect-status.linked { background: rgba(92,122,31,0.14); color: var(--green); }
 
   /* ══════════ Workout timer card (inline, sits under the last exercise) ══════════ */
+  /* Timer sits in the day band, not in a card of its own at the foot of the page. */
+  .timer-strip {
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px solid var(--border);
+  }
+  .timer-strip-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .timer-strip .timer-display { font-size: 23px; line-height: 1.1; }
+  .timer-strip .timer-actions { flex: 1; max-width: 230px; }
+  .timer-strip .timer-btn { padding: 10px 12px; font-size: 12.5px; }
+  .timer-strip .timer-logged-msg { margin-top: 9px; }
+  @media (max-width: 360px) {
+    .timer-strip-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .timer-strip .timer-actions { max-width: none; }
+  }
   .timer-card {
     margin: 0 16px 12px;
     background: var(--bg-card);
@@ -1661,12 +1681,12 @@
 <div class="page-header">
   <div class="header-top">
     <a href="https://asbfmckay.github.io/home" class="home-icon" aria-label="Home">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <rect x="7.5" y="10.6" width="9" height="2.8" rx="0.4" fill="var(--lime)"/>
-        <rect x="1.5" y="5.5" width="3.6" height="13" rx="1.4" fill="var(--lime)"/>
-        <rect x="18.9" y="5.5" width="3.6" height="13" rx="1.4" fill="var(--lime)"/>
-        <rect x="5.3" y="8" width="2.4" height="8" rx="0.8" fill="var(--lime)"/>
-        <rect x="16.3" y="8" width="2.4" height="8" rx="0.8" fill="var(--lime)"/>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
+           stroke="var(--lime)" stroke-linecap="round">
+        <path d="M 8.75 18.59 A 7.56 7.56 0 0 1 13.38 4.34" stroke-width="2.1"/>
+        <path d="M 15.25 4.95 A 7.56 7.56 0 0 1 10.62 19.20" stroke-width="2.1"/>
+        <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
+              stroke-width="1.42" stroke-linejoin="round"/>
       </svg>
     </a>
     <span class="header-eyebrow">Health &amp; Fitness</span>
@@ -1695,6 +1715,18 @@
     <button class="day-btn" onclick="showDay('thu',this)"><span class="dn">THU</span><span class="df">Core &amp;<br>Cardio</span></button>
     <button class="day-btn" onclick="showDay('fri',this)"><span class="dn">FRI</span><span class="df">Full Body<br>HIIT</span></button>
   </div>
+</div>
+
+<!-- Lives inside the active day's header band; moved there by showDay(). -->
+<div class="timer-strip" id="timer-strip">
+  <div class="timer-strip-row">
+    <div>
+      <div class="timer-label">Workout Timer</div>
+      <div class="timer-display" id="timer-display">00:00</div>
+    </div>
+    <div class="timer-actions" id="timer-actions"></div>
+  </div>
+  <div class="timer-logged-msg" id="timer-logged-msg">✓ Session logged</div>
 </div>
 
 <!-- ══════════ MON ══════════ -->
@@ -2082,16 +2114,6 @@
   </div>
 </div>
 <!-- ══════════ END TRAINING DAYS ══════════ -->
-
-<div class="section-label">Log This Session</div>
-<div class="timer-card">
-  <div class="timer-top-row">
-    <div class="timer-label">Workout Timer</div>
-    <div class="timer-display" id="timer-display">00:00</div>
-  </div>
-  <div class="timer-actions" id="timer-actions"></div>
-  <div class="timer-logged-msg" id="timer-logged-msg">✓ Session logged</div>
-</div>
 
 <div class="settings-link-wrap">
   <button class="settings-link" onclick="showPage('settings')">
@@ -2539,6 +2561,15 @@ function showDay(id, btn) {
   document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('day-' + id).classList.add('active');
   btn.classList.add('active');
+  placeTimer();
+}
+/* Put the timer inside the day band you are looking at, under the day's meta line.
+   Moving the one element keeps a single timer-display / timer-actions pair, so the
+   session code needs no changes and a running timer survives switching days. */
+function placeTimer() {
+  const strip = document.getElementById('timer-strip');
+  const head = document.querySelector('.day-view.active .day-header');
+  if (strip && head && strip.parentElement !== head) head.appendChild(strip);
 }
 
 /* Measure where the chat card actually starts and give it exactly the rest of the
@@ -2985,6 +3016,7 @@ function initTrackers() {
   initFitnessStats();
   initResultsLog();
   initTimer();
+  placeTimer();          // seat it in Monday's band on first load
   initCoach();
   renderWeek();
   renderFoodGroups();
