@@ -2,7 +2,7 @@
    Network-first for the app shell: a stale cached index.html after a deploy is far
    more confusing than a second's wait, so the network wins whenever it is there and
    the cache exists only so the app opens at all when it is not. */
-const CACHE = 'hf-v1';
+const CACHE = 'hf-v2';
 const SHELL = ['./', './index.html', './manifest.json',
                './icon-192.png', './icon-512.png', './icon-maskable.png'];
 

@@ -1154,6 +1154,90 @@
   .connect-status.linked { background: rgba(92,122,31,0.14); color: var(--green); }
 
   /* ══════════ Workout timer card (inline, sits under the last exercise) ══════════ */
+  /* ══════════ Quick circuit ══════════ */
+  .circuit-card{padding:14px 16px 6px}
+  .circuit-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .circuit-name{font-family:var(--display);font-size:17px;font-weight:700;color:var(--text-h)}
+  .circuit-meta{font-size:12px;color:var(--text-dim);margin-top:3px}
+  .circuit-top .solid-btn{flex:none;padding:11px 20px}
+  /* The runner takes the whole screen: mid-circuit you are looking at it from the floor,
+     so the clock has to be readable at arm's length and nothing else should compete. */
+  .circuit-run{position:fixed;inset:0;z-index:300;background:var(--green-deep);color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:10px;padding:24px;text-align:center}
+  .circuit-run[hidden]{display:none}
+  .circuit-run.resting{background:#10233a}
+  .circuit-close{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;
+    width:40px;height:40px;border-radius:10px;border:none;background:rgba(255,255,255,.12);
+    color:#fff;font-size:22px;line-height:1;cursor:pointer}
+  .circuit-round{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;color:rgba(255,255,255,.55)}
+  .circuit-phase{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--lime)}
+  .circuit-img{width:min(260px,62%);max-height:34vh;object-fit:contain;border-radius:12px;
+    background:rgba(255,255,255,.06)}
+  .circuit-img[hidden]{display:none}
+  /* With a photo on screen the clock gives up some height rather than pushing the
+     buttons off the bottom. */
+  .circuit-run.has-img .circuit-clock{font-size:60px}
+  .circuit-run.has-img .circuit-now{font-size:20px;margin-top:2px}
+  .circuit-thumb{width:46px;height:46px;flex:none;border-radius:8px;object-fit:cover;
+    border:1.5px solid var(--border);background:var(--bg-soft);cursor:pointer}
+  .circuit-add{width:46px;height:46px;flex:none;border-radius:8px;cursor:pointer;
+    border:1.5px dashed var(--border-md);background:var(--bg-soft);color:var(--text-dim);
+    display:grid;place-items:center;font-size:18px;line-height:1}
+  .circuit-clock{font-family:var(--mono);font-size:98px;font-weight:800;line-height:1;
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .circuit-bar{width:min(320px,80%);height:6px;border-radius:3px;background:rgba(255,255,255,.16);
+    overflow:hidden}
+  .circuit-bar-fill{height:100%;background:var(--lime);border-radius:3px;width:100%}
+  .circuit-now{font-family:var(--display);font-size:25px;font-weight:700;line-height:1.2;
+    margin-top:6px;max-width:16ch}
+  .circuit-next{font-size:13px;color:rgba(255,255,255,.55)}
+  .circuit-actions{display:flex;gap:10px;margin-top:18px;width:min(320px,80%)}
+  .circuit-actions .timer-btn{flex:1}
+  @media (max-height:640px){ .circuit-clock{font-size:76px} .circuit-now{font-size:21px} }
+  /* ══════════ Weekly plan ══════════ */
+  .plan-nudge{display:flex;align-items:center;gap:12px;justify-content:space-between;
+    margin:0 16px 12px;padding:13px 15px;border-radius:8px;
+    background:var(--green-deep);color:#fff;box-shadow:0 4px 16px rgba(23,27,46,.14)}
+  .plan-nudge[hidden]{display:none}
+  .plan-nudge-title{font-weight:700;font-size:14px;color:var(--lime)}
+  .plan-nudge-sub{font-size:12px;color:rgba(255,255,255,.72);margin-top:2px;line-height:1.4}
+  .plan-nudge .solid-btn{flex:none}
+  .plan-card{padding:6px 16px 16px}
+  .plan-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
+  .plan-row:last-of-type{border-bottom:none}
+  .plan-day{width:34px;flex:none;font-family:var(--mono);font-size:11px;font-weight:700;
+    letter-spacing:.06em;color:var(--text-dim);text-transform:uppercase}
+  .plan-row.is-today .plan-day{color:var(--lime-dark)}
+  .plan-pick{flex:1;min-width:0;display:flex;gap:6px}
+  .plan-pick select,.plan-pick input{min-width:0;background:var(--bg-soft);
+    border:1.5px solid var(--border);border-radius:7px;padding:8px 8px;
+    font-family:var(--body-f);font-size:13px;color:var(--text-h);outline:none;height:38px}
+  .plan-pick select{flex:1}
+  .plan-pick input{width:74px;flex:none;text-align:center}
+  .plan-pick input::placeholder{color:var(--text-dim)}
+  /* Once committed the plan is a commitment, not a form — it stops looking editable. */
+  .plan-card.locked .plan-pick select,.plan-card.locked .plan-pick input{
+    background:none;border-color:transparent;padding-left:0;pointer-events:none;
+    -webkit-appearance:none;appearance:none;font-weight:700}
+  .plan-card.locked .plan-row.rest .plan-pick{opacity:.45}
+  .plan-card.locked .plan-row.rest .plan-pick input{display:none}
+  .plan-tick{flex:none;width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border-md);
+    background:var(--bg-soft);display:grid;place-items:center;cursor:pointer;color:var(--text-dim)}
+  .plan-tick svg{width:17px;height:17px}
+  .plan-tick.done{background:var(--lime);border-color:var(--lime);color:var(--green-deep)}
+  .plan-tick[hidden]{display:none}
+  .plan-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:14px;padding-top:13px;border-top:1px solid var(--border)}
+  .plan-progress{font-size:12.5px;color:var(--text-dim);line-height:1.45}
+  .plan-progress b{color:var(--text-h)}
+  @media (max-width:380px){
+    .plan-pick input{width:62px}
+    .plan-foot{flex-direction:column;align-items:stretch}
+    .plan-foot .solid-btn{width:100%}
+  }
   /* Timer sits in the day band, not in a card of its own at the foot of the page. */
   .timer-strip {
     margin-top: 16px;
@@ -1705,7 +1789,60 @@
   </div>
 </div>
 
+<div class="circuit-run" id="circuit-run" hidden>
+  <button class="circuit-close" onclick="quitCircuit()" aria-label="Quit">&times;</button>
+  <div class="circuit-round" id="circuit-round">Round 1 of 4</div>
+  <div class="circuit-phase" id="circuit-phase">Get ready</div>
+  <img class="circuit-img" id="circuit-img" alt="" hidden>
+  <div class="circuit-clock" id="circuit-clock">10</div>
+  <div class="circuit-bar"><div class="circuit-bar-fill" id="circuit-bar"></div></div>
+  <div class="circuit-now" id="circuit-now">Goblet Squat</div>
+  <div class="circuit-next" id="circuit-next">Next: Press Up</div>
+  <div class="circuit-actions">
+    <button class="timer-btn pause-btn" id="circuit-pause" onclick="toggleCircuitPause()">Pause</button>
+    <button class="timer-btn resume-btn" onclick="skipCircuitStep()">Skip</button>
+  </div>
+</div>
 <div id="page-workout" class="page-section">
+
+<div id="plan-nudge" class="plan-nudge" hidden>
+  <div>
+    <div class="plan-nudge-title">Plan next week</div>
+    <div class="plan-nudge-sub">It&rsquo;s Friday — set what you&rsquo;re doing Saturday to Friday.</div>
+  </div>
+  <button class="solid-btn" onclick="planWeek(1)">Plan it</button>
+</div>
+
+<div class="section-label">Quick circuit</div>
+<div class="acc-card circuit-card">
+  <div class="circuit-top">
+    <div>
+      <div class="circuit-name">Full Body Circuit</div>
+      <div class="circuit-meta">9 exercises &middot; 4 rounds &middot; ~20 min</div>
+    </div>
+    <button class="solid-btn" onclick="startCircuit()">Start</button>
+  </div>
+  <details class="acc">
+    <summary class="acc-sum"><span>The nine</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div id="circuit-list" class="log-list"></div>
+  </details>
+</div>
+
+<div class="section-label" id="plan-label">This week&rsquo;s plan</div>
+<div class="acc-card plan-card">
+  <div class="wk-nav">
+    <button class="ghost-btn wk-arrow" onclick="stepPlan(-1)" aria-label="Previous week">&lsaquo;</button>
+    <div class="wk-range" id="plan-range">—</div>
+    <button class="ghost-btn wk-arrow" onclick="stepPlan(1)" aria-label="Next week">&rsaquo;</button>
+  </div>
+  <div id="plan-rows"></div>
+  <div class="plan-foot">
+    <div class="plan-progress" id="plan-progress"></div>
+    <button class="solid-btn" id="plan-commit" onclick="commitPlan()">Commit to this week</button>
+  </div>
+</div>
 
 <div class="week-nav-wrap">
   <div class="week-nav">
@@ -2550,6 +2687,392 @@
 </div><!-- /page-settings -->
 
 <script>
+/* ══════════════════════════════════════════════════════
+   QUICK CIRCUIT — nine exercises, four rounds, 20 seconds on. The whole point is
+   that you never touch the phone once it starts, so it runs itself: work, rest,
+   next, round, finished. It logs a session at the end, which ticks the week's plan.
+   ══════════════════════════════════════════════════════ */
+const CIRCUIT = {
+  name: 'Full Body Circuit',
+  rounds: 4,
+  work: 20,
+  rest: 15,          // the programme says 10–20; the middle of that
+  roundRest: 50,     // after the last exercise of a round (programme says 40–60)
+  leadIn: 10,
+  moves: [
+    { name: 'Goblet Squat',            note: 'Dumbbell at chest, sit between the heels' },
+    { name: 'Press Up',                note: 'Hands under shoulders, body in one line' },
+    { name: 'Scissor Kicks',           note: 'Lower back pressed into the floor' },
+    { name: 'Standing Shoulder Press', note: 'Neutral grip, ribs down' },
+    { name: 'Bent Over Row',           note: 'Neutral grip, hinge at the hips' },
+    { name: 'Bench Dips',              note: 'Elbows back, not flared' },
+    { name: 'Bicep Curl',              note: 'Standing, elbows pinned to the ribs' },
+    { name: 'Jumping Jacks',           note: 'Soft knees, keep the pace honest' },
+    { name: 'Crunch',                  note: 'Last one — then a longer rest' }
+  ]
+};
+let CIRC = null, CIRC_TICK = null, CIRC_WAKE = null;
+
+function renderCircuitList() {
+  const el = document.getElementById('circuit-list');
+  if (!el) return;
+  el.innerHTML = CIRCUIT.moves.map((m, i) =>
+    '<div class="log-entry" style="align-items:center;gap:10px;">'
+    + '<img class="circuit-thumb" id="cthumb-' + i + '" hidden alt="" onclick="pickCircuitImage(' + i + ')">'
+    + '<button class="circuit-add" id="cadd-' + i + '" onclick="pickCircuitImage(' + i + ')"'
+    +   ' title="Add a photo">+</button>'
+    + '<span style="flex:1;min-width:0;">'
+    +   '<span style="font-weight:700;color:var(--text-h);font-size:13px;">' + esc(m.name) + '</span>'
+    +   '<span class="le-date" style="display:block;text-transform:none;">' + esc(m.note) + '</span>'
+    + '</span>'
+    + '<span class="le-date">' + CIRCUIT.work + 's</span>'
+    + '</div>').join('')
+    + '<div class="wk-note">' + CIRCUIT.rounds + ' rounds &middot; ' + CIRCUIT.work + 's on, '
+    + CIRCUIT.rest + 's off &middot; ' + CIRCUIT.roundRest + 's between rounds.</div>';
+}
+
+/* Photos live in the same IndexedDB store the exercise cards use, keyed by move name
+   so they survive the move being reordered or the circuit being edited. Downscaled on
+   the way in — a full-resolution photo per exercise would fill the store for nothing. */
+const circuitImageKey = name => 'circuit:' + name;
+function pickCircuitImage(i) {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0];
+    if (!f || !f.type.startsWith('image/')) return;
+    const dataUrl = await downscaleImage(f, 900, 0.8);
+    await saveExerciseImage(circuitImageKey(CIRCUIT.moves[i].name), dataUrl);
+    paintCircuitThumbs();
+  };
+  inp.click();
+}
+async function paintCircuitThumbs() {
+  for (let i = 0; i < CIRCUIT.moves.length; i++) {
+    const img = document.getElementById('cthumb-' + i);
+    const add = document.getElementById('cadd-' + i);
+    if (!img || !add) continue;
+    const data = await getExerciseImage(circuitImageKey(CIRCUIT.moves[i].name));
+    img.src = data || ''; img.hidden = !data; add.hidden = !!data;
+  }
+}
+async function showCircuitImage(name) {
+  const el = document.getElementById('circuit-img');
+  const run = document.getElementById('circuit-run');
+  if (!el) return;
+  const data = name ? await getExerciseImage(circuitImageKey(name)) : null;
+  el.src = data || ''; el.hidden = !data;
+  if (run) run.classList.toggle('has-img', !!data);
+}
+
+/* The whole session as a flat list of steps, built once so the runner only has to
+   walk an index — no arithmetic mid-circuit about where it is up to. */
+function buildCircuitSteps() {
+  const steps = [{ kind: 'ready', secs: CIRCUIT.leadIn, name: 'Get ready', round: 1, idx: 0 }];
+  for (let r = 1; r <= CIRCUIT.rounds; r++) {
+    CIRCUIT.moves.forEach((m, i) => {
+      steps.push({ kind: 'work', secs: CIRCUIT.work, name: m.name, note: m.note, round: r, idx: i });
+      const last = i === CIRCUIT.moves.length - 1;
+      if (last && r === CIRCUIT.rounds) return;              // nothing after the final move
+      steps.push({ kind: 'rest', secs: last ? CIRCUIT.roundRest : CIRCUIT.rest,
+                   name: last ? 'Round done' : 'Rest', round: r, idx: i });
+    });
+  }
+  return steps;
+}
+function circuitTotalSecs() { return buildCircuitSteps().reduce((a, st) => a + st.secs, 0); }
+
+async function startCircuit() {
+  CIRC = { steps: buildCircuitSteps(), i: 0, left: 0, paused: false, elapsed: 0 };
+  CIRC.left = CIRC.steps[0].secs;
+  const el = document.getElementById('circuit-run');
+  if (el) el.hidden = false;
+  // Keep the screen on — a circuit where the phone locks at exercise three is useless.
+  try { if ('wakeLock' in navigator) CIRC_WAKE = await navigator.wakeLock.request('screen'); } catch (_) {}
+  renderCircuit();
+  clearInterval(CIRC_TICK);
+  CIRC_TICK = setInterval(circuitTick, 1000);
+}
+function circuitTick() {
+  if (!CIRC || CIRC.paused) return;
+  CIRC.left--;
+  CIRC.elapsed++;
+  if (CIRC.left <= 3 && CIRC.left > 0) cue('tick');
+  if (CIRC.left <= 0) {
+    CIRC.i++;
+    if (CIRC.i >= CIRC.steps.length) return finishCircuit();
+    CIRC.left = CIRC.steps[CIRC.i].secs;
+    cue(CIRC.steps[CIRC.i].kind === 'work' ? 'go' : 'stop');
+  }
+  renderCircuit();
+}
+function skipCircuitStep() {
+  if (!CIRC) return;
+  CIRC.i++;
+  if (CIRC.i >= CIRC.steps.length) return finishCircuit();
+  CIRC.left = CIRC.steps[CIRC.i].secs;
+  renderCircuit();
+}
+function toggleCircuitPause() {
+  if (!CIRC) return;
+  CIRC.paused = !CIRC.paused;
+  const b = document.getElementById('circuit-pause');
+  if (b) b.textContent = CIRC.paused ? 'Resume' : 'Pause';
+}
+function renderCircuit() {
+  if (!CIRC) return;
+  const st = CIRC.steps[CIRC.i];
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('circuit-clock', CIRC.left);
+  set('circuit-round', 'Round ' + st.round + ' of ' + CIRCUIT.rounds);
+  set('circuit-phase', st.kind === 'work' ? 'Work' : st.kind === 'ready' ? 'Get ready' : 'Rest');
+  set('circuit-now', st.kind === 'work' ? st.name : (CIRC.steps[CIRC.i + 1] || {}).name || 'Finished');
+  const nxt = CIRC.steps.slice(CIRC.i + 1).find(x => x.kind === 'work');
+  set('circuit-next', st.kind === 'work'
+    ? (st.note || '')
+    : nxt ? 'Up next after this' : 'Last one');
+  const bar = document.getElementById('circuit-bar');
+  if (bar) bar.style.width = Math.max(0, (CIRC.left / st.secs) * 100) + '%';
+  const run = document.getElementById('circuit-run');
+  if (run) run.classList.toggle('resting', st.kind !== 'work');
+  // During a rest, show the move that is coming up — that is when you want to see it.
+  const show = st.kind === 'work' ? st.name : (nxt || {}).name;
+  if (show !== CIRC.shownImage) { CIRC.shownImage = show; showCircuitImage(show); }
+}
+/* A short vibration beats a beep: it works with the phone face-down on the floor
+   and does not need audio permission. Silently ignored where unsupported. */
+function cue(kind) {
+  try {
+    if (!navigator.vibrate) return;
+    navigator.vibrate(kind === 'go' ? [220] : kind === 'stop' ? [90, 70, 90] : [35]);
+  } catch (_) {}
+}
+function closeCircuit() {
+  clearInterval(CIRC_TICK); CIRC_TICK = null;
+  try { if (CIRC_WAKE) { CIRC_WAKE.release(); CIRC_WAKE = null; } } catch (_) {}
+  const el = document.getElementById('circuit-run');
+  if (el) el.hidden = true;
+}
+function quitCircuit() {
+  if (CIRC && CIRC.elapsed > 60 && !confirm('Quit the circuit? Nothing will be logged.')) return;
+  CIRC = null;
+  closeCircuit();
+}
+function finishCircuit() {
+  const secs = CIRC ? CIRC.elapsed : 0;
+  CIRC = null;
+  closeCircuit();
+  if (secs >= 60) {
+    const log = loadJSON('session-log', []);
+    log.push({ id: genId(), date: todayKey(), type: 'workout',
+               durationSec: secs, label: CIRCUIT.name });
+    saveJSON('session-log', log);
+    markPlannedDone(todayKey());
+    renderSessionStats();
+    refreshAllViews();
+  }
+  cue('go');
+  alert('Circuit done — ' + Math.round(secs / 60) + ' min logged.');
+}
+
+/* ══════════════════════════════════════════════════════
+   WEEKLY PLAN — decide on Friday what next week looks like, commit to it,
+   then tick it off. The week runs Saturday → Friday, so planning on Friday
+   afternoon is planning the week that starts tomorrow.
+   ══════════════════════════════════════════════════════ */
+let PLAN_OFFSET = 0;                 // 0 = the week containing today
+
+/* The list builds up over time: the five programmes plus whatever he adds.
+   Stored rather than hardcoded so a new activity does not need a code change. */
+const DEFAULT_WORKOUT_TYPES = [
+  { name: 'Chest & Triceps',   measure: 'min' },
+  { name: 'Shoulders & Arms',  measure: 'min' },
+  { name: 'Back & Biceps',     measure: 'min' },
+  { name: 'Core & Cardio',     measure: 'min' },
+  { name: 'Full Body HIIT',    measure: 'min' },
+  { name: 'Full Body Circuit', measure: 'min' },
+  { name: 'Run',               measure: 'km'  },
+  { name: 'Walk',              measure: 'km'  },
+  { name: 'Swim',              measure: 'min' },
+  { name: 'Ride',              measure: 'km'  },
+  { name: 'Other',             measure: 'min' }
+];
+function getWorkoutTypes() {
+  const saved = loadJSON('workout-types', null);
+  return Array.isArray(saved) && saved.length ? saved : DEFAULT_WORKOUT_TYPES.slice();
+}
+function addWorkoutType() {
+  const name = (prompt('Name the workout type') || '').trim();
+  if (!name) return null;
+  const list = getWorkoutTypes();
+  if (list.some(t => t.name.toLowerCase() === name.toLowerCase())) return name;
+  const km = confirm('Measure ' + name + ' in kilometres?\n\nOK = kilometres, Cancel = minutes');
+  list.push({ name: name, measure: km ? 'km' : 'min' });
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  saveJSON('workout-types', list);
+  return name;
+}
+function measureFor(typeName) {
+  const t = getWorkoutTypes().find(x => x.name === typeName);
+  return t ? t.measure : 'min';
+}
+
+/* Saturday-start week. planWeekStart(0) is the week today sits in. */
+function saturdayOf(d) {
+  const x = new Date(d); x.setHours(0,0,0,0);
+  x.setDate(x.getDate() - ((x.getDay() + 1) % 7));   // Sat=6 -> 0 back
+  return x;
+}
+function planWeekStart(offset) {
+  const s = saturdayOf(new Date());
+  s.setDate(s.getDate() + (offset === undefined ? PLAN_OFFSET : offset) * 7);
+  return s;
+}
+function planKey(start) { return 'plan-' + isoOf(start); }
+function getPlan(start) {
+  return loadJSON(planKey(start), { committed: false, days: {} }) || { committed: false, days: {} };
+}
+function savePlan(start, plan) { saveJSON(planKey(start), plan); }
+function planDates(start) {
+  const out = [];
+  for (let i = 0; i < 7; i++) { const d = new Date(start); d.setDate(d.getDate() + i); out.push(isoOf(d)); }
+  return out;
+}
+function stepPlan(n) { PLAN_OFFSET += n; renderPlan(); }
+function planWeek(offset) { PLAN_OFFSET = offset; renderPlan(); showPage('workout');
+  document.querySelector('.plan-card').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+
+function setPlanType(date, value) {
+  const start = planWeekStart();
+  if (value === '__add') {
+    const name = addWorkoutType();
+    renderPlan();
+    if (!name) return;
+    value = name;
+  }
+  const plan = getPlan(start);
+  const row = plan.days[date] || {};
+  row.type = value || null;
+  if (!value) { delete plan.days[date]; } else { plan.days[date] = row; }
+  savePlan(start, plan);
+  renderPlan();
+}
+function setPlanAmount(date, value) {
+  const start = planWeekStart();
+  const plan = getPlan(start);
+  const row = plan.days[date];
+  if (!row) return;
+  const n = parseFloat(value);
+  row.amount = isNaN(n) ? null : n;
+  savePlan(start, plan);
+}
+function commitPlan() {
+  const start = planWeekStart();
+  const plan = getPlan(start);
+  const planned = Object.keys(plan.days).length;
+  if (!plan.committed && !planned) { alert('Pick at least one day first.'); return; }
+  plan.committed = !plan.committed;
+  if (plan.committed) plan.committedAt = Date.now();
+  savePlan(start, plan);
+  renderPlan();
+}
+function togglePlanDone(date) {
+  const start = planWeekStart();
+  const plan = getPlan(start);
+  const row = plan.days[date];
+  if (!row) return;
+  row.done = !row.done;
+  row.doneAt = row.done ? Date.now() : null;
+  savePlan(start, plan);
+  renderPlan();
+}
+/* Finishing a session on the timer ticks that day off, so a workout you actually
+   did never sits there looking undone. Manual toggling still wins afterwards. */
+function markPlannedDone(date) {
+  const start = saturdayOf(new Date(date + 'T00:00:00'));
+  const plan = getPlan(start);
+  const row = plan.days[date];
+  if (!row || row.done) return;
+  row.done = true; row.doneAt = Date.now(); row.auto = true;
+  savePlan(start, plan);
+  renderPlan();
+}
+
+function renderPlan() {
+  const start = planWeekStart();
+  const plan = getPlan(start);
+  const dates = planDates(start);
+  const today = todayKey();
+  const types = getWorkoutTypes();
+
+  const card = document.querySelector('.plan-card');
+  if (card) card.classList.toggle('locked', !!plan.committed);
+
+  const label = document.getElementById('plan-label');
+  if (label) label.textContent = PLAN_OFFSET === 0 ? 'This week’s plan'
+    : PLAN_OFFSET === 1 ? 'Next week’s plan' : 'Week plan';
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  const range = document.getElementById('plan-range');
+  if (range) range.textContent = fmt(dates[0]) + ' – ' + fmt(dates[6]);
+
+  const rows = document.getElementById('plan-rows');
+  if (rows) {
+    rows.innerHTML = dates.map(date => {
+      const row = plan.days[date] || {};
+      const dayName = new Date(date + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'short' });
+      const unit = row.type ? measureFor(row.type) : 'min';
+      const opts = ['<option value="">Rest</option>']
+        .concat(types.map(t => '<option value="' + esc(t.name) + '"' +
+          (row.type === t.name ? ' selected' : '') + '>' + esc(t.name) + '</option>'))
+        .concat(row.type && !types.some(t => t.name === row.type)
+          ? ['<option value="' + esc(row.type) + '" selected>' + esc(row.type) + '</option>'] : [])
+        .concat(plan.committed ? [] : ['<option value="__add">+ Add type…</option>'])
+        .join('');
+      const amount = row.amount != null ? row.amount : '';
+      return '<div class="plan-row' + (date === today ? ' is-today' : '') + (row.type ? '' : ' rest') + '">'
+        + '<div class="plan-day">' + dayName + '</div>'
+        + '<div class="plan-pick">'
+        +   '<select onchange="setPlanType(\'' + date + '\', this.value)">' + opts + '</select>'
+        +   '<input type="number" min="0" step="' + (unit === 'km' ? '0.5' : '5') + '" '
+        +     'placeholder="' + (plan.committed && amount === '' ? '' : unit) + '" value="' + amount + '" '
+        +     'onchange="setPlanAmount(\'' + date + '\', this.value)"'
+        +     (row.type ? '' : ' disabled') + '>'
+        + '</div>'
+        + '<button class="plan-tick' + (row.done ? ' done' : '') + '"'
+        +   (plan.committed && row.type ? '' : ' hidden')
+        +   ' onclick="togglePlanDone(\'' + date + '\')" aria-label="Mark done">'
+        +   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" '
+        +   'stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"/></svg>'
+        + '</button>'
+        + '</div>';
+    }).join('');
+  }
+
+  const planned = dates.filter(d => (plan.days[d] || {}).type).length;
+  const done = dates.filter(d => (plan.days[d] || {}).done).length;
+  const prog = document.getElementById('plan-progress');
+  if (prog) {
+    prog.innerHTML = !planned ? 'Nothing planned yet.'
+      : plan.committed ? '<b>' + done + ' of ' + planned + '</b> done'
+          + (done === planned ? ' — week complete.' : '')
+      : '<b>' + planned + '</b> session' + (planned === 1 ? '' : 's') + ' planned — not committed yet.';
+  }
+  const btn = document.getElementById('plan-commit');
+  if (btn) {
+    btn.textContent = plan.committed ? 'Edit plan' : 'Commit to this week';
+    btn.classList.toggle('again', !!plan.committed);
+  }
+  renderPlanNudge();
+}
+/* From Friday morning, if next week has nothing in it. */
+function renderPlanNudge() {
+  const el = document.getElementById('plan-nudge');
+  if (!el) return;
+  const isFriday = new Date().getDay() === 5;
+  const next = getPlan(planWeekStart(1));
+  const empty = !Object.keys(next.days || {}).length;
+  el.hidden = !(isFriday && empty && PLAN_OFFSET !== 1);
+}
 function showDay(id, btn) {
   document.querySelectorAll('.day-view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
@@ -3010,7 +3533,10 @@ function initTrackers() {
   initFitnessStats();
   initResultsLog();
   initTimer();
-  placeTimer();          // seat it in Monday's band on first load
+  placeTimer();
+  renderPlan();          // seat it in Monday's band on first load
+  renderCircuitList();
+  paintCircuitThumbs();
   initCoach();
   renderWeek();
   renderFoodGroups();
@@ -3880,6 +4406,7 @@ function finishSession() {
       label: workoutLabel
     });
     saveJSON('session-log', log);
+    markPlannedDone(todayKey());      // the plan ticks itself off
     const msg = document.getElementById('timer-logged-msg');
     if (msg) {
       msg.classList.add('show');
@@ -4466,34 +4993,53 @@ async function pullSamsung(silent) {
   if (!COACH_READY()) { updateCoachUI(); return; }
   if (note && !silent) { note.textContent = 'Syncing…'; note.style.color = 'var(--text-dim)'; }
   try {
-    const res = await fetch(COACH_URL() + '/health/latest', { headers: coachHeaders() });
+    // Pull the whole recent window, not just the most recent day. Reading only
+    // "latest" meant any day the phone synced while this app was closed — a whole
+    // weekend — sat in the worker and never reached the dials, and nothing ever
+    // went back for it. Asking for a range makes the gaps self-healing: whenever a
+    // sync covers an old day, the next time you open the app it fills in.
+    const res = await fetch(COACH_URL() + '/health/days?n=21', { headers: coachHeaders() });
     if (res.status === 401) throw new Error('shared secret rejected');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     COACH_VERIFIED = true; COACH_LAST_ERR = '';
-    const j = await res.json();
-    if (j && j.date) {
+    const days = await res.json();
+    const dates = Object.keys(days || {}).sort();
+    let filled = 0, newDays = 0;
+    dates.forEach(date => {
+      const j = days[date];
+      if (!j) return;
+      const d = getFitnessData(date);
+      const had = ['steps', 'active', 'kcal', 'sleep'].some(k => d[k] != null);
       // The watch owns these four. Everything else on the day is left alone.
-      const d = getFitnessData(j.date);
-      ['steps', 'active', 'kcal', 'sleep'].forEach(k => { if (j[k] != null) d[k] = j[k]; });
+      let moved = false;
+      ['steps', 'active', 'kcal', 'sleep'].forEach(k => {
+        if (j[k] != null && d[k] !== j[k]) { d[k] = j[k]; moved = true; }
+      });
       // Whether that burn figure is active-only or a whole-day total decides whether
       // resting burn gets added to it. Guessing wrong is a 2,000 calorie error.
       if (j.burnKind) d.burnKind = j.burnKind;
-      d._watch = true;    // from here on the coach must not overwrite these
-      saveFitnessDataForDate(j.date, d);
+      if (moved) {
+        d._watch = true;    // from here on the coach must not overwrite these
+        saveFitnessDataForDate(date, d);
+        filled++;
+        if (!had) newDays++;
+      }
       if (j.weight != null) {
         const entries = loadJSON('results-log', []);
-        const i = entries.findIndex(e => e.date === j.date);
-        const entry = { date: j.date, weight: j.weight };
+        const i = entries.findIndex(e => e.date === date);
+        const entry = { date: date, weight: j.weight };
         if (i >= 0) entries[i] = entry; else entries.push(entry);
         entries.sort((a, b) => b.date.localeCompare(a.date));
         saveJSON('results-log', entries);
       }
-      saveJSON('coach-last-sync', Date.now());
-      refreshAllViews();
-    }
+    });
+    if (filled) { saveJSON('coach-last-sync', Date.now()); refreshAllViews(); }
     renderCoachLastSync();
     if (note && !silent) {
-      note.textContent = j && j.postedAt ? 'Synced successfully' : 'Connected — the phone has not posted yet';
+      note.textContent = !dates.length ? 'Connected — the phone has not posted yet'
+        : filled ? ('Synced ' + filled + ' day' + (filled === 1 ? '' : 's')
+                    + (newDays ? ' · ' + newDays + ' backfilled' : ''))
+        : 'Already up to date';
       note.style.color = 'var(--green)';
     }
     updateCoachUI();
@@ -4898,7 +5444,7 @@ async function getWeekRead() {
   }
 }
 function refreshAllViews() {
-  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes(); renderWeek(); renderFoodGroups(); fillFitnessLogForm();
+  renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes(); renderWeek(); renderFoodGroups(); fillFitnessLogForm(); renderPlan();
   renderWeightChart(); renderSessionStats(); refreshSettingsFields();
 }
 function refreshSettingsFields() {
@@ -5095,6 +5641,8 @@ function coachState() {
   return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 120),
     sessions: loadJSON('session-log', []).slice(-30), recipes: getRecipes(),
     today: todayKey(), reviewDue: reviewDue(), labs: getLabs().slice(0, 120),
+    plan: { thisWeek: getPlan(planWeekStart(0)), nextWeek: getPlan(planWeekStart(1)),
+            weekStart: isoOf(planWeekStart(0)) },
     supplements: getSupps(), profile: loadJSON('coach-profile', null) };
 }
 /* Which day still owes him a full review. Today once it is past 8pm; otherwise the most
@@ -5199,6 +5747,31 @@ function applyDayRow(row) {
   }
   return changed;
 }
+</script>
+<script>
+/* Life App link (10 Nov 2026). The Life App (asbfmckay.github.io/life-app) opens this app with
+   ?ret=<life app address>&rid=<id>#workout (or #health, #review). We open that page and show a small bar:
+   "Done · back to Life App" returns to ret#done=<rid> (the Life App ticks Exercise), "Back" returns without. */
+(function(){
+  var ok = function(u){ return /^(https:\/\/asbfmckay\.github\.io\/|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/)/.test(u || ''); };
+  var q = new URLSearchParams(location.search), st = null;
+  if (ok(q.get('ret'))) { st = { ret: q.get('ret'), rid: q.get('rid') || '' }; try { sessionStorage.setItem('hf.life', JSON.stringify(st)); } catch (e) {} history.replaceState(null, '', location.pathname + location.hash); }
+  else { try { st = JSON.parse(sessionStorage.getItem('hf.life') || 'null'); } catch (e) {} }
+  var page = { '#workout': 'workout', '#health': 'hf', '#review': 'review', '#coach': 'coach' }[location.hash];
+  window.addEventListener('load', function(){
+    if (page && typeof showPage === 'function') { try { showPage(page); } catch (e) {} }
+    if (!st || !ok(st.ret)) return;
+    var css = document.createElement('style');
+    css.textContent = '#lifeBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;gap:6px;padding:6px;border-radius:999px;background:rgba(20,20,24,.92);box-shadow:0 8px 28px rgba(0,0,0,.35)}#lifeBar button{white-space:nowrap;border:none;border-radius:999px;padding:10px 16px;font:inherit;font-size:14px;cursor:pointer}#lifeBar .ld{background:#E8CB78;color:#26241F;font-weight:600}#lifeBar .lb{background:transparent;color:#ddd}';
+    document.head.appendChild(css);
+    var bar = document.createElement('div'); bar.id = 'lifeBar';
+    bar.innerHTML = '<button class="lb" type="button">\u2039 Back</button><button class="ld" type="button">\u2713 Done \u00b7 back to Life App</button>';
+    document.body.appendChild(bar);
+    var leave = function(done){ try { sessionStorage.removeItem('hf.life'); } catch (e) {} location.href = st.ret + '#' + (done ? 'done=' + encodeURIComponent(st.rid) : 'back'); };
+    bar.querySelector('.lb').onclick = function(){ leave(false); };
+    bar.querySelector('.ld').onclick = function(){ leave(true); };
+  });
+})();
 </script>
 </body>
 </html>
