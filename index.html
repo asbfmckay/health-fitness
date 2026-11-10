@@ -1205,6 +1205,58 @@
   .plan-nudge-title{font-weight:700;font-size:14px;color:var(--lime)}
   .plan-nudge-sub{font-size:12px;color:rgba(255,255,255,.72);margin-top:2px;line-height:1.4}
   .plan-nudge .solid-btn{flex:none}
+
+  /* ── Today's session, and the browse strip under it ───────────────────── */
+  .today-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--bg-card);border:1.5px solid var(--border);border-radius:8px;
+    padding:13px 15px;margin:0 16px 12px}
+  .today-strip[hidden]{display:none}
+  .today-name{font-size:16px;font-weight:800;color:var(--text-h);letter-spacing:-.2px}
+  .today-meta{font-size:12px;color:var(--text-dim);margin-top:2px}
+  .today-strip .solid-btn{flex:none;white-space:nowrap}
+
+  .sess-nav-wrap{margin:0 16px 16px}
+  .sess-nav{display:flex;flex-direction:column;gap:10px}
+  .sess-group-name{font-family:var(--mono);font-size:10px;font-weight:700;
+    letter-spacing:.09em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+  .sess-group{display:flex;flex-wrap:wrap;gap:6px}
+  .sess-group-name{flex-basis:100%}
+  .sess-btn{background:var(--bg-soft);border:1.5px solid var(--border-md);border-radius:9px;
+    padding:8px 11px;font-size:12.5px;font-weight:700;color:var(--text-b);cursor:pointer;
+    font-family:inherit}
+  .sess-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+  .sess-btn.planned:not(.active){border-color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}
+  .today-chip{display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;
+    background:var(--lime);color:var(--green-deep);font-family:var(--mono);font-size:9.5px;
+    font-weight:700;letter-spacing:.08em;vertical-align:middle}
+  .circuit-go{margin:12px 16px 4px}
+  .circuit-go .solid-btn{width:100%}
+  /* The list used to sit inside a card that supplied its own inset; standing on its
+     own in the day view it needs the same 16px the exercise cards use, or the rep
+     time runs off the right edge. */
+  #day-circuit #circuit-list{margin:0 16px}
+  #day-circuit .log-entry{gap:10px}
+
+  /* ── The week at a glance, with the editor behind an Edit button ──────── */
+  .plan-summary{padding:4px 0 2px}
+  .sum-row{display:flex;align-items:center;gap:11px;padding:9px 0;
+    border-bottom:1px solid var(--border)}
+  .sum-row:last-child{border-bottom:none}
+  .sum-day{width:34px;flex:none;font-family:var(--mono);font-size:11px;font-weight:700;
+    color:var(--text-dim);text-transform:uppercase}
+  .sum-row.is-today .sum-day{color:var(--lime-dark)}
+  .sum-what{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--text-h)}
+  .sum-row.rest .sum-what{font-weight:600;color:var(--text-dim)}
+  .sum-amt{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-dim)}
+  .sum-row.is-done .sum-what{color:var(--text-dim);text-decoration:line-through}
+  .sum-empty{padding:10px 0;font-size:13px;color:var(--text-dim)}
+  .plan-foot-btns{display:flex;gap:8px;align-items:center}
+  @media (max-width:420px){
+    .plan-foot-btns{width:100%}
+    .plan-foot-btns .solid-btn{flex:1}
+    .today-strip{flex-direction:column;align-items:stretch}
+    .today-strip .solid-btn{width:100%}
+  }
   .plan-card{padding:6px 16px 16px}
   .plan-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
   .plan-row:last-of-type{border-bottom:none}
@@ -1828,48 +1880,11 @@
   <button class="solid-btn" onclick="planWeek(1)">Plan it</button>
 </div>
 
-<div class="section-label">Quick circuit</div>
-<div class="acc-card circuit-card">
-  <div class="circuit-top">
-    <div>
-      <div class="circuit-name">Full Body Circuit</div>
-      <div class="circuit-meta">9 exercises &middot; 4 rounds &middot; ~20 min</div>
-    </div>
-    <button class="solid-btn" onclick="startCircuit()">Start</button>
-  </div>
-  <details class="acc">
-    <summary class="acc-sum"><span>The nine</span>
-      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-    <div id="circuit-list" class="log-list"></div>
-  </details>
-</div>
+<!-- What you are here to do, first. Everything else sits under it. -->
+<div class="section-label" id="today-label">Today</div>
+<div id="today-strip" class="today-strip"></div>
 
-<div class="section-label" id="plan-label">This week&rsquo;s plan</div>
-<div class="acc-card plan-card">
-  <div class="wk-nav">
-    <button class="ghost-btn wk-arrow" onclick="stepPlan(-1)" aria-label="Previous week">&lsaquo;</button>
-    <div class="wk-range" id="plan-range">—</div>
-    <button class="ghost-btn wk-arrow" onclick="stepPlan(1)" aria-label="Next week">&rsaquo;</button>
-  </div>
-  <div id="plan-rows"></div>
-  <div class="plan-foot">
-    <div class="plan-progress" id="plan-progress"></div>
-    <button class="solid-btn" id="plan-commit" onclick="commitPlan()">Commit to this week</button>
-  </div>
-</div>
-
-<div class="week-nav-wrap">
-  <div class="week-nav">
-    <button class="day-btn active" onclick="showDay('mon',this)"><span class="dn">MON</span><span class="df">Chest &amp;<br>Triceps</span></button>
-    <button class="day-btn" onclick="showDay('tue',this)"><span class="dn">TUE</span><span class="df">Shoulders &amp;<br>Arms</span></button>
-    <button class="day-btn" onclick="showDay('wed',this)"><span class="dn">WED</span><span class="df">Back &amp;<br>Biceps</span></button>
-    <button class="day-btn" onclick="showDay('thu',this)"><span class="dn">THU</span><span class="df">Core &amp;<br>Cardio</span></button>
-    <button class="day-btn" onclick="showDay('fri',this)"><span class="dn">FRI</span><span class="df">Full Body<br>HIIT</span></button>
-  </div>
-</div>
-
-<!-- Lives inside the active day's header band; moved there by showDay(). -->
+<!-- Lives inside whichever session band is showing; moved there by placeTimer(). -->
 <div class="timer-strip" id="timer-strip">
   <div class="timer-strip-row">
     <div>
@@ -2261,6 +2276,62 @@
   </div>
 </div>
 <!-- ══════════ END TRAINING DAYS ══════════ -->
+
+<!-- ══════════ CIRCUIT ══════════
+     The circuit is a session like any other now, so it lives beside the split days
+     rather than in its own card above everything. The timer strip moves into this
+     header too, which is what gives it the same Start as every other workout. -->
+<div id="day-circuit" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(203,229,88,0.18);color:var(--green-deep)">CIRCUIT</div>
+    <div class="day-heading">Full Body Circuit</div>
+  </div>
+  <div class="cardio-block">
+    <div class="cardio-icon"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="cardio-title">9 exercises &middot; 4 rounds &middot; ~20 min</div>
+      <div class="cardio-detail">20 sec on, 15 sec change &middot; 50 sec between rounds</div></div>
+  </div>
+  <div class="circuit-go"><button class="solid-btn" onclick="startCircuit()">Start the circuit</button></div>
+  <div class="section-label">The nine — tap + to add a photo</div>
+  <div id="circuit-list" class="log-list"></div>
+</div>
+
+<!-- ══════════ ANY OTHER SESSION ══════════
+     A run, a swim, or anything he adds himself. No exercise list to show, but it still
+     gets the day band and the timer — which is the whole point of it existing. -->
+<div id="day-generic" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" id="gen-tag">SESSION</div>
+    <div class="day-heading" id="gen-heading">Workout</div>
+  </div>
+  <div class="cardio-block" id="gen-target-wrap">
+    <div class="cardio-icon"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="cardio-title" id="gen-target">Planned</div>
+      <div class="cardio-detail" id="gen-sub">Start the timer when you set off.</div></div>
+  </div>
+</div>
+
+<div class="section-label">Browse sessions</div>
+<div class="sess-nav-wrap"><div class="sess-nav" id="sess-nav"></div></div>
+
+<div class="section-label" id="plan-label">This week&rsquo;s plan</div>
+<div class="acc-card plan-card">
+  <div class="wk-nav">
+    <button class="ghost-btn wk-arrow" onclick="stepPlan(-1)" aria-label="Previous week">&lsaquo;</button>
+    <div class="wk-range" id="plan-range">—</div>
+    <button class="ghost-btn wk-arrow" onclick="stepPlan(1)" aria-label="Next week">&rsaquo;</button>
+  </div>
+  <div id="plan-summary" class="plan-summary"></div>
+  <div id="plan-rows" hidden></div>
+  <div class="plan-foot">
+    <div class="plan-progress" id="plan-progress"></div>
+    <div class="plan-foot-btns">
+      <button class="ghost-btn" id="plan-edit" onclick="togglePlanEdit()">Edit</button>
+      <button class="solid-btn" id="plan-commit" onclick="commitPlan()">Commit to this week</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="settings-link-wrap">
   <button class="settings-link" onclick="showPage('settings')">
@@ -2897,24 +2968,58 @@ function finishCircuit() {
    ══════════════════════════════════════════════════════ */
 let PLAN_OFFSET = 0;                 // 0 = the week containing today
 
-/* The list builds up over time: the five programmes plus whatever he adds.
-   Stored rather than hardcoded so a new activity does not need a code change. */
-const DEFAULT_WORKOUT_TYPES = [
-  { name: 'Chest & Triceps',   measure: 'min' },
-  { name: 'Shoulders & Arms',  measure: 'min' },
-  { name: 'Back & Biceps',     measure: 'min' },
-  { name: 'Core & Cardio',     measure: 'min' },
-  { name: 'Full Body HIIT',    measure: 'min' },
-  { name: 'Full Body Circuit', measure: 'min' },
-  { name: 'Run',               measure: 'km'  },
-  { name: 'Walk',              measure: 'km'  },
-  { name: 'Swim',              measure: 'min' },
-  { name: 'Ride',              measure: 'km'  },
-  { name: 'Other',             measure: 'min' }
+/* ══════════ PROGRAMS ══════════
+   The library you plan from. A program is a named set of sessions; a session is one
+   workout you can put on a day. Three kinds, and the kind decides how it is run:
+
+     view    — its own laid-out page of exercises with weights (the 5-day split)
+     circuit — timed rounds, run by the countdown (Full Body Circuit)
+     simple  — no exercise list; a name, a target and the timer (Run, Swim, …)
+
+   The old fixed Monday-to-Friday split is now just the first program in this list,
+   which is what lets a week mix a split session, a circuit and a run. Plans store the
+   session NAME, as they always have, so existing weeks keep working untouched. */
+const PROGRAMS = [
+  { id: 'split5', name: '5-Day Split', sessions: [
+    { name: 'Chest & Triceps',  measure: 'min', kind: 'view', view: 'mon' },
+    { name: 'Shoulders & Arms', measure: 'min', kind: 'view', view: 'tue' },
+    { name: 'Back & Biceps',    measure: 'min', kind: 'view', view: 'wed' },
+    { name: 'Core & Cardio',    measure: 'min', kind: 'view', view: 'thu' },
+    { name: 'Full Body HIIT',   measure: 'min', kind: 'view', view: 'fri' }
+  ]},
+  { id: 'circuits', name: 'Quick Circuits', sessions: [
+    { name: 'Full Body Circuit', measure: 'min', kind: 'circuit', circuit: 'CIRCUIT' }
+  ]},
+  { id: 'cardio', name: 'Cardio & other', sessions: [
+    { name: 'Run',   measure: 'km',  kind: 'simple' },
+    { name: 'Walk',  measure: 'km',  kind: 'simple' },
+    { name: 'Swim',  measure: 'min', kind: 'simple' },
+    { name: 'Ride',  measure: 'km',  kind: 'simple' },
+    { name: 'Other', measure: 'min', kind: 'simple' }
+  ]}
 ];
+/* Flattened, in program order — the planner dropdown and every lookup read this. */
+function allSessions() {
+  const out = [];
+  PROGRAMS.forEach(p => p.sessions.forEach(s =>
+    out.push(Object.assign({ program: p.name, programId: p.id }, s))));
+  return out;
+}
+function sessionByName(name) {
+  if (!name) return null;
+  const hit = allSessions().find(s => s.name === name);
+  if (hit) return hit;
+  // Anything he added himself: no exercise list, but still timed like any other.
+  const custom = (loadJSON('workout-types', []) || []).find(t => t.name === name);
+  return custom ? { name: name, measure: custom.measure || 'min', kind: 'simple',
+                    program: 'Mine', programId: 'custom' } : null;
+}
+const DEFAULT_WORKOUT_TYPES = allSessions().map(s => ({ name: s.name, measure: s.measure }));
 function getWorkoutTypes() {
-  const saved = loadJSON('workout-types', null);
-  return Array.isArray(saved) && saved.length ? saved : DEFAULT_WORKOUT_TYPES.slice();
+  // The programs always come first; "workout-types" now holds only his own additions.
+  const mine = (loadJSON('workout-types', []) || [])
+    .filter(t => !PROGRAMS.some(p => p.sessions.some(s => s.name === t.name)));
+  return DEFAULT_WORKOUT_TYPES.concat(mine);
 }
 function addWorkoutType() {
   const name = (prompt('Name the workout type') || '').trim();
@@ -2928,8 +3033,8 @@ function addWorkoutType() {
   return name;
 }
 function measureFor(typeName) {
-  const t = getWorkoutTypes().find(x => x.name === typeName);
-  return t ? t.measure : 'min';
+  const s = sessionByName(typeName);
+  return s ? s.measure : 'min';
 }
 
 /* Saturday-start week. planWeekStart(0) is the week today sits in. */
@@ -2988,6 +3093,7 @@ function commitPlan() {
   if (!plan.committed && !planned) { alert('Pick at least one day first.'); return; }
   plan.committed = !plan.committed;
   if (plan.committed) plan.committedAt = Date.now();
+  PLAN_EDIT = !plan.committed;        // committing closes the editor, reopening shows it
   savePlan(start, plan);
   renderPlan();
 }
@@ -3036,11 +3142,16 @@ function renderPlan() {
       const row = plan.days[date] || {};
       const dayName = new Date(date + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'short' });
       const unit = row.type ? measureFor(row.type) : 'min';
+      // Grouped by program, so picking "Back & Biceps" and "Full Body Circuit" in the
+      // same week is one dropdown rather than two different concepts.
+      const opt = n => '<option value="' + esc(n) + '"' + (row.type === n ? ' selected' : '')
+                     + '>' + esc(n) + '</option>';
+      const mine = types.filter(t => !PROGRAMS.some(pr => pr.sessions.some(x => x.name === t.name)));
       const opts = ['<option value="">Rest</option>']
-        .concat(types.map(t => '<option value="' + esc(t.name) + '"' +
-          (row.type === t.name ? ' selected' : '') + '>' + esc(t.name) + '</option>'))
-        .concat(row.type && !types.some(t => t.name === row.type)
-          ? ['<option value="' + esc(row.type) + '" selected>' + esc(row.type) + '</option>'] : [])
+        .concat(PROGRAMS.map(pr => '<optgroup label="' + esc(pr.name) + '">'
+                 + pr.sessions.map(x => opt(x.name)).join('') + '</optgroup>'))
+        .concat(mine.length ? ['<optgroup label="Mine">' + mine.map(t => opt(t.name)).join('') + '</optgroup>'] : [])
+        .concat(row.type && !sessionByName(row.type) ? [opt(row.type)] : [])
         .concat(plan.committed ? [] : ['<option value="__add">+ Add type…</option>'])
         .join('');
       const amount = row.amount != null ? row.amount : '';
@@ -3074,11 +3185,61 @@ function renderPlan() {
   }
   const btn = document.getElementById('plan-commit');
   if (btn) {
-    btn.textContent = plan.committed ? 'Edit plan' : 'Commit to this week';
+    btn.textContent = plan.committed ? 'Reopen' : 'Commit';
     btn.classList.toggle('again', !!plan.committed);
   }
+
+  /* The dropdowns are an editor, not a display. Show a compact read of the week by
+     default and reveal the editor on demand — a run of rest days collapses to one
+     line, so a three-session week reads as three lines instead of seven rows. */
+  const editing = PLAN_EDIT || !plan.committed && !planned;
+  const rowsEl = document.getElementById('plan-rows');
+  const sumEl  = document.getElementById('plan-summary');
+  if (rowsEl) rowsEl.hidden = !editing;
+  if (sumEl)  sumEl.hidden  = editing;
+  const edit = document.getElementById('plan-edit');
+  if (edit) { edit.textContent = editing ? 'Done' : 'Edit'; edit.hidden = !!plan.committed && !editing ? false : false; }
+
+  if (sumEl && !editing) {
+    const short = d => new Date(d + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'short' });
+    const out = []; let restRun = [];
+    const flushRest = () => {
+      if (!restRun.length) return;
+      out.push('<div class="sum-row rest"><div class="sum-day">'
+        + (restRun.length === 1 ? short(restRun[0]) : short(restRun[0]) + '–' + short(restRun[restRun.length - 1]))
+        + '</div><div class="sum-what">Rest</div></div>');
+      restRun = [];
+    };
+    dates.forEach(date => {
+      const r = plan.days[date] || {};
+      if (!r.type) { restRun.push(date); return; }
+      flushRest();
+      const unit = measureFor(r.type) === 'km' ? 'km' : 'min';
+      out.push('<div class="sum-row' + (date === today ? ' is-today' : '') + (r.done ? ' is-done' : '') + '">'
+        + '<div class="sum-day">' + short(date) + '</div>'
+        + '<div class="sum-what">' + esc(r.type)
+        + (r.amount != null ? ' <span class="sum-amt">' + esc(String(r.amount)) + ' ' + unit + '</span>' : '')
+        + '</div>'
+        + (plan.committed ? '<button class="plan-tick' + (r.done ? ' done' : '') + '" onclick="togglePlanDone(\'' + date + '\')" aria-label="Mark done">'
+            + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"/></svg></button>' : '')
+        + '</div>');
+    });
+    flushRest();
+    sumEl.innerHTML = out.join('') || '<div class="sum-empty">Nothing planned this week.</div>';
+  }
+
   renderPlanNudge();
+  if (PLAN_OFFSET === 0) {
+    const t = todaysPlanned();
+    // Land on today's session unless he has deliberately navigated elsewhere.
+    if (t && (!CURRENT_SESSION || !PLAN_BROWSING)) showSession(t.type, { amount: t.amount });
+    else { renderToday(); }
+    renderSessionNav();
+  }
 }
+let PLAN_BROWSING = false;
+let PLAN_EDIT = false;
+function togglePlanEdit() { PLAN_EDIT = !PLAN_EDIT; renderPlan(); }
 /* From Friday morning, if next week has nothing in it. */
 function renderPlanNudge() {
   const el = document.getElementById('plan-nudge');
@@ -3088,12 +3249,111 @@ function renderPlanNudge() {
   const empty = !Object.keys(next.days || {}).length;
   el.hidden = !(isFriday && empty && PLAN_OFFSET !== 1);
 }
-function showDay(id, btn) {
+/* ── Which session is on screen ──────────────────────────────────────────────
+   One function for every kind. A split day has its own laid-out view; the circuit
+   has one too; everything else borrows the generic band. All three end up with the
+   timer in their header, because placeTimer() moves the single strip into whichever
+   day-header is showing. */
+let CURRENT_SESSION = null;
+
+function showSession(name, opts) {
+  const sess = sessionByName(name);
+  if (!sess) return;
+  CURRENT_SESSION = sess;
+  const viewId = sess.kind === 'view' ? 'day-' + sess.view
+               : sess.kind === 'circuit' ? 'day-circuit' : 'day-generic';
+
+  if (sess.kind === 'simple') {
+    document.getElementById('gen-heading').textContent = sess.name;
+    document.getElementById('gen-tag').textContent = (sess.program || 'Session').toUpperCase();
+    const amt = (opts && opts.amount != null) ? opts.amount : null;
+    document.getElementById('gen-target').textContent = amt != null
+      ? ('Planned: ' + amt + ' ' + (sess.measure === 'km' ? 'km' : 'min'))
+      : sess.name;
+    document.getElementById('gen-sub').textContent = sess.measure === 'km'
+      ? 'Start the timer when you set off.'
+      : 'Start the timer when you begin.';
+  }
+
   document.querySelectorAll('.day-view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('day-' + id).classList.add('active');
-  btn.classList.add('active');
+  const view = document.getElementById(viewId);
+  if (view) view.classList.add('active');
+  document.querySelectorAll('.sess-btn').forEach(el =>
+    el.classList.toggle('active', el.dataset.sess === name));
+
+  // Mark the band itself as today's rather than repeating the name in a card above it.
+  const t = todaysPlanned();
+  const isToday = !!(t && t.type === name);
+  document.querySelectorAll('.today-chip').forEach(c => c.remove());
+  if (isToday && view) {
+    const head = view.querySelector('.day-heading');
+    if (head) {
+      const chip = document.createElement('span');
+      chip.className = 'today-chip';
+      chip.textContent = t.amount != null
+        ? 'TODAY · ' + t.amount + (sess.measure === 'km' ? ' KM' : ' MIN') : 'TODAY';
+      head.appendChild(chip);
+    }
+  }
+  // The circuit is run by its own countdown, so a second stopwatch beside it is noise.
+  const strip = document.getElementById('timer-strip');
+  if (strip) strip.hidden = sess.kind === 'circuit';
+  renderToday();
   placeTimer();
+}
+/* Kept so anything still calling showDay('mon', btn) keeps working. */
+function showDay(id, btn) {
+  const sess = allSessions().find(x => x.view === id);
+  if (sess) showSession(sess.name);
+}
+
+/* The session you are meant to be doing today, from the committed plan. */
+function todaysPlanned() {
+  const plan = getPlan(saturdayOf(new Date()));
+  const row = (plan.days || {})[todayKey()];
+  return row && row.type ? { type: row.type, amount: row.amount, done: !!row.done } : null;
+}
+
+function renderToday() {
+  const strip = document.getElementById('today-strip');
+  if (!strip) return;
+  const t = todaysPlanned();
+  const label = document.getElementById('today-label');
+  if (label) label.textContent = t ? 'Today' : 'Today — nothing planned';
+
+  if (t) {
+    // Only worth showing when you have navigated away from it.
+    const showing = CURRENT_SESSION && CURRENT_SESSION.name === t.type;
+    strip.hidden = !!showing;
+    if (label) label.textContent = showing ? 'Today' : 'Browsing';
+    const unit = measureFor(t.type) === 'km' ? 'km' : 'min';
+    strip.innerHTML = '<div class="today-line">'
+      + '<div class="today-name">' + esc(t.type) + '</div>'
+      + '<div class="today-meta">today&rsquo;s session'
+      + (t.amount != null ? ' &middot; ' + esc(String(t.amount)) + ' ' + unit : '')
+      + (t.done ? ' &middot; done' : '') + '</div></div>'
+      + '<button class="solid-btn" onclick="showSession(\'' + esc(t.type).replace(/'/g,"&#39;") + '\')">Back to today</button>';
+  } else {
+    strip.hidden = false;
+    // No plan for today is not an error state — offer the quickest thing to do.
+    strip.innerHTML = '<div class="today-line"><div class="today-name">Nothing planned</div>'
+      + '<div class="today-meta">Pick a session below, or start a circuit.</div></div>'
+      + '<button class="solid-btn" onclick="showSession(\'Full Body Circuit\')">20 min circuit</button>';
+  }
+}
+
+/* The browse strip: every session, grouped by the program it belongs to. */
+function renderSessionNav() {
+  const nav = document.getElementById('sess-nav');
+  if (!nav) return;
+  const today = todaysPlanned();
+  nav.innerHTML = PROGRAMS.map(p =>
+    '<div class="sess-group"><div class="sess-group-name">' + esc(p.name) + '</div>'
+    + p.sessions.map(se =>
+        '<button class="sess-btn' + (today && today.type === se.name ? ' planned' : '') + '"'
+        + ' data-sess="' + esc(se.name) + '"'
+        + ' onclick="showSession(this.dataset.sess)">' + esc(se.name) + '</button>').join('')
+    + '</div>').join('');
 }
 /* Put the timer inside the day band you are looking at, under the day's meta line.
    Moving the one element keeps a single timer-display / timer-actions pair, so the
@@ -3548,8 +3808,9 @@ function initTrackers() {
   initFitnessStats();
   initResultsLog();
   initTimer();
+  renderPlan();          // also paints today's session and the browse strip
+  if (!CURRENT_SESSION) showSession('Chest & Triceps');   // nothing planned yet
   placeTimer();
-  renderPlan();          // seat it in Monday's band on first load
   renderCircuitList();
   paintCircuitThumbs();
   initCoach();
@@ -4395,14 +4656,10 @@ function resetSession() {
 }
 
 function getActiveWorkoutLabel() {
-  const btn = document.querySelector('.day-btn.active');
-  if (!btn) return null;
-  const dn = btn.querySelector('.dn');
-  const df = btn.querySelector('.df');
-  if (!dn) return null;
-  const day = dn.textContent.trim();
-  const workout = df ? df.innerText.replace(/\s+/g, ' ').trim() : '';
-  return workout ? `${day} — ${workout}` : day;
+  // The session on screen, not the day button — there are no day buttons any more.
+  if (CURRENT_SESSION) return CURRENT_SESSION.name;
+  const h = document.querySelector('.day-view.active .day-heading');
+  return h ? h.textContent.trim() : null;
 }
 
 function finishSession() {
