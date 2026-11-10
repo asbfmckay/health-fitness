@@ -1392,7 +1392,16 @@
   .hist-title{font-family:var(--display);font-size:19px;font-weight:800;color:var(--text-h);
     letter-spacing:-0.01em}
   .hist-sub{font-size:12px;color:var(--text-dim);margin-top:3px}
-  .hist-x{margin-left:auto;flex:none;width:32px;height:32px;border-radius:8px;border:1px solid var(--border-md);
+  .hist-sync{margin-left:auto;flex:none;display:flex;align-items:center;gap:6px;
+    height:32px;padding:0 11px;border-radius:8px;border:1px solid var(--border-md);
+    background:var(--bg-soft);color:var(--text-body);cursor:pointer;
+    font-family:var(--body-f);font-size:12px;font-weight:700}
+  .hist-sync[hidden]{display:none}
+  .hist-sync svg{width:14px;height:14px}
+  .hist-sync[disabled]{opacity:.55;pointer-events:none}
+  .hist-sync.spin svg{animation:hist-spin 1s linear infinite}
+  @keyframes hist-spin{to{transform:rotate(360deg)}}
+  .hist-x{margin-left:0;flex:none;width:32px;height:32px;border-radius:8px;border:1px solid var(--border-md);
     background:var(--bg-soft);color:var(--text-body);display:grid;place-items:center;cursor:pointer}
   .hist-x svg{width:15px;height:15px}
   .hist-range{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:var(--bg-soft);
@@ -1740,6 +1749,12 @@
         <div class="hist-title" id="hist-title">Steps</div>
         <div class="hist-sub" id="hist-sub"></div>
       </div>
+      <button class="hist-sync" id="hist-sync" onclick="syncStepsNow()" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+        <span id="hist-sync-label">Sync</span>
+      </button>
       <button class="hist-x" onclick="closeHistory()" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
           stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
@@ -4607,6 +4622,8 @@ function histSeries(key, range) {
 }
 
 function openHistory(key) {
+  const sy = document.getElementById('hist-sync');
+  if (sy) sy.hidden = key !== 'steps';          // one line to extend to the other watch dials
   HIST_KEY = key;
   HIST_RANGE = 'week';
   document.querySelectorAll('.hist-rbtn').forEach(b => b.classList.toggle('active', b.dataset.range === 'week'));
@@ -4625,6 +4642,28 @@ function setHistRange(r) {
   renderHistory();
 }
 
+/* Steps are the one figure he checks against his watch in the moment, so the history
+   sheet gets a pull of its own rather than making him go to Settings. It fetches the
+   same 21-day window the app pulls on open, then redraws the sheet in place. */
+async function syncStepsNow() {
+  const btn = document.getElementById('hist-sync');
+  const lbl = document.getElementById('hist-sync-label');
+  if (!COACH_READY()) { if (lbl) lbl.textContent = 'Not linked'; return; }
+  if (btn) { btn.disabled = true; btn.classList.add('spin'); }
+  if (lbl) lbl.textContent = 'Syncing';
+  const before = (getFitnessData(todayKey()) || {}).steps;
+  try {
+    await pullSamsung(true);
+    const after = (getFitnessData(todayKey()) || {}).steps;
+    renderHistory();
+    renderFitnessStats();
+    if (lbl) lbl.textContent = after !== before ? 'Updated' : 'No change';
+  } catch (_) {
+    if (lbl) lbl.textContent = 'Failed';
+  }
+  if (btn) { btn.disabled = false; btn.classList.remove('spin'); }
+  setTimeout(() => { if (lbl) lbl.textContent = 'Sync'; }, 2500);
+}
 function renderHistory() {
   const m = metricDef(HIST_KEY);
   if (!m) return;
