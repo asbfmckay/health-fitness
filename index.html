@@ -10,8 +10,8 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Health &amp; Fitness</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='#171b2e'/%3E%3Cg%20fill='none'%20stroke='#cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%208.75%2018.59%20A%207.56%207.56%200%200%201%2013.38%204.34'%20stroke-width='2.1'/%3E%3Cpath%20d='M%2015.25%204.95%20A%207.56%207.56%200%200%201%2010.62%2019.20'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='#171b2e'/%3E%3Cg%20fill='none'%20stroke='#cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%208.75%2018.59%20A%207.56%207.56%200%200%201%2013.38%204.34'%20stroke-width='2.1'/%3E%3Cpath%20d='M%2015.25%204.95%20A%207.56%207.56%200%200%201%2010.62%2019.20'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='#171b2e'/%3E%3Cg%20fill='none'%20stroke='#cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%2015.81%205.54%20A%207.5%207.5%200%200%201%2011.41%2019.48'%20stroke-width='2.1'/%3E%3Cpath%20d='M%208.19%2018.46%20A%207.5%207.5%200%200%201%2012.59%204.52'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='#171b2e'/%3E%3Cg%20fill='none'%20stroke='#cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%2015.81%205.54%20A%207.5%207.5%200%200%201%2011.41%2019.48'%20stroke-width='2.1'/%3E%3Cpath%20d='M%208.19%2018.46%20A%207.5%207.5%200%200%201%2012.59%204.52'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#f3f1ec">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1215,17 +1215,31 @@
   .today-meta{font-size:12px;color:var(--text-dim);margin-top:2px}
   .today-strip .solid-btn{flex:none;white-space:nowrap}
 
-  .sess-nav-wrap{margin:0 16px 16px}
-  .sess-nav{display:flex;flex-direction:column;gap:10px}
-  .sess-group-name{font-family:var(--mono);font-size:10px;font-weight:700;
-    letter-spacing:.09em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
-  .sess-group{display:flex;flex-wrap:wrap;gap:6px}
-  .sess-group-name{flex-basis:100%}
-  .sess-btn{background:var(--bg-soft);border:1.5px solid var(--border-md);border-radius:9px;
-    padding:8px 11px;font-size:12.5px;font-weight:700;color:var(--text-b);cursor:pointer;
+  /* One line instead of a grid of eleven buttons. */
+  .sess-pick-wrap{display:flex;align-items:center;gap:10px;margin:0 16px 18px}
+  .sess-pick-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--text-dim);flex:none}
+  #sess-pick{flex:1;min-width:0;background:var(--bg-soft);border:1.5px solid var(--border-md);
+    border-radius:9px;padding:10px 11px;font-size:13px;font-weight:700;color:var(--text-b);
     font-family:inherit}
-  .sess-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
-  .sess-btn.planned:not(.active){border-color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}
+
+  /* Time it, or just tick it off — a run is timed on the watch, not here. */
+  .log-bar{display:flex;align-items:center;gap:8px;margin-top:11px;
+    padding-top:11px;border-top:1px solid var(--border)}
+  .log-bar[hidden]{display:none}
+  .log-bar-or{font-size:11.5px;color:var(--text-dim);flex:none}
+  .log-bar input{width:72px;flex:none;text-align:center;background:var(--bg-soft);
+    border:1.5px solid var(--border-md);border-radius:8px;padding:9px 6px;
+    font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text-h);
+    -moz-appearance:textfield}
+  .log-bar input::-webkit-outer-spin-button,.log-bar input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0}
+  .log-unit{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-dim);flex:none}
+  .log-bar .timer-btn{flex:1}
+  .sess-done{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .sess-done[hidden]{display:none}
+  .sess-done-txt{font-size:14.5px;font-weight:800;color:var(--green-deep)}
+  .timer-strip-row[hidden]{display:none}
   .today-chip{display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;
     background:var(--lime);color:var(--green-deep);font-family:var(--mono);font-size:9.5px;
     font-weight:700;letter-spacing:.08em;vertical-align:middle}
@@ -1758,8 +1772,8 @@
   <div class="lock-logo">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
          stroke="var(--lime)" stroke-linecap="round">
-      <path d="M 8.75 18.59 A 7.56 7.56 0 0 1 13.38 4.34" stroke-width="2.1"/>
-      <path d="M 15.25 4.95 A 7.56 7.56 0 0 1 10.62 19.20" stroke-width="2.1"/>
+      <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
+      <path d="M 8.19 18.46 A 7.5 7.5 0 0 1 12.59 4.52" stroke-width="2.1"/>
       <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
             stroke-width="1.42" stroke-linejoin="round"/>
     </svg>
@@ -1834,8 +1848,8 @@
     <a href="https://asbfmckay.github.io/home" class="home-icon" aria-label="Home">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
            stroke="var(--lime)" stroke-linecap="round">
-        <path d="M 8.75 18.59 A 7.56 7.56 0 0 1 13.38 4.34" stroke-width="2.1"/>
-        <path d="M 15.25 4.95 A 7.56 7.56 0 0 1 10.62 19.20" stroke-width="2.1"/>
+        <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
+        <path d="M 8.19 18.46 A 7.5 7.5 0 0 1 12.59 4.52" stroke-width="2.1"/>
         <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
               stroke-width="1.42" stroke-linejoin="round"/>
       </svg>
@@ -1880,6 +1894,24 @@
   <button class="solid-btn" onclick="planWeek(1)">Plan it</button>
 </div>
 
+<div class="section-label" id="plan-label">This week&rsquo;s plan</div>
+<div class="acc-card plan-card">
+  <div class="wk-nav">
+    <button class="ghost-btn wk-arrow" onclick="stepPlan(-1)" aria-label="Previous week">&lsaquo;</button>
+    <div class="wk-range" id="plan-range">—</div>
+    <button class="ghost-btn wk-arrow" onclick="stepPlan(1)" aria-label="Next week">&rsaquo;</button>
+  </div>
+  <div id="plan-summary" class="plan-summary"></div>
+  <div id="plan-rows" hidden></div>
+  <div class="plan-foot">
+    <div class="plan-progress" id="plan-progress"></div>
+    <div class="plan-foot-btns">
+      <button class="ghost-btn" id="plan-edit" onclick="togglePlanEdit()">Edit</button>
+      <button class="solid-btn" id="plan-commit" onclick="commitPlan()">Commit to this week</button>
+    </div>
+  </div>
+</div>
+
 <!-- What you are here to do, first. Everything else sits under it. -->
 <div class="section-label" id="today-label">Today</div>
 <div id="today-strip" class="today-strip"></div>
@@ -1892,6 +1924,20 @@
       <div class="timer-display" id="timer-display">00:00</div>
     </div>
     <div class="timer-actions" id="timer-actions"></div>
+  </div>
+  <!-- Runs are tracked on the watch, so pressing Start is pointless for them. Every
+       session can simply be marked done, with the distance or minutes actually done. -->
+  <div class="log-bar" id="log-bar" hidden>
+    <span class="log-bar-or">or</span>
+    <input id="log-amt" type="number" min="0" step="0.5" inputmode="decimal"
+           autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true"
+           aria-label="Amount done">
+    <span class="log-unit" id="log-unit">km</span>
+    <button class="timer-btn finish-btn" onclick="logSessionDone()">Mark done</button>
+  </div>
+  <div class="sess-done" id="sess-done" hidden>
+    <div class="sess-done-txt" id="sess-done-txt">Completed</div>
+    <button class="ghost-btn" onclick="undoSessionDone()">Undo</button>
   </div>
   <div class="timer-logged-msg" id="timer-logged-msg">✓ Session logged</div>
 </div>
@@ -2311,25 +2357,9 @@
   </div>
 </div>
 
-<div class="section-label">Browse sessions</div>
-<div class="sess-nav-wrap"><div class="sess-nav" id="sess-nav"></div></div>
-
-<div class="section-label" id="plan-label">This week&rsquo;s plan</div>
-<div class="acc-card plan-card">
-  <div class="wk-nav">
-    <button class="ghost-btn wk-arrow" onclick="stepPlan(-1)" aria-label="Previous week">&lsaquo;</button>
-    <div class="wk-range" id="plan-range">—</div>
-    <button class="ghost-btn wk-arrow" onclick="stepPlan(1)" aria-label="Next week">&rsaquo;</button>
-  </div>
-  <div id="plan-summary" class="plan-summary"></div>
-  <div id="plan-rows" hidden></div>
-  <div class="plan-foot">
-    <div class="plan-progress" id="plan-progress"></div>
-    <div class="plan-foot-btns">
-      <button class="ghost-btn" id="plan-edit" onclick="togglePlanEdit()">Edit</button>
-      <button class="solid-btn" id="plan-commit" onclick="commitPlan()">Commit to this week</button>
-    </div>
-  </div>
+<div class="sess-pick-wrap">
+  <label class="sess-pick-label" for="sess-pick">Browse</label>
+  <select id="sess-pick" onchange="PLAN_BROWSING=true;showSession(this.value)"></select>
 </div>
 
 
@@ -3075,7 +3105,24 @@ function setPlanType(date, value) {
   row.type = value || null;
   if (!value) { delete plan.days[date]; } else { plan.days[date] = row; }
   savePlan(start, plan);
-  renderPlan();
+  renderPlan({ keepPlace: true });
+}
+/* Rebuilding the tab moves everything above the plan, so the row you are editing
+   slides out from under your thumb. Hold the scroll position across the rebuild and
+   put the cursor back where it was. */
+function withPlace(fn) {
+  const y = window.scrollY;
+  const act = document.activeElement;
+  const id = act && act.closest && act.closest('.plan-row')
+    ? Array.prototype.indexOf.call(act.closest('#plan-rows').children, act.closest('.plan-row')) : -1;
+  const wasInput = act && act.tagName === 'INPUT';
+  fn();
+  window.scrollTo(0, y);
+  if (id >= 0) {
+    const row = document.querySelectorAll('#plan-rows .plan-row')[id];
+    const el = row && row.querySelector(wasInput ? 'input' : 'select');
+    if (el && !el.disabled) el.focus({ preventScroll: true });
+  }
 }
 function setPlanAmount(date, value) {
   const start = planWeekStart();
@@ -3119,7 +3166,8 @@ function markPlannedDone(date) {
   renderPlan();
 }
 
-function renderPlan() {
+function renderPlan(o) {
+  if (o && o.keepPlace) { const f = () => renderPlan(); withPlace(f); return; }
   const start = planWeekStart();
   const plan = getPlan(start);
   const dates = planDates(start);
@@ -3160,6 +3208,11 @@ function renderPlan() {
         + '<div class="plan-pick">'
         +   '<select onchange="setPlanType(\'' + date + '\', this.value)">' + opts + '</select>'
         +   '<input type="number" min="0" step="' + (unit === 'km' ? '0.5' : '5') + '" '
+        +     'inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" '
+        // Chrome offers saved logins on any unnamed text-ish field inside a form-like
+        // block. These three attributes are what stop the password bubble appearing
+        // over the keyboard every time a distance is typed.
+        +     'data-lpignore="true" data-form-type="other" name="amt-' + date + '" '
         +     'placeholder="' + (plan.committed && amount === '' ? '' : unit) + '" value="' + amount + '" '
         +     'onchange="setPlanAmount(\'' + date + '\', this.value)"'
         +     (row.type ? '' : ' disabled') + '>'
@@ -3185,8 +3238,12 @@ function renderPlan() {
   }
   const btn = document.getElementById('plan-commit');
   if (btn) {
+    // Once the week is committed the loud button has nothing left to do, so it steps
+    // back and stops competing with the ticks for attention.
     btn.textContent = plan.committed ? 'Reopen' : 'Commit';
     btn.classList.toggle('again', !!plan.committed);
+    btn.classList.toggle('solid-btn', !plan.committed);
+    btn.classList.toggle('ghost-btn', !!plan.committed);
   }
 
   /* The dropdowns are an editor, not a display. Show a compact read of the week by
@@ -3298,8 +3355,72 @@ function showSession(name, opts) {
   // The circuit is run by its own countdown, so a second stopwatch beside it is noise.
   const strip = document.getElementById('timer-strip');
   if (strip) strip.hidden = sess.kind === 'circuit';
+  renderSessionState(isToday ? t : null, sess);
   renderToday();
   placeTimer();
+}
+
+/* Three states for the band you are looking at:
+     done        — it is ticked off; show what was done, offer Undo, hide the controls
+     today's     — timer AND a "mark done" bar, because a run is timed on the watch
+     browsing    — timer only; there is nothing to tick off on a day you are not doing  */
+function renderSessionState(todayRow, sess) {
+  const doneEl = document.getElementById('sess-done');
+  const logBar = document.getElementById('log-bar');
+  const row1   = document.querySelector('#timer-strip .timer-strip-row');
+  if (!doneEl || !logBar) return;
+
+  const isDone = !!(todayRow && todayRow.done);
+  doneEl.hidden = !isDone;
+  if (row1) row1.hidden = isDone;
+  logBar.hidden = isDone || !todayRow || sess.kind === 'circuit';
+
+  const tgt = document.getElementById('gen-target-wrap');
+  if (tgt) tgt.hidden = isDone;        // "Planned: 3 km" is wrong once it is run
+
+  if (isDone) {
+    const unit = sess.measure === 'km' ? 'km' : 'min';
+    const amt  = todayRow.amount != null ? todayRow.amount + ' ' + unit : '';
+    document.getElementById('sess-done-txt').innerHTML =
+      '&#10003; Completed' + (amt ? ' &middot; <b>' + esc(amt) + '</b>' : '');
+  } else if (!logBar.hidden) {
+    const unit = sess.measure === 'km' ? 'km' : 'min';
+    document.getElementById('log-unit').textContent = unit;
+    const amt = document.getElementById('log-amt');
+    amt.step = unit === 'km' ? '0.5' : '5';
+    amt.placeholder = todayRow.amount != null ? String(todayRow.amount) : unit;
+    amt.value = '';
+  }
+  const st = document.getElementById('timer-strip');
+  if (st && isDone) st.hidden = false;      // the done line lives in the same strip
+}
+
+/* Logged off the watch: record what was actually done and tick the day. */
+function logSessionDone() {
+  const t = todaysPlanned();
+  if (!t) return;
+  const raw = (document.getElementById('log-amt') || {}).value;
+  const n = parseFloat(raw);
+  if (!isNaN(n)) {
+    const start = saturdayOf(new Date());
+    const plan = getPlan(start);
+    const row = plan.days[todayKey()];
+    if (row) { row.amount = n; savePlan(start, plan); }
+  }
+  markPlannedDone(todayKey());
+  const msg = document.getElementById('timer-logged-msg');
+  if (msg) { msg.classList.add('show'); setTimeout(() => msg.classList.remove('show'), 2000); }
+  if (CURRENT_SESSION) showSession(CURRENT_SESSION.name);
+}
+function undoSessionDone() {
+  const start = saturdayOf(new Date());
+  const plan = getPlan(start);
+  const row = plan.days[todayKey()];
+  if (!row) return;
+  row.done = false; row.doneAt = null; row.auto = false;
+  savePlan(start, plan);
+  renderPlan();
+  if (CURRENT_SESSION) showSession(CURRENT_SESSION.name);
 }
 /* Kept so anything still calling showDay('mon', btn) keeps working. */
 function showDay(id, btn) {
@@ -3342,18 +3463,16 @@ function renderToday() {
   }
 }
 
-/* The browse strip: every session, grouped by the program it belongs to. */
+/* One compact dropdown, grouped by program — the button grid was a screenful. */
 function renderSessionNav() {
-  const nav = document.getElementById('sess-nav');
-  if (!nav) return;
-  const today = todaysPlanned();
-  nav.innerHTML = PROGRAMS.map(p =>
-    '<div class="sess-group"><div class="sess-group-name">' + esc(p.name) + '</div>'
-    + p.sessions.map(se =>
-        '<button class="sess-btn' + (today && today.type === se.name ? ' planned' : '') + '"'
-        + ' data-sess="' + esc(se.name) + '"'
-        + ' onclick="showSession(this.dataset.sess)">' + esc(se.name) + '</button>').join('')
-    + '</div>').join('');
+  const sel = document.getElementById('sess-pick');
+  if (!sel) return;
+  const cur = CURRENT_SESSION ? CURRENT_SESSION.name : '';
+  const mine = getWorkoutTypes().filter(t => !PROGRAMS.some(p => p.sessions.some(x => x.name === t.name)));
+  const opt = n => '<option value="' + esc(n) + '"' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>';
+  sel.innerHTML = PROGRAMS.map(p => '<optgroup label="' + esc(p.name) + '">'
+      + p.sessions.map(x => opt(x.name)).join('') + '</optgroup>').join('')
+    + (mine.length ? '<optgroup label="Mine">' + mine.map(t => opt(t.name)).join('') + '</optgroup>' : '');
 }
 /* Put the timer inside the day band you are looking at, under the day's meta line.
    Moving the one element keeps a single timer-display / timer-actions pair, so the
