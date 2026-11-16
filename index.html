@@ -6182,7 +6182,14 @@ function applyDayRow(row) {
     var bar = document.createElement('div'); bar.id = 'lifeBar';
     bar.innerHTML = '<button class="lb" type="button">\u2039 Back</button><button class="ld" type="button">\u2713 Done \u00b7 back to Life App</button>';
     document.body.appendChild(bar);
-    var leave = function(done){ try { sessionStorage.removeItem('hf.life'); } catch (e) {} location.href = st.ret + '#' + (done ? 'done=' + encodeURIComponent(st.rid) : 'back'); };
+    // Leave a note for the Life App (same website, shared storage), then try to just close this
+    // window so the Life App underneath carries on; if the phone won't allow that, go there instead.
+    var leave = function(done){
+      try { sessionStorage.removeItem('hf.life'); } catch (e) {}
+      try { localStorage.setItem('life_return', JSON.stringify({ rid: st.rid, done: !!done, at: Date.now() })); } catch (e) {}
+      try { window.close(); } catch (e) {}
+      setTimeout(function(){ location.href = st.ret; }, 350);
+    };
     bar.querySelector('.lb').onclick = function(){ leave(false); };
     bar.querySelector('.ld').onclick = function(){ leave(true); };
   });
