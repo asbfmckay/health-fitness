@@ -6031,6 +6031,7 @@ async function pullSamsung(silent) {
     if (res.status === 401) throw new Error('shared secret rejected');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     COACH_VERIFIED = true; COACH_LAST_ERR = '';
+    try { saveJSON('coach-last-ok', Date.now()); } catch (e) {}
     const days = await res.json();
     const dates = Object.keys(days || {}).sort();
     let filled = 0, newDays = 0;
@@ -6079,12 +6080,23 @@ async function pullSamsung(silent) {
     if (note && !silent) { note.textContent = COACH_LAST_ERR; note.style.color = 'var(--chest)'; }
   }
 }
-/* "Failed to fetch" tells you nothing. Name the two things it actually means. */
+/* "Failed to fetch" tells you nothing — but nor does naming a cause we cannot know.
+   This used to assert ALLOW_ORIGIN was wrong, which sent me to Cloudflare to change a
+   setting that was already correct: the previous message had gone through, so CORS
+   could not have been the problem. A dropped mobile request looks identical from here.
+   So: say what is certain, and only raise the config causes when they are plausible. */
 function explainFetchError(err) {
   const m = String(err && err.message || err);
   if (/failed to fetch|networkerror|load failed/i.test(m)) {
-    return 'Blocked before it reached the worker. Usually ALLOW_ORIGIN in Cloudflare not matching ' +
-           (location.origin === 'null' ? 'a page opened from disk' : location.origin) + ' — set it to * and redeploy.';
+    // If the coach has answered at any point, the URL, secret and CORS are all fine.
+    const workedBefore = !!loadJSON('coach-last-ok', null);
+    if (workedBefore) {
+      return 'The request did not reach the worker. It has worked before on this device, so '
+           + 'this is most likely the connection dropping — try again in a moment.';
+    }
+    return 'The request did not reach the worker, and it has not connected on this device yet. '
+         + 'Check the Coach URL in Settings first, then ALLOW_ORIGIN in Cloudflare — it must be '
+         + '* or include ' + (location.origin === 'null' ? 'a page opened from disk' : location.origin) + '.';
   }
   if (/401/.test(m)) return 'Shared secret rejected by the worker.';
   return m;
