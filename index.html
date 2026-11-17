@@ -1363,6 +1363,12 @@
     text-transform:uppercase;color:var(--text-dim);cursor:pointer}
   .prog-btn.active{background:var(--green-deep);color:var(--lime)}
   .day-report-body{padding-bottom:14px}
+
+  .share-state{font-size:13.5px;color:var(--text-b)}
+  .share-live{font-weight:700;color:var(--green-deep);margin-bottom:6px}
+  .share-url{font-family:var(--mono);font-size:11.5px;word-break:break-all;color:var(--text-dim);
+    background:var(--bg-soft);border:1px solid var(--border);border-radius:7px;padding:9px 10px}
+  .share-copied{margin-top:6px;font-size:12px;font-weight:700;color:var(--green-deep)}
   .plan-card{padding:6px 16px 16px}
   .plan-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
   .plan-row:last-of-type{border-bottom:none}
@@ -2839,6 +2845,23 @@
     <div class="day-heading">Settings</div>
   </div>
 
+  <div class="section-label">Share with your trainer</div>
+  <div class="tracker-card">
+    <div id="share-state" class="share-state">Checking…</div>
+    <div class="log-form" style="margin-top:12px;gap:8px;flex-wrap:wrap;">
+      <div class="log-field" style="flex:1;min-width:120px;">
+        <label class="mini-label">Days to show</label>
+        <input type="number" id="share-days" min="1" max="60" step="1" value="14"
+               inputmode="numeric" autocomplete="off" data-lpignore="true">
+      </div>
+      <button class="solid-btn" id="share-make" onclick="makeShareLink()">Create link</button>
+      <button class="ghost-btn" id="share-revoke" onclick="revokeShareLink()" hidden>Revoke</button>
+    </div>
+    <div class="tip-box" style="margin-top:12px;">Anyone with the link can read the report —
+      there is no password. Send it to your trainer directly, not into a group chat.
+      Creating a new link revokes the old one.</div>
+  </div>
+
   <div class="section-label">Daily Targets</div>
   <div class="tracker-card">
     <div class="log-form" style="flex-direction:column; align-items:stretch; gap:14px;">
@@ -3740,6 +3763,7 @@ function showPage(id) {
     }));
   }
   if (id === 'review') renderWeek();
+  if (id === 'settings') shareStatus();   // check the trainer link each time Settings opens
   if (id === 'hf') renderFoodGroups();
 }
 
@@ -4419,6 +4443,83 @@ function rehomeFoodSections() {
   take(fgLabel);
   take(document.getElementById('fg-bars') ? document.getElementById('fg-bars').closest('.acc-card') : null);
   take(document.getElementById('recipes-acc'));
+}
+
+/* ── Trainer share link ─────────────────────────────────────────────────────
+   The token in the URL is the only credential, so the honest framing matters: this
+   is "anyone with the link", not "only your trainer". Said plainly in the UI rather
+   than buried, because he will paste it somewhere eventually. */
+async function shareStatus() {
+  const el = document.getElementById('share-state');
+  if (!el) return;
+  try {
+    const res = await fetch(COACH_URL() + '/share/status', { headers: coachHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    renderShare(j);
+  } catch (e) {
+    el.textContent = 'Could not check the link — ' + explainFetchError(e);
+  }
+}
+function renderShare(j) {
+  const el = document.getElementById('share-state');
+  const rev = document.getElementById('share-revoke');
+  const mk = document.getElementById('share-make');
+  if (!el) return;
+  if (j && j.active) {
+    el.innerHTML = '<div class="share-live">Link is live — last ' + (j.days || 14) + ' days</div>'
+      + '<div class="share-url" id="share-url">' + esc(j.url) + '</div>'
+      + '<button class="ghost-btn" onclick="copyShareLink()" style="margin-top:8px;">Copy link</button>';
+    if (rev) rev.hidden = false;
+    if (mk) mk.textContent = 'Replace link';
+    const d = document.getElementById('share-days');
+    if (d && j.days) d.value = j.days;
+  } else {
+    el.textContent = 'No link yet. Your log is not shared with anyone.';
+    if (rev) rev.hidden = true;
+    if (mk) mk.textContent = 'Create link';
+  }
+}
+async function makeShareLink() {
+  const days = parseInt((document.getElementById('share-days') || {}).value, 10) || 14;
+  const el = document.getElementById('share-state');
+  if (el) el.textContent = 'Creating…';
+  try {
+    const res = await fetch(COACH_URL() + '/share/new', {
+      method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, coachHeaders()),
+      body: JSON.stringify({ days: days })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    // The report reads the state backup, so push before handing over a link that
+    // would otherwise show whatever was last synced — possibly days old.
+    try { await pushState(); } catch (_) {}
+    renderShare({ active: true, url: j.url, days: j.days });
+  } catch (e) {
+    if (el) el.textContent = 'Could not create the link — ' + explainFetchError(e);
+  }
+}
+async function revokeShareLink() {
+  if (!confirm('Revoke the link? Your trainer will get a 404 until you make a new one.')) return;
+  try {
+    const res = await fetch(COACH_URL() + '/share/revoke', { method: 'POST', headers: coachHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    renderShare({ active: false });
+  } catch (e) {
+    const el = document.getElementById('share-state');
+    if (el) el.textContent = 'Could not revoke — ' + explainFetchError(e);
+  }
+}
+function copyShareLink() {
+  const u = document.getElementById('share-url');
+  if (!u) return;
+  const text = u.textContent.trim();
+  const done = () => { const el = document.getElementById('share-state');
+    const note = document.createElement('div'); note.className = 'share-copied'; note.textContent = 'Copied';
+    el.appendChild(note); setTimeout(() => note.remove(), 1600); };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done);
+  else { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t);
+         t.select(); try { document.execCommand('copy'); } catch (_) {} t.remove(); done(); }
 }
 
 /* ══════════════════════════════════════════════════════
