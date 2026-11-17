@@ -599,6 +599,7 @@
     width: 100%;
     max-width: 488px;
     display: grid;
+    /* Five tabs since Food was added. Any more and this wants scrolling instead. */
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 4px;
     background: var(--bg-soft);
@@ -608,7 +609,7 @@
   }
 
   .page-btn {
-    padding: 9px 2px;
+    padding: 9px 1px;
     letter-spacing: 0;
     white-space: nowrap;
     font-size: 10.5px;
@@ -617,13 +618,14 @@
     background: transparent;
     color: var(--text-dim);
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.15s ease;
   }
+  @media (min-width: 390px) { .page-btn { font-size: 11px; } }
 
   .page-btn.active {
     background: var(--green-deep);
@@ -1006,6 +1008,7 @@
     margin: 0 16px 12px;
   }
 
+  .stat-card[hidden]{display:none}
   .stat-card {
     background: var(--bg-card);
     border: 1.5px solid var(--border);
@@ -1271,6 +1274,95 @@
     .today-strip{flex-direction:column;align-items:stretch}
     .today-strip .solid-btn{width:100%}
   }
+
+  /* ── Food tab ──────────────────────────────────────────────────────────── */
+  .food-datenav{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin:0 16px 12px}
+  .food-date{flex:1;text-align:center;font-family:var(--display);font-size:17px;
+    font-weight:700;color:var(--text-h)}
+  .food-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
+    border-radius:10px;padding:15px 16px;box-shadow:0 4px 16px rgba(23,27,46,0.05)}
+  .food-card-title{font-size:13px;font-weight:700;color:var(--text-b);margin-bottom:8px}
+  .cal-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px}
+  .cal-big{font-family:var(--display);font-size:27px;font-weight:800;color:var(--text-h);
+    letter-spacing:-.6px;line-height:1}
+  .cal-unit{font-size:15px;font-weight:700}
+  .cal-goal{font-size:14px;font-weight:600;color:var(--text-dim)}
+  .cal-left{font-size:13px;color:var(--text-dim);text-align:right;white-space:nowrap}
+  .cal-left b{font-size:16px;color:var(--text-h)}
+  .bar{height:8px;border-radius:999px;background:var(--bg-soft);overflow:hidden}
+  .bar-fill{height:100%;border-radius:999px;background:var(--lime);transition:width .25s ease}
+  .bar-fill.over{background:var(--c-kcalIn)}
+  .macro-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .macro-cell{min-width:0}
+  .macro-name{font-size:12px;font-weight:700;color:var(--text-b);margin-bottom:3px}
+  .macro-val{font-size:12.5px;color:var(--text-dim);margin-bottom:7px;white-space:nowrap}
+  .macro-val b{font-size:15px;color:var(--text-h);font-weight:800}
+  .food-more{padding:4px 16px}
+  .food-more>.acc-sum{padding:12px 0}
+  .food-more[open]>.acc-sum{margin-bottom:8px}
+  .food-more .macro-3{padding-bottom:14px}
+
+  .meal-card{margin:0 16px 10px;background:var(--bg-card);border:1.5px solid var(--border);
+    border-radius:10px;overflow:hidden}
+  .meal-head{display:flex;align-items:center;gap:10px;padding:13px 15px}
+  .meal-title{flex:1;font-size:15px;font-weight:800;color:var(--text-h)}
+  .meal-kcal{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text-dim)}
+  .meal-log{background:var(--lime);border:none;border-radius:999px;padding:8px 18px;
+    font-family:inherit;font-size:13px;font-weight:800;color:var(--green-deep);cursor:pointer}
+  .meal-items{border-top:1px solid var(--border)}
+  .meal-item{display:flex;align-items:center;gap:10px;padding:10px 15px;
+    border-bottom:1px solid var(--border)}
+  .meal-item:last-child{border-bottom:none}
+  .meal-item-main{flex:1;min-width:0}
+  .meal-item-name{font-size:13.5px;font-weight:700;color:var(--text-h)}
+  .meal-item-sub{font-size:11.5px;color:var(--text-dim);margin-top:2px}
+  .meal-del{flex:none;width:28px;height:28px;border-radius:7px;border:1px solid var(--border-md);
+    background:var(--bg-soft);color:var(--text-dim);font-size:17px;line-height:1;cursor:pointer}
+  .meal-again{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+    border:none;border-top:1px solid var(--border);background:transparent;cursor:pointer;
+    padding:11px 15px;text-align:left;font-family:inherit;font-size:13px;color:var(--text-h)}
+  .meal-again-sub{font-weight:600;color:var(--text-dim);font-size:11.5px}
+  .meal-plus{font-size:20px;color:var(--text-dim)}
+
+  .rep-row{display:flex;align-items:baseline;gap:12px;padding:8px 0;
+    border-bottom:1px solid var(--border)}
+  .rep-row:last-child{border-bottom:none}
+  .rep-label{width:84px;flex:none;font-family:var(--mono);font-size:10.5px;font-weight:700;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
+  .rep-value{flex:1;font-size:13.5px;font-weight:700;color:var(--text-h);min-width:0}
+  .rep-note{font-weight:600;font-size:11.5px;color:var(--text-dim)}
+  .rep-none{font-weight:600;color:var(--text-dim)}
+  .rep-meals{padding-top:9px;margin-top:3px;border-top:1px solid var(--border)}
+  .rep-slot{font-size:12.5px;color:var(--text-b);margin-top:5px;line-height:1.45}
+
+  .meal-sheet{position:fixed;inset:0;z-index:60;background:rgba(23,27,46,.55);
+    display:flex;align-items:flex-end;justify-content:center}
+  .meal-sheet[hidden]{display:none}
+  .meal-sheet-card{width:100%;max-width:520px;max-height:88vh;overflow:auto;
+    background:var(--bg-card);border-radius:16px 16px 0 0;padding:16px}
+  .meal-sheet-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .meal-sheet-title{flex:1;font-family:var(--display);font-size:17px;font-weight:800;color:var(--text-h)}
+  .ms-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .ms-wide{grid-column:1 / -1}
+  .ms-field label{display:block;font-size:11px;font-weight:700;color:var(--text-dim);
+    margin-bottom:4px}
+  .ms-field label span{font-weight:600;opacity:.8}
+  .ms-field input{width:100%;background:var(--bg-soft);border:1.5px solid var(--border-md);
+    border-radius:8px;padding:11px 10px;font-family:inherit;font-size:14px;font-weight:700;
+    color:var(--text-h);-moz-appearance:textfield}
+  .ms-field input::-webkit-outer-spin-button,.ms-field input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0}
+  .ms-save{width:100%;margin-top:14px}
+
+  .prog-switch{display:flex;gap:4px;margin:0 16px 14px;background:var(--bg-soft);
+    border:1.5px solid var(--border);border-radius:8px;padding:4px}
+  .prog-switch[hidden]{display:none}
+  .prog-btn{flex:1;border:none;background:transparent;border-radius:6px;padding:9px 4px;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.03em;
+    text-transform:uppercase;color:var(--text-dim);cursor:pointer}
+  .prog-btn.active{background:var(--green-deep);color:var(--lime)}
+  .day-report-body{padding-bottom:14px}
   .plan-card{padding:6px 16px 16px}
   .plan-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
   .plan-row:last-of-type{border-bottom:none}
@@ -1864,9 +1956,9 @@
 <div class="page-nav-wrap">
   <div class="page-nav">
     <button class="page-btn active" data-page="coach" onclick="showPage('coach')">Coach</button>
-    <button class="page-btn" data-page="hf" onclick="showPage('hf')">Health</button>
+    <button class="page-btn" data-page="food" onclick="showPage('food')">Food</button>
     <button class="page-btn" data-page="workout" onclick="showPage('workout')">Workout</button>
-    <button class="page-btn" data-page="review" onclick="showPage('review')">Review</button>
+    <button class="page-btn" data-page="progress" onclick="showPage('progress')">Progress</button>
   </div>
 </div>
 
@@ -1884,6 +1976,89 @@
     <button class="timer-btn resume-btn" onclick="skipCircuitStep()">Skip</button>
   </div>
 </div>
+<!-- Progress holds two views: today's body numbers, and the week. One tab, because
+     they are the same question asked over different spans. -->
+<div class="prog-switch" id="prog-switch" hidden>
+  <button class="prog-btn active" data-view="day"  onclick="showProgress('day')">Day</button>
+  <button class="prog-btn"        data-view="week" onclick="showProgress('week')">Week</button>
+</div>
+
+<div id="page-food" class="page-section">
+
+  <div class="food-datenav">
+    <button class="ghost-btn wk-arrow" onclick="stepFoodDay(-1)" aria-label="Previous day">&lsaquo;</button>
+    <div class="food-date" id="food-date">Today</div>
+    <button class="ghost-btn wk-arrow" onclick="stepFoodDay(1)" aria-label="Next day">&rsaquo;</button>
+  </div>
+
+  <!-- Calories: eaten, target, and what is left. "Left" is the number you act on. -->
+  <div class="food-card">
+    <div class="food-card-title">Calories</div>
+    <div class="cal-row">
+      <div class="cal-big"><span id="cal-eaten">0</span> <span class="cal-unit">cal</span>
+        <span class="cal-goal">/ <span id="cal-goal">1,800</span></span></div>
+      <div class="cal-left"><b id="cal-left">1,800</b> <span id="cal-left-word">left</span></div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="cal-bar"></div></div>
+  </div>
+
+  <!-- The three that matter, in the order MyFitnessPal uses so the eye knows where to go -->
+  <div class="food-card">
+    <div class="macro-3" id="macro-3"></div>
+  </div>
+
+  <details class="food-card food-more acc">
+    <summary class="acc-sum"><span>Fibre, sodium &amp; sugar</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="macro-3" id="macro-extra"></div>
+  </details>
+
+  <div class="section-label">Meals</div>
+  <div id="meal-slots"></div>
+
+  <details class="food-card food-more acc" id="day-report-acc">
+    <summary class="acc-sum"><span>Day report</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div id="day-report" class="day-report-body"></div>
+  </details>
+
+  <!-- Deliberately a form, not a food database. The coach reads a photo or a
+       description and fills these in; this is for knowing the numbers yourself,
+       or correcting its guess. -->
+  <div class="meal-sheet" id="meal-sheet" hidden>
+    <div class="meal-sheet-card">
+      <div class="meal-sheet-head">
+        <div class="meal-sheet-title" id="meal-sheet-title">Add food</div>
+        <button class="meal-del" onclick="closeMealEntry()" aria-label="Close">&times;</button>
+      </div>
+      <div class="ms-grid">
+        <div class="ms-field ms-wide"><label>Food</label>
+          <input id="ms-name" type="text" autocomplete="off" data-lpignore="true" placeholder="Chicken salad"></div>
+        <div class="ms-field ms-wide"><label>Amount <span>(optional)</span></label>
+          <input id="ms-qty" type="text" autocomplete="off" data-lpignore="true" placeholder="1 bowl / 250g"></div>
+        <div class="ms-field"><label>Calories</label>
+          <input id="ms-kcal" type="number" inputmode="numeric" autocomplete="off" data-lpignore="true" min="0"></div>
+        <div class="ms-field"><label>Protein (g)</label>
+          <input id="ms-protein" type="number" inputmode="decimal" autocomplete="off" data-lpignore="true" min="0"></div>
+        <div class="ms-field"><label>Carbs (g)</label>
+          <input id="ms-carbs" type="number" inputmode="decimal" autocomplete="off" data-lpignore="true" min="0"></div>
+        <div class="ms-field"><label>Fat (g)</label>
+          <input id="ms-fat" type="number" inputmode="decimal" autocomplete="off" data-lpignore="true" min="0"></div>
+        <div class="ms-field"><label>Fibre (g)</label>
+          <input id="ms-fibre" type="number" inputmode="decimal" autocomplete="off" data-lpignore="true" min="0"></div>
+        <div class="ms-field"><label>Sodium (mg)</label>
+          <input id="ms-sodium" type="number" inputmode="numeric" autocomplete="off" data-lpignore="true" min="0"></div>
+        <div class="ms-field"><label>Sugar (g)</label>
+          <input id="ms-sugar" type="number" inputmode="decimal" autocomplete="off" data-lpignore="true" min="0"></div>
+      </div>
+      <button class="solid-btn ms-save" onclick="saveMealEntry()">Add</button>
+    </div>
+  </div>
+
+</div>
+
 <div id="page-workout" class="page-section">
 
 <div id="plan-nudge" class="plan-nudge" hidden>
@@ -2499,23 +2674,24 @@
 
   <div class="section-label" id="dials-label">Today</div>
   <div class="stat-grid">
-    <div class="stat-card">
+    <!-- Calories In, Protein and Veg used to be typed here. The Food tab owns them now:
+         it derives them from the meals, so a figure typed here would be overwritten by
+         the next meal logged. The rings stay in the document — hidden — because
+         renderFitnessStats() and the history sheets still address them by id. -->
+    <div class="stat-card" hidden>
       <div class="stat-head"><div class="stat-label">Calories In</div></div>
       <div class="stat-ring-wrap" id="kcalIn-ring"></div>
-      <div class="stat-sub" id="kcalIn-target-label">/ 2,000</div>
-      <input type="number" class="stat-input" id="kcalIn-input" placeholder="Log cal" min="0">
+      <div class="stat-sub" id="kcalIn-target-label">/ 1,800</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" hidden>
       <div class="stat-head"><div class="stat-label">Protein</div></div>
       <div class="stat-ring-wrap" id="protein-ring"></div>
-      <div class="stat-sub" id="protein-target-label">/ 150g</div>
-      <input type="number" class="stat-input" id="protein-input" placeholder="Log g" min="0">
+      <div class="stat-sub" id="protein-target-label">/ 158g</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" hidden>
       <div class="stat-head"><div class="stat-label">Veg Serves</div></div>
       <div class="stat-ring-wrap" id="veg-ring"></div>
       <div class="stat-sub" id="veg-target-label">/ 5</div>
-      <input type="number" class="stat-input" id="veg-input" placeholder="Log serves" min="0" step="0.5">
     </div>
     <div class="stat-card" style="display:flex;flex-direction:column;justify-content:center;">
       <div class="stat-head"><div class="stat-label">Energy</div></div>
@@ -2675,6 +2851,26 @@
         <input type="number" id="set-protein-target" min="0" step="5">
       </div>
       <div class="log-field">
+        <label class="mini-label">Carbs target (g)</label>
+        <input type="number" id="set-carbs-target" min="0" step="5">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Fat target (g)</label>
+        <input type="number" id="set-fat-target" min="0" step="5">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Fibre target (g)</label>
+        <input type="number" id="set-fibre-target" min="0" step="1">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Sodium target (mg)</label>
+        <input type="number" id="set-sodium-target" min="0" step="100">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Sugar target (g)</label>
+        <input type="number" id="set-sugar-target" min="0" step="5">
+      </div>
+      <div class="log-field">
         <label class="mini-label">Veg serves target</label>
         <input type="number" id="set-veg-target" min="0" step="1">
       </div>
@@ -2798,7 +2994,7 @@
     <div class="tip-box" style="margin-top:12px;">Steps, active minutes, calories burned and sleep arrive from <strong>Samsung Health</strong> via Health Connect, posted by the <strong>Health Connect Webhook</strong> app on your phone. Everything else — weight, food, sessions — backs up through the same worker, so phone and computer stay in step.</div>
   </div>
 
-  <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('hf')">Done</button>
+  <button class="solid-btn" style="margin-top:4px; margin-left:16px;" onclick="showPage('progress')">Done</button>
 
 </div><!-- /page-settings -->
 
@@ -3502,9 +3698,34 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', sizeChat);
   window.visualViewport.addEventListener('scroll', sizeChat);
 }
+let PROGRESS_VIEW = 'day';
+/* Progress is one tab over two sections: the body numbers for a day (the old Health
+   page) and the week (the old Review page). They stay separate in the document so
+   nothing inside them had to move; the switch just decides which is showing. */
+function showProgress(view) {
+  PROGRESS_VIEW = view === 'week' ? 'week' : 'day';
+  document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+  document.getElementById(PROGRESS_VIEW === 'week' ? 'page-review' : 'page-hf').classList.add('active');
+  document.querySelectorAll('.prog-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.view === PROGRESS_VIEW));
+  if (PROGRESS_VIEW === 'week') renderWeek();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
 function showPage(id) {
+  // "progress" is a tab, not a section — it owns two of them.
+  const isProgress = id === 'progress';
   document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.page-btn').forEach(el => el.classList.remove('active'));
+  const sw = document.getElementById('prog-switch');
+  if (sw) sw.hidden = !isProgress;
+  if (isProgress) {
+    const btn0 = document.querySelector('.page-btn[data-page="progress"]');
+    if (btn0) btn0.classList.add('active');
+    document.body.classList.remove('coach-open');
+    showProgress(PROGRESS_VIEW);
+    return;
+  }
   document.getElementById('page-' + id).classList.add('active');
   const btn = document.querySelector(`.page-btn[data-page="${id}"]`);
   if (btn) btn.classList.add('active');
@@ -3932,6 +4153,8 @@ function initTrackers() {
   placeTimer();
   renderCircuitList();
   paintCircuitThumbs();
+  rehomeFoodSections();
+  renderFood();
   initCoach();
   renderWeek();
   renderFoodGroups();
@@ -3954,14 +4177,21 @@ function initTrackers() {
    SETTINGS — every target lives here
    ══════════════════════════════════════════════════════ */
 const DEFAULT_TARGETS = {
-  kcalIn: 2000,
-  protein: 150,
+  kcalIn: 1800,
+  protein: 158,
+  carbs: 158,
+  fat: 60,
+  sodium: 2300,
+  sugar: 102,
+  // Not on the MyFitnessPal screenshot, but it is the number that decides whether
+  // 1,800 calories feels survivable. 30g is the Australian adult guideline.
+  fibre: 30,
   veg: 5,
   steps: 10000,
   active: 30,
   kcal: 2400,
   sleep: 8,
-  weight: 80,
+  weight: 90,          // the stated goal; 80 was a leftover default
   afd: 4,
   workouts: 5
 };
@@ -3992,6 +4222,11 @@ function initSettings() {
   const fields = {
     'set-kcalIn-target': 'kcalIn',
     'set-protein-target': 'protein',
+    'set-carbs-target': 'carbs',
+    'set-fat-target': 'fat',
+    'set-fibre-target': 'fibre',
+    'set-sodium-target': 'sodium',
+    'set-sugar-target': 'sugar',
     'set-veg-target': 'veg',
     'set-steps-target': 'steps',
     'set-active-target': 'active',
@@ -4168,6 +4403,385 @@ function saveFitnessValue(key, value) {
 function saveFitnessDataForDate(date, data) {
   data._ts = Date.now();          // recency marker used by the merge
   saveJSON('fitness-' + date, data);
+}
+
+/* Food groups and saved meals were built on the Health page before Food existed.
+   They are food, so they belong here. Moving the live elements rather than copying
+   the markup means every id, handler and render function keeps working untouched. */
+function rehomeFoodSections() {
+  const food = document.getElementById('page-food');
+  const report = document.getElementById('day-report-acc');
+  if (!food || !report) return;
+  const take = el => { if (el && el.parentElement !== food) food.insertBefore(el, report); };
+  const label = text => [...document.querySelectorAll('#page-hf .section-label')]
+    .find(l => l.textContent.trim() === text);
+  const fgLabel = label('Food groups');
+  take(fgLabel);
+  take(document.getElementById('fg-bars') ? document.getElementById('fg-bars').closest('.acc-card') : null);
+  take(document.getElementById('recipes-acc'));
+}
+
+/* ══════════════════════════════════════════════════════
+   FOOD TAB
+   ══════════════════════════════════════════════════════ */
+let FOOD_DATE = null;
+function foodDate() { return FOOD_DATE || todayKey(); }
+function stepFoodDay(n) {
+  const d = new Date(foodDate() + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  if (isoOf(d) > todayKey()) return;        // no logging into the future
+  FOOD_DATE = isoOf(d);
+  renderFood();
+}
+const nf = n => Math.round(n).toLocaleString('en-AU');
+
+function bar(done, target, colour) {
+  const pct = target > 0 ? Math.min(100, (done / target) * 100) : 0;
+  const over = target > 0 && done > target;
+  return '<div class="bar"><div class="bar-fill' + (over ? ' over' : '') + '" style="width:'
+    + pct.toFixed(1) + '%;background:' + colour + '"></div></div>';
+}
+
+function renderFood() {
+  const date = foodDate();
+  const t = getTargets();
+  const tot = mealTotals(date);
+  const d = getFitnessData(date) || {};
+  // A day logged before meals existed still has typed totals worth showing.
+  const eaten = tot.count ? tot.kcal : (d.kcalIn != null ? d.kcalIn : 0);
+
+  const dl = document.getElementById('food-date');
+  if (dl) dl.textContent = date === todayKey() ? 'Today'
+    : new Date(date + 'T00:00:00').toLocaleDateString('en-AU',
+        { weekday: 'short', day: 'numeric', month: 'short' });
+
+  const goal = t.kcalIn || 0;
+  const left = goal - eaten;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('cal-eaten', nf(eaten)); set('cal-goal', nf(goal));
+  set('cal-left', nf(Math.abs(left)));
+  set('cal-left-word', left < 0 ? 'over' : 'left');
+  const cb = document.getElementById('cal-bar');
+  if (cb) {
+    const pct = goal > 0 ? Math.min(100, (eaten / goal) * 100) : 0;
+    cb.style.width = pct.toFixed(1) + '%';
+    cb.classList.toggle('over', eaten > goal);
+  }
+
+  const cell = (label, done, target, unit, colour) =>
+    '<div class="macro-cell">'
+    + '<div class="macro-name">' + label + '</div>'
+    + '<div class="macro-val"><b>' + nf(done) + unit + '</b> <span>/ ' + nf(target) + '</span></div>'
+    + bar(done, target, colour) + '</div>';
+
+  const val = k => tot.count ? tot[k] : (d[k] != null ? d[k] : 0);
+  const m3 = document.getElementById('macro-3');
+  if (m3) m3.innerHTML =
+      cell('Carbs',   val('carbs'),   t.carbs,   'g', 'var(--c-veg)')
+    + cell('Fat',     val('fat'),     t.fat,     'g', 'var(--c-kcalIn)')
+    + cell('Protein', val('protein'), t.protein, 'g', 'var(--c-protein)');
+  const mx = document.getElementById('macro-extra');
+  if (mx) mx.innerHTML =
+      cell('Fibre',  val('fibre'),  t.fibre,  'g',  'var(--c-protein)')
+    + cell('Sodium', val('sodium'), t.sodium, 'mg', 'var(--c-kcalIn)')
+    + cell('Sugar',  val('sugar'),  t.sugar,  'g',  'var(--c-veg)');
+
+  renderMealSlots(date);
+  renderDayReport(date);
+}
+
+function renderMealSlots(date) {
+  const wrap = document.getElementById('meal-slots');
+  if (!wrap) return;
+  wrap.innerHTML = MEAL_SLOTS.map(slot => {
+    const rows = getMeals(date).filter(m => m.slot === slot.key);
+    const st = mealTotals(date, slot.key);
+    const items = rows.map(m =>
+      '<div class="meal-item">'
+      + '<div class="meal-item-main"><div class="meal-item-name">' + esc(m.name) + '</div>'
+      +   '<div class="meal-item-sub">' + (m.qty ? esc(m.qty) + ' &middot; ' : '')
+      +     nf(m.kcal || 0) + ' cal'
+      +     (m.protein != null ? ' &middot; P ' + nf(m.protein) : '')
+      +     (m.carbs   != null ? ' &middot; C ' + nf(m.carbs)   : '')
+      +     (m.fat     != null ? ' &middot; F ' + nf(m.fat)     : '')
+      +   '</div></div>'
+      + '<button class="meal-del" onclick="delMealEntry(\'' + date + '\',\'' + m.id + '\')"'
+      +   ' aria-label="Remove">&times;</button>'
+      + '</div>').join('');
+
+    const prev = rows.length ? null : lastSlotEntries(date, slot.key);
+    const again = prev
+      ? '<button class="meal-again" onclick="repeatSlot(\'' + date + '\',\'' + slot.key + '\')">'
+        + '<span><b>Log ' + new Date(prev.date + 'T00:00:00').toLocaleDateString('en-AU',{weekday:'long'})
+        + '&rsquo;s again</b><br><span class="meal-again-sub">'
+        + esc(prev.rows[0].name) + (prev.rows.length > 1 ? ' and ' + (prev.rows.length - 1) + ' more' : '')
+        + '</span></span><span class="meal-plus">+</span></button>'
+      : '';
+
+    return '<div class="meal-card">'
+      + '<div class="meal-head">'
+      +   '<div class="meal-title">' + slot.name + '</div>'
+      +   (st.count ? '<div class="meal-kcal">' + nf(st.kcal) + ' cal</div>' : '')
+      +   '<button class="meal-log" onclick="openMealEntry(\'' + slot.key + '\')">Log</button>'
+      + '</div>'
+      + (items ? '<div class="meal-items">' + items + '</div>' : '')
+      + again
+      + '</div>';
+  }).join('');
+}
+
+function delMealEntry(date, id) {
+  removeMeal(date, id);
+  renderFood(); refreshAllViews();
+}
+
+/* ── Adding a meal ──────────────────────────────────────────────────────────
+   Deliberately a plain form, not a food database. The coach already reads a photo
+   or a description and returns the macros; this is for when you know the numbers
+   or want to correct its guess. */
+function openMealEntry(slot) {
+  const sheet = document.getElementById('meal-sheet');
+  document.getElementById('meal-sheet-title').textContent = 'Add to ' + slotName(slot);
+  sheet.dataset.slot = slot;
+  ['name','qty','kcal','protein','carbs','fat','fibre','sodium','sugar']
+    .forEach(k => { const el = document.getElementById('ms-' + k); if (el) el.value = ''; });
+  sheet.hidden = false;
+  setTimeout(() => { const n = document.getElementById('ms-name'); if (n) n.focus(); }, 60);
+}
+function closeMealEntry() { document.getElementById('meal-sheet').hidden = true; }
+function saveMealEntry() {
+  const sheet = document.getElementById('meal-sheet');
+  const v = k => { const el = document.getElementById('ms-' + k); if (!el) return null;
+                   const n = parseFloat(el.value); return isNaN(n) ? null : n; };
+  const name = (document.getElementById('ms-name').value || '').trim();
+  if (!name) { document.getElementById('ms-name').focus(); return; }
+  addMeal(foodDate(), {
+    slot: sheet.dataset.slot || 'snacks', name: name,
+    qty: (document.getElementById('ms-qty').value || '').trim() || null,
+    kcal: v('kcal'), protein: v('protein'), carbs: v('carbs'), fat: v('fat'),
+    fibre: v('fibre'), sodium: v('sodium'), sugar: v('sugar')
+  });
+  closeMealEntry();
+  renderFood(); refreshAllViews();
+}
+
+/* ── The day report ─────────────────────────────────────────────────────────
+   Written to be read by someone who was not there: the trainer. Every figure says
+   what it is and what it is measured against, and anything missing says so rather
+   than showing a zero. */
+function weightOn(date) {
+  const log = loadJSON('results-log', []) || [];
+  const exact = log.find(e => e.date === date && e.weight != null);
+  if (exact) return exact.weight;
+  const before = log.filter(e => e.date <= date && e.weight != null)
+                    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  return before ? before.weight : null;
+}
+/* Mean of the logged weights in the 7 days up to and including `date`. A single
+   morning's reading swings a kilo on water alone; the trend is the real signal. */
+function weightTrend(date) {
+  const log = loadJSON('results-log', []) || [];
+  const end = new Date(date + 'T00:00:00');
+  const start = new Date(end); start.setDate(start.getDate() - 6);
+  const vals = log.filter(e => e.weight != null && e.date >= isoOf(start) && e.date <= date)
+                  .map(e => e.weight);
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+function trainingOn(date) {
+  const log = loadJSON('session-log', []) || [];
+  const rows = log.filter(e => e.date === date);
+  const plan = getPlan(saturdayOf(new Date(date + 'T00:00:00')));
+  const planned = ((plan.days || {})[date]) || null;
+  const out = rows.map(r => (r.label || 'Session') + ' · ' + formatDuration(r.durationSec));
+  if (!out.length && planned && planned.done) {
+    const unit = measureFor(planned.type) === 'km' ? 'km' : 'min';
+    out.push(planned.type + (planned.amount != null ? ' · ' + planned.amount + ' ' + unit : ''));
+  }
+  return out;
+}
+
+function renderDayReport(date) {
+  const el = document.getElementById('day-report');
+  if (!el) return;
+  const t = getTargets();
+  const tot = mealTotals(date);
+  const d = getFitnessData(date) || {};
+  const eaten = tot.count ? tot.kcal : d.kcalIn;
+  const prot = tot.count ? tot.protein : d.protein;
+  const w = weightOn(date), tr = weightTrend(date);
+  const burn = dayBurn(d);
+  const train = trainingOn(date);
+
+  const row = (label, value, note) =>
+    '<div class="rep-row"><div class="rep-label">' + label + '</div>'
+    + '<div class="rep-value">' + value + (note ? ' <span class="rep-note">' + note + '</span>' : '')
+    + '</div></div>';
+  const none = '<span class="rep-none">not recorded</span>';
+
+  let out = '';
+  out += row('Calories', eaten != null ? nf(eaten) + ' / ' + nf(t.kcalIn) : none,
+             eaten != null ? (eaten > t.kcalIn ? nf(eaten - t.kcalIn) + ' over' : nf(t.kcalIn - eaten) + ' left') : '');
+  out += row('Protein', prot != null ? nf(prot) + 'g / ' + nf(t.protein) + 'g' : none,
+             // The figure a trainer actually reads. 158g means nothing without the bodyweight.
+             (prot != null && w) ? (prot / w).toFixed(2) + ' g/kg' : '');
+  if (tot.count) {
+    out += row('Carbs', nf(tot.carbs) + 'g / ' + nf(t.carbs) + 'g');
+    out += row('Fat', nf(tot.fat) + 'g / ' + nf(t.fat) + 'g');
+    out += row('Fibre', nf(tot.fibre) + 'g / ' + nf(t.fibre) + 'g');
+    out += row('Sodium', nf(tot.sodium) + 'mg / ' + nf(t.sodium) + 'mg');
+    out += row('Sugar', nf(tot.sugar) + 'g / ' + nf(t.sugar) + 'g');
+  }
+  out += row('Weight', w != null ? w.toFixed(1) + ' kg' : none,
+             tr != null ? '7-day ' + tr.toFixed(1) + ' kg' : '');
+  out += row('Burned', burn.total != null ? nf(burn.total) + ' cal' : none,
+             burn.total != null ? (burn.measuredOnly ? 'measured' : nf(burn.activity || 0) + ' active + ' + nf(burn.rest) + ' resting') : '');
+  out += row('Training', train.length ? train.map(esc).join('<br>') : '<span class="rep-none">rest</span>');
+
+  // Deficit vs what the scales actually did. When these disagree the usual cause is
+  // under-logging, not a broken metabolism — worth seeing side by side.
+  if (eaten != null && burn.total != null) {
+    const def = burn.total - eaten;
+    out += row('Deficit', (def >= 0 ? '' : '+') + nf(Math.abs(def)) + ' cal',
+               def > 0 ? '≈ ' + (def * 7 / 7700).toFixed(2) + ' kg/week' : 'surplus');
+  }
+  const wk = weeklyReconcile(date);
+  if (wk) out += row('Last 7 days', wk.predicted.toFixed(2) + ' kg predicted',
+                     'actual ' + (wk.actual > 0 ? '+' : '') + wk.actual.toFixed(2) + ' kg');
+  if (tot.count) {
+    out += '<div class="rep-meals"><div class="rep-label">Eaten</div>'
+      + MEAL_SLOTS.map(sl => {
+          const rows = getMeals(date).filter(m => m.slot === sl.key);
+          if (!rows.length) return '';
+          return '<div class="rep-slot"><b>' + sl.name + '</b> — '
+            + rows.map(m => esc(m.name) + ' (' + nf(m.kcal || 0) + ')').join(', ') + '</div>';
+        }).join('') + '</div>';
+  }
+  el.innerHTML = out;
+}
+
+/* Predicted loss from the week's deficits against the change in trend weight.
+   Needs at least four logged days each side or it is noise. */
+function weeklyReconcile(date) {
+  const end = new Date(date + 'T00:00:00');
+  let deficit = 0, days = 0;
+  for (let i = 0; i < 7; i++) {
+    const dd = new Date(end); dd.setDate(dd.getDate() - i);
+    const key = isoOf(dd);
+    const row = getFitnessData(key) || {};
+    const tot = mealTotals(key);
+    const ate = tot.count ? tot.kcal : row.kcalIn;
+    const b = dayBurn(row);
+    if (ate == null || b.total == null) continue;
+    deficit += (b.total - ate); days++;
+  }
+  if (days < 4) return null;
+  const now = weightTrend(date);
+  const before = new Date(end); before.setDate(before.getDate() - 7);
+  const then = weightTrend(isoOf(before));
+  if (now == null || then == null) return null;
+  return { predicted: -(deficit / days * 7) / 7700, actual: now - then, days: days };
+}
+
+/* ══════════════════════════════════════════════════════
+   MEALS — what was actually eaten, not just the day's totals
+   ══════════════════════════════════════════════════════
+   A day holds `meals`: a flat list of entries, each tagged with a slot. The day's
+   calorie and macro figures are DERIVED from that list whenever it has anything in
+   it, and fall back to a typed figure when it does not — so the dials, the coach and
+   the Review tab all keep working without knowing meals exist.
+
+   Entries carry an id so one can be removed without disturbing the rest, and the
+   macros are optional: a quick-added "sandwich, 450 cal" is still worth logging. */
+const MEAL_SLOTS = [
+  { key: 'breakfast', name: 'Breakfast' },
+  { key: 'lunch',     name: 'Lunch' },
+  { key: 'dinner',    name: 'Dinner' },
+  { key: 'snacks',    name: 'Snacks' }
+];
+const MACRO_KEYS = ['kcal', 'protein', 'carbs', 'fat', 'fibre', 'sodium', 'sugar'];
+
+function getMeals(date) {
+  const list = (getFitnessData(date) || {}).meals;
+  return Array.isArray(list) ? list : [];
+}
+function slotName(key) {
+  const s = MEAL_SLOTS.find(x => x.key === key);
+  return s ? s.name : 'Snacks';
+}
+/* Totals across a day, or across one slot. */
+function mealTotals(date, slot) {
+  const out = { kcal: 0, protein: 0, carbs: 0, fat: 0, fibre: 0, sodium: 0, sugar: 0, count: 0 };
+  getMeals(date).forEach(m => {
+    if (slot && m.slot !== slot) return;
+    out.count++;
+    MACRO_KEYS.forEach(k => { const v = Number(m[k]); if (!isNaN(v)) out[k] += v; });
+  });
+  return out;
+}
+/* The one place that reconciles meals with the typed day figures. Called after every
+   change. Without this the Food tab and the Health dials would drift apart, which is
+   exactly the class of bug dayBurn() was written to end. */
+function syncMealTotals(date) {
+  const d = getFitnessData(date) || {};
+  if (!Array.isArray(d.meals) || !d.meals.length) return;
+  const t = mealTotals(date);
+  d.kcalIn = Math.round(t.kcal);
+  d.protein = Math.round(t.protein);
+  d.carbs = Math.round(t.carbs);
+  d.fat = Math.round(t.fat);
+  d.fibre = Math.round(t.fibre);
+  d.sodium = Math.round(t.sodium);
+  d.sugar = Math.round(t.sugar);
+  saveFitnessDataForDate(date, d);
+}
+function addMeal(date, entry) {
+  const d = getFitnessData(date) || {};
+  const list = Array.isArray(d.meals) ? d.meals.slice() : [];
+  const row = { id: genId(), slot: entry.slot || 'snacks', name: String(entry.name || 'Food').trim(),
+                at: entry.at || Date.now() };
+  MACRO_KEYS.forEach(k => { const v = Number(entry[k]); if (!isNaN(v) && entry[k] != null) row[k] = v; });
+  if (entry.qty) row.qty = String(entry.qty);
+  list.push(row);
+  d.meals = list;
+  saveFitnessDataForDate(date, d);
+  syncMealTotals(date);
+  return row;
+}
+function removeMeal(date, id) {
+  const d = getFitnessData(date) || {};
+  if (!Array.isArray(d.meals)) return;
+  d.meals = d.meals.filter(m => m.id !== id);
+  saveFitnessDataForDate(date, d);
+  if (d.meals.length) syncMealTotals(date);
+  else {
+    // Last entry gone: clear the derived figures rather than leave the final total
+    // standing as if it had been typed in. Explicit nulls, because a deleted field
+    // comes back on the next merge.
+    const e = getFitnessData(date) || {};
+    ['kcalIn','protein','carbs','fat','fibre','sodium','sugar'].forEach(k => { e[k] = null; });
+    saveFitnessDataForDate(date, e);
+  }
+}
+/* Yesterday's version of a slot, for "log it again". */
+function lastSlotEntries(date, slot) {
+  for (let back = 1; back <= 7; back++) {
+    const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() - back);
+    const key = isoOf(d);
+    const rows = getMeals(key).filter(m => m.slot === slot);
+    if (rows.length) return { date: key, rows: rows };
+  }
+  return null;
+}
+function repeatSlot(date, slot) {
+  const prev = lastSlotEntries(date, slot);
+  if (!prev) return 0;
+  prev.rows.forEach(r => {
+    const copy = Object.assign({}, r); delete copy.id; copy.at = Date.now(); copy.slot = slot;
+    addMeal(date, copy);
+  });
+  renderFood(); refreshAllViews();
+  return prev.rows.length;
 }
 
 function initFitnessStats() {
@@ -5860,14 +6474,15 @@ async function getWeekRead() {
 }
 function refreshAllViews() {
   renderAfd(); renderFitnessStats(); renderFitnessLog(); renderResults(); renderRecipes(); renderWeek(); renderFoodGroups(); fillFitnessLogForm(); renderPlan();
-  renderWeightChart(); renderSessionStats(); refreshSettingsFields();
+  renderWeightChart(); renderSessionStats(); refreshSettingsFields(); renderFood();
 }
 function refreshSettingsFields() {
   const t = getTargets();
   const map = { 'set-steps-target': 'steps', 'set-active-target': 'active', 'set-kcal-target': 'kcal',
     'set-sleep-target': 'sleep', 'set-weight-target': 'weight', 'set-afd-target': 'afd',
     'set-workouts-target': 'workouts', 'set-kcalIn-target': 'kcalIn', 'set-protein-target': 'protein',
-    'set-veg-target': 'veg' };
+    'set-veg-target': 'veg', 'set-carbs-target': 'carbs', 'set-fat-target': 'fat',
+    'set-fibre-target': 'fibre', 'set-sodium-target': 'sodium', 'set-sugar-target': 'sugar' };
   Object.entries(map).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.value = t[key]; });
 }
 
@@ -6102,6 +6717,19 @@ function applyCoachPatch(p) {
     list.sort((a, b) => b.date.localeCompare(a.date));
     saveJSON('results-log', list);
   }
+  // Meals the coach read off a photo or a description. Each lands in a slot on a day,
+  // and the day's totals re-derive from them — so the dials move without the coach
+  // ever sending a calorie total of its own.
+  [].concat(p.meals || []).forEach(m => {
+    if (!m || !m.name) return;
+    let when = /^\d{4}-\d{2}-\d{2}$/.test(m.date || '') ? m.date : todayKey();
+    if (when > todayKey()) when = todayKey();     // never log into the future
+    const slot = MEAL_SLOTS.some(x => x.key === m.slot) ? m.slot : 'snacks';
+    const row = addMeal(when, Object.assign({}, m, { slot: slot }));
+    applied.push(row.name + ' → ' + slotName(slot)
+      + (row.kcal != null ? ' (' + Math.round(row.kcal) + ' cal)' : '')
+      + (when !== todayKey() ? ' on ' + formatDate(when) : ''));
+  });
   (p.recipes || []).forEach(r => { const row = upsertRecipe(r); if (row) applied.push('saved “' + row.name + '”'); });
   (p.labs || []).forEach(r => { const row = upsertLab(r); if (row) applied.push(row.marker + ' ' + row.value + (row.unit || '')); });
   (p.supplements || []).forEach(r => {
