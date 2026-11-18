@@ -1368,6 +1368,11 @@
   .share-live{font-weight:700;color:var(--green-deep);margin-bottom:6px}
   .share-url{font-family:var(--mono);font-size:11.5px;word-break:break-all;color:var(--text-dim);
     background:var(--bg-soft);border:1px solid var(--border);border-radius:7px;padding:9px 10px}
+
+  a.share-url{display:block;text-decoration:none}
+  a.share-url:active{opacity:.6}
+  .share-actions{display:flex;gap:8px;margin-top:10px}
+  .share-actions button{flex:1}
   .share-copied{margin-top:6px;font-size:12px;font-weight:700;color:var(--green-deep)}
   .plan-card{padding:6px 16px 16px}
   .plan-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
@@ -4467,9 +4472,15 @@ function renderShare(j) {
   const mk = document.getElementById('share-make');
   if (!el) return;
   if (j && j.active) {
+    // A real anchor, not a styled div — tapping the URL should open it, which is the
+    // first thing anyone tries. rel=noopener because it leaves the app.
     el.innerHTML = '<div class="share-live">Link is live — last ' + (j.days || 14) + ' days</div>'
-      + '<div class="share-url" id="share-url">' + esc(j.url) + '</div>'
-      + '<button class="ghost-btn" onclick="copyShareLink()" style="margin-top:8px;">Copy link</button>';
+      + '<a class="share-url" id="share-url" href="' + esc(j.url) + '" target="_blank" rel="noopener">'
+      +   esc(j.url) + '</a>'
+      + '<div class="share-actions">'
+      +   '<button class="solid-btn" onclick="copyShareLink()">Copy link</button>'
+      +   '<button class="ghost-btn" onclick="shareLinkNative()">Send…</button>'
+      + '</div>';
     if (rev) rev.hidden = false;
     if (mk) mk.textContent = 'Replace link';
     const d = document.getElementById('share-days');
@@ -4510,10 +4521,21 @@ async function revokeShareLink() {
     if (el) el.textContent = 'Could not revoke — ' + explainFetchError(e);
   }
 }
+/* Android's own share sheet — straight into Messages or Gmail, no copy-paste step. */
+function shareLinkNative() {
+  const u = document.getElementById('share-url');
+  if (!u) return;
+  const url = u.getAttribute('href');
+  if (navigator.share) {
+    navigator.share({ title: 'My training log', url: url }).catch(() => {});
+  } else {
+    copyShareLink();
+  }
+}
 function copyShareLink() {
   const u = document.getElementById('share-url');
   if (!u) return;
-  const text = u.textContent.trim();
+  const text = (u.getAttribute('href') || u.textContent).trim();
   const done = () => { const el = document.getElementById('share-state');
     const note = document.createElement('div'); note.className = 'share-copied'; note.textContent = 'Copied';
     el.appendChild(note); setTimeout(() => note.remove(), 1600); };
