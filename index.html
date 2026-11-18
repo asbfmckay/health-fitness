@@ -14,7 +14,10 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='#171b2e'/%3E%3Cg%20fill='none'%20stroke='#cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%2015.81%205.54%20A%207.5%207.5%200%200%201%2011.41%2019.48'%20stroke-width='2.1'/%3E%3Cpath%20d='M%208.19%2018.46%20A%207.5%207.5%200%200%201%2012.59%204.52'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#f3f1ec">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Manrope carries the body copy; Space Grotesk gives headings and big figures a
+     face of their own. Both display=swap so text paints immediately on a slow link. -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -31,7 +34,9 @@
     --text-h:    #171b2e;
     --text-body: #4a4740;
     --text-dim:  #8f8a7f;
-    --bg:        #f3f1ec;
+    /* Lightened back off the deeper beige — enough step below card white for the
+       cards to lift, without the page reading as a grey wash. */
+    --bg:        #f2f0e7;
     --bg-card:   #ffffff;
     --bg-soft:   #eeece3;
     --border:    #e4e0d5;
@@ -55,9 +60,40 @@
     --tag-active-border: rgba(159,185,63,0.5);
     --tag-active-text: #5c7a1f;
 
-    --display: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* All three roles pointed at Manrope, so a heading was body text in bold and the
+       "mono" label face was not mono at all. Space Grotesk takes headings and figures;
+       Manrope keeps the reading text, which it is better at. */
+    --display: 'Space Grotesk', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
     --body-f: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
-    --mono: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'Space Grotesk', 'Manrope', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* ── Elevation ──────────────────────────────────────────────────────────
+       One 5%-opacity shadow was doing every job, so nothing sat above anything
+       else and the whole page read as a single flat plane. A real scale: each
+       level pairs a tight contact shadow with a wider ambient one, which is what
+       makes a card look lifted rather than outlined. */
+    --e1: 0 1px 2px rgba(23,27,46,.06), 0 2px 8px rgba(23,27,46,.05);
+    --e2: 0 2px 4px rgba(23,27,46,.07), 0 8px 20px rgba(23,27,46,.07);
+    --e3: 0 4px 8px rgba(23,27,46,.08), 0 16px 36px rgba(23,27,46,.10);
+    --e-press: inset 0 1px 2px rgba(23,27,46,.10);
+
+    /* ── Radii ──────────────────────────────────────────────────────────────
+       Was 5, 6, 7, 8, 9, 10 and 12 with no rule behind it. Three steps and a
+       pill, used by role: controls, cards, sheets. */
+    --r-sm: 9px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-pill: 999px;
+
+    /* ── Surfaces ───────────────────────────────────────────────────────────
+       The page was #f3f1ec against #ffffff cards — barely a step, so cards had
+       nothing to lift off. Deeper, slightly cooler ground; cards stay white. */
+    --bg-deep:   #e9e6dd;
+    --bg-raised: #ffffff;
+    --hairline:  rgba(23,27,46,.07);
+
+    --t-fast: 120ms cubic-bezier(.2,.6,.3,1);
+    --t-med:  220ms cubic-bezier(.2,.6,.3,1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -233,7 +269,7 @@
     border-radius: 8px;
     padding: 18px 18px 16px;
     margin: 0 16px 12px;
-    box-shadow: 0 4px 16px rgba(23,27,46,0.05);
+    box-shadow: var(--e1);
   }
 
   .day-tag {
@@ -331,7 +367,7 @@
     border: 1.5px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(23,27,46,0.05);
+    box-shadow: var(--e1);
   }
 
   .ex-top {
@@ -399,6 +435,7 @@
   .tag-core{background:rgba(63,182,194,0.10);color:var(--core);}
   .tag-cardio{background:rgba(242,165,63,0.10);color:var(--cardio);}
   .tag-shoulders{background:rgba(92,189,138,0.10);color:var(--shoulders);}
+  .tag-legs{background:rgba(242,165,63,0.12);color:var(--cardio);}
 
   .ex-weight-wrap {
     display: flex;
@@ -644,7 +681,7 @@
     border: 1.5px solid var(--border);
     border-radius: 8px;
     padding: 16px 16px 18px;
-    box-shadow: 0 4px 16px rgba(23,27,46,0.05);
+    box-shadow: var(--e1);
   }
 
   .tracker-top {
@@ -1014,7 +1051,7 @@
     border: 1.5px solid var(--border);
     border-radius: 8px;
     padding: 14px 14px 15px;
-    box-shadow: 0 4px 16px rgba(23,27,46,0.05);
+    box-shadow: var(--e1);
     text-align: center;
   }
 
@@ -1219,6 +1256,38 @@
   .today-strip .solid-btn{flex:none;white-space:nowrap}
 
   /* One line instead of a grid of eleven buttons. */
+
+  .prog-card{margin:0 16px 9px;background:var(--bg-card);border:1.5px solid var(--border);
+    border-radius:12px;padding:0 14px;position:relative;overflow:hidden;
+    box-shadow: var(--e1);transition:border-color .15s ease}
+  /* A colour spine down the left edge so the programmes read as different things at a
+     glance rather than five identical white slabs. */
+  .prog-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:var(--prog-colour,var(--border-md))}
+  .prog-card[open]{border-color:var(--border-md)}
+  .prog-card>.acc-sum{padding:15px 0 15px 8px;gap:10px}
+  .prog-icon{flex:none;width:30px;height:30px;border-radius:8px;display:flex;
+    align-items:center;justify-content:center;background:var(--prog-tint,var(--bg-soft))}
+  .prog-icon svg{width:16px;height:16px}
+  .prog-name{flex:1;min-width:0;font-size:14.5px;font-weight:800;color:var(--text-h);
+    letter-spacing:-.2px}
+  /* flex:1 on the name is what makes the counts line up: the count is a fixed column
+     at the right rather than trailing whatever the name happens to be. */
+  .prog-count{flex:none;width:72px;text-align:right;font-family:var(--mono);font-size:10.5px;
+    font-weight:700;color:var(--text-dim)}
+  .prog-card .chev{margin-left:0 !important;flex:none}
+  .prog-sessions{padding-bottom:10px}
+  .prog-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:var(--bg-soft);border:1.5px solid var(--border-md);border-radius:9px;
+    padding:11px 12px;margin-top:7px;font-family:inherit;cursor:pointer}
+  .prog-row-n{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--text-h)}
+  .prog-row.current{background:var(--navy);border-color:var(--navy)}
+  .prog-row.current .prog-row-n{color:#fff}
+  .prog-tag{flex:none;background:var(--lime);color:var(--green-deep);border-radius:999px;
+    padding:2px 7px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em}
+  .prog-go{flex:none;font-family:var(--mono);font-size:10px;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--text-dim)}
+  .prog-row.current .prog-go{color:var(--lime)}
   .sess-pick-wrap{display:flex;align-items:center;gap:10px;margin:0 16px 18px}
   .sess-pick-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.09em;
     text-transform:uppercase;color:var(--text-dim);flex:none}
@@ -1267,10 +1336,7 @@
   .sum-amt{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-dim)}
   .sum-row.is-done .sum-what{color:var(--text-dim);text-decoration:line-through}
   .sum-empty{padding:10px 0;font-size:13px;color:var(--text-dim)}
-  .plan-foot-btns{display:flex;gap:8px;align-items:center}
   @media (max-width:420px){
-    .plan-foot-btns{width:100%}
-    .plan-foot-btns .solid-btn{flex:1}
     .today-strip{flex-direction:column;align-items:stretch}
     .today-strip .solid-btn{width:100%}
   }
@@ -1281,7 +1347,7 @@
   .food-date{flex:1;text-align:center;font-family:var(--display);font-size:17px;
     font-weight:700;color:var(--text-h)}
   .food-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
-    border-radius:10px;padding:15px 16px;box-shadow:0 4px 16px rgba(23,27,46,0.05)}
+    border-radius:10px;padding:15px 16px;box-shadow: var(--e1)}
   .food-card-title{font-size:13px;font-weight:700;color:var(--text-b);margin-bottom:8px}
   .cal-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px}
   .cal-big{font-family:var(--display);font-size:27px;font-weight:800;color:var(--text-h);
@@ -1374,14 +1440,83 @@
   .share-actions{display:flex;gap:8px;margin-top:10px}
   .share-actions button{flex:1}
   .share-copied{margin-top:6px;font-size:12px;font-weight:700;color:var(--green-deep)}
-  .plan-card{padding:6px 16px 16px}
-  .plan-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
+  /* .acc-card is declared further down with padding-bottom:4px and the same
+     specificity, so it was winning and the footer sat hard against the edge.
+     Qualifying with .acc-card settles it regardless of source order. */
+
+  /* ══════════ Elevation & shape pass ══════════
+     Applied by role rather than per-component, so anything added later inherits it. */
+  .tracker-card,.acc-card,.food-card,.meal-card,.prog-card,.exercise-card,.stat-card,
+  .today-strip,.day-header,.plan-fill{
+    border-radius:var(--r-md);
+    box-shadow:var(--e1);
+    border-color:var(--hairline);
+  }
+  /* The things you act on sit a step higher than the things you read. */
+  .prog-card[open],.meal-card:has(.meal-items),.today-strip{box-shadow:var(--e2)}
+  .meal-sheet-card{border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--e3)}
+  .day-header{box-shadow:var(--e2)}
+
+  /* Controls: one radius, one press state. Nothing had a pressed state before, so
+     every tap felt like nothing had happened until the screen changed. */
+  .solid-btn,.ghost-btn,.meal-log,.timer-btn,.prog-row,.fill-day,.rg,.page-btn,.prog-btn{
+    border-radius:var(--r-sm);
+    transition:transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+  .solid-btn:active,.ghost-btn:active,.meal-log:active,.timer-btn:active,
+  .prog-row:active,.fill-day:active{transform:translateY(1px) scale(.995)}
+  .solid-btn{box-shadow:0 1px 2px rgba(23,27,46,.10), 0 4px 12px rgba(159,185,63,.28)}
+  .solid-btn:active{box-shadow:var(--e-press)}
+  .meal-log{box-shadow:0 1px 2px rgba(23,27,46,.08), 0 3px 10px rgba(159,185,63,.26)}
+
+  /* Lime was only ever a button fill. A hairline of it under the page title ties the
+     accent to the whole screen instead of one control. */
+  .page-nav{border-radius:var(--r-md);box-shadow:inset 0 1px 2px rgba(23,27,46,.05)}
+  .page-btn.active{box-shadow:0 2px 6px rgba(23,27,46,.22), 0 0 0 1px rgba(203,229,88,.30)}
+
+  .exercise-card{transition:box-shadow var(--t-fast)}
+  .exercise-card:has(.ex-detail[style*="block"]){box-shadow:var(--e2)}
+
+  /* Type: the display face was set at the same weight and spacing as body copy, so
+     headings never asserted themselves. */
+  .day-heading,.cal-big,.tracker-stat,.w-now{letter-spacing:-.6px}
+  .section-label{color:var(--text-dim);opacity:.85}
+
+  /* ══════════ Typography ══════════
+     Figures sit in columns all over this app — dials, macro rows, the plan, the weight
+     log. Manrope's default figures are proportional, so a 1 is narrower than a 4 and
+     nothing lines up vertically. tabular-nums fixes the column; slashed-zero keeps 0
+     and O apart at label sizes. */
+  .cal-big,.cal-left,.macro-val,.tracker-stat,.w-now,.stat-ring-wrap,.balance-num,
+  .meal-kcal,.meal-item-sub,.rep-value,.sum-amt,.plan-pick input,.ex-weight-input,
+  .timer-display,.ms-field input,.log-bar input,.prog-count,.ch-v,.ybound,
+  .chip,.card b,.fill-std-note{
+    font-variant-numeric: tabular-nums slashed-zero;
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+  /* Headings take the display face and tighten up; it has more personality than
+     Manrope at size and holds together better at weight. */
+  .day-heading,.cal-big,.tracker-stat,.w-now,.lock-title,.greeting,.circuit-name,
+  .meal-sheet-title,.prog-name,.today-name,.food-date,.wk-range,.ch-v b{
+    font-family:var(--display);
+    letter-spacing:-.4px;
+  }
+  .section-label,.mini-label,.page-btn,.prog-btn,.rg,.prog-count,.prog-go,
+  .ex-weight-label,.timer-label{font-family:var(--mono);letter-spacing:.06em}
+  .acc-card.plan-card{padding:6px 16px 22px}
+  .plan-row{display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid var(--border)}
   .plan-row:last-of-type{border-bottom:none}
   .plan-day{width:34px;flex:none;font-family:var(--mono);font-size:11px;font-weight:700;
     letter-spacing:.06em;color:var(--text-dim);text-transform:uppercase}
   .plan-row.is-today .plan-day{color:var(--lime-dark)}
   .plan-pick{flex:1;min-width:0;display:flex;gap:6px}
-  .plan-pick select,.plan-pick input{min-width:0;background:var(--bg-soft);
+  /* The native select was a flat grey slab with the system arrow — the one control
+     touched most on this page and the plainest thing on it. Own chevron, bigger tap
+     target, and the chosen session reads as a value rather than placeholder text. */
+  .plan-pick select{appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23707585' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+  .plan-pick select,.plan-pick input{min-width:0;background-color:var(--bg-soft);
     border:1.5px solid var(--border);border-radius:7px;padding:8px 8px;
     font-family:var(--body-f);font-size:13px;color:var(--text-h);outline:none;height:38px}
   .plan-pick select{flex:1}
@@ -1393,20 +1528,54 @@
     -webkit-appearance:none;appearance:none;font-weight:700}
   .plan-card.locked .plan-row.rest .plan-pick{opacity:.45}
   .plan-card.locked .plan-row.rest .plan-pick input{display:none}
+
+  .plan-pick select:focus{border-color:var(--lime-dark);outline:none}
+  .plan-row:not(.rest) .plan-pick select{color:var(--text-h);font-weight:700}
+  .plan-row.rest .plan-pick select{color:var(--text-dim);font-weight:600}
+
+  /* Programme filler */
+  .plan-fill{background:var(--bg-soft);border:1.5px solid var(--border-md);border-radius:10px;
+    padding:13px 13px 14px;margin:10px 0 4px}
+  .fill-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--text-dim);margin-bottom:7px}
+  #fill-prog{width:100%;appearance:none;-webkit-appearance:none;background-color:var(--bg-card);
+    border:1.5px solid var(--border-md);border-radius:9px;padding:12px 30px 12px 12px;
+    font-family:inherit;font-size:13.5px;font-weight:700;color:var(--text-h);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23707585' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 11px center}
+  .fill-days{display:flex;gap:5px;margin-top:10px}
+  .fill-std{margin-top:10px}
+  .fill-std .solid-btn{width:100%}
+  .fill-std-note{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+  .fill-std-note span{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.03em;
+    border-radius:999px;padding:3px 7px}
+  .sw-on{background:var(--lime);color:var(--green-deep)}
+  .sw-off{background:var(--bg-card);color:var(--text-dim);border:1px solid var(--border)}
+  .fill-days{margin-top:14px}
+
+  .fill-day{flex:1;min-width:0;background:var(--bg-card);border:1.5px solid var(--border-md);
+    border-radius:8px;padding:10px 2px;font-family:var(--mono);font-size:10.5px;font-weight:700;
+    text-transform:uppercase;color:var(--text-dim);cursor:pointer}
+  .fill-day.today{border-color:var(--lime-dark)}
+  .fill-day.on{background:var(--navy);border-color:var(--navy);color:var(--lime)}
+  .fill-note{font-size:12px;color:var(--text-dim);margin-top:9px;line-height:1.45;min-height:17px}
+  #fill-apply{width:100%;margin-top:11px}
+  #fill-apply:disabled{opacity:.45}
   .plan-tick{flex:none;width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border-md);
     background:var(--bg-soft);display:grid;place-items:center;cursor:pointer;color:var(--text-dim)}
   .plan-tick svg{width:17px;height:17px}
   .plan-tick.done{background:var(--lime);border-color:var(--lime);color:var(--green-deep)}
   .plan-tick[hidden]{display:none}
-  .plan-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    margin-top:14px;padding-top:13px;border-top:1px solid var(--border)}
-  .plan-progress{font-size:12.5px;color:var(--text-dim);line-height:1.45}
+  /* Progress text and two buttons never fitted on one line on a phone — they wrapped
+     into each other and the card ended in a jam. Stacked at every width instead, with
+     the buttons sharing a row of their own. */
+  .plan-foot{display:flex;flex-direction:column;align-items:stretch;gap:12px;
+    margin-top:16px;padding-top:14px;padding-bottom:4px;border-top:1px solid var(--border)}
+  .plan-progress{font-size:12.5px;color:var(--text-dim);line-height:1.5}
   .plan-progress b{color:var(--text-h)}
-  @media (max-width:380px){
-    .plan-pick input{width:62px}
-    .plan-foot{flex-direction:column;align-items:stretch}
-    .plan-foot .solid-btn{width:100%}
-  }
+  .plan-foot-btns{display:flex;gap:8px}
+  .plan-foot-btns .solid-btn,.plan-foot-btns .ghost-btn{flex:1;padding:12px 14px}
+  @media (max-width:380px){ .plan-pick input{width:62px} }
   /* Timer sits in the day band, not in a card of its own at the foot of the page. */
   .timer-strip {
     margin-top: 16px;
@@ -1433,7 +1602,7 @@
     border: 1.5px solid var(--border);
     border-radius: 8px;
     padding: 16px;
-    box-shadow: 0 4px 16px rgba(23,27,46,0.05);
+    box-shadow: var(--e1);
   }
 
   .timer-top-row {
@@ -1649,7 +1818,7 @@
   .stat-card.span2 .acc{text-align:left}
   .acc{margin-top:14px;border-top:1px solid var(--border);padding-top:4px}
   .acc-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
-    border-radius:8px;padding:0 16px 4px;box-shadow:0 4px 16px rgba(23,27,46,0.05);border-top-width:1.5px}
+    border-radius:8px;padding:0 16px 4px;box-shadow: var(--e1);border-top-width:1.5px}
   .acc-card>.acc-sum{padding:15px 0}
   .acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;
     padding:11px 0;font-size:13px;font-weight:700;color:var(--text-h)}
@@ -1669,7 +1838,7 @@
 
   /* ══════════ Coach chat ══════════ */
   .chat-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
-    border-radius:8px;box-shadow:0 4px 16px rgba(23,27,46,0.05);overflow:hidden}
+    border-radius:8px;box-shadow: var(--e1);overflow:hidden}
   .chat-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1.5px solid var(--border)}
   .chat-avatar{width:30px;height:30px;border-radius:8px;background:var(--green-deep);display:grid;
     place-items:center;flex:none}
@@ -1748,7 +1917,7 @@
   /* ══════════ Date bar ══════════ */
   .datebar{display:flex;align-items:center;gap:8px;margin:0 16px 12px;background:var(--bg-card);
     border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;
-    box-shadow:0 4px 16px rgba(23,27,46,0.05)}
+    box-shadow: var(--e1)}
   .dnav{width:32px;height:32px;border-radius:7px;border:1px solid var(--border-md);background:var(--bg-soft);
     display:grid;place-items:center;cursor:pointer;color:var(--text-body);flex:none}
   .dnav[disabled]{opacity:.3;cursor:default}
@@ -2088,6 +2257,19 @@
     <button class="ghost-btn wk-arrow" onclick="stepPlan(1)" aria-label="Next week">&rsaquo;</button>
   </div>
   <div id="plan-summary" class="plan-summary"></div>
+  <!-- Pick the programme first, then say which days. Setting seven dropdowns one at a
+       time was the long way round to "I'm doing the 2-day split on Mon and Thu". -->
+  <div id="plan-fill" class="plan-fill" hidden>
+    <div class="fill-label">Fill from a programme</div>
+    <select id="fill-prog" onchange="renderFillDays()"></select>
+    <div id="fill-std" class="fill-std" hidden>
+      <button class="solid-btn" onclick="applyStandardWeek()">Use the standard week</button>
+      <div class="fill-std-note" id="fill-std-note"></div>
+    </div>
+    <div id="fill-days" class="fill-days"></div>
+    <div id="fill-note" class="fill-note"></div>
+    <button class="ghost-btn" id="fill-apply" onclick="applyFill()">Add to the days ticked</button>
+  </div>
   <div id="plan-rows" hidden></div>
   <div class="plan-foot">
     <div class="plan-progress" id="plan-progress"></div>
@@ -2129,14 +2311,12 @@
 </div>
 
 <!-- ══════════ MON ══════════ -->
-<div id="day-mon" class="day-view active">
+<!-- No day is active in the markup: showSession() decides, and with nothing planned
+     the answer is none of them. -->
+<div id="day-mon" class="day-view">
   <div class="day-header">
     <div class="day-tag" style="background:rgba(226,102,92,0.12);color:var(--chest)">MONDAY</div>
     <div class="day-heading">Chest &amp; Triceps</div>
-  </div>
-  <div class="cardio-block">
-    <div class="cardio-icon"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div><div class="cardio-title">Run / Walk First</div><div class="cardio-detail">10 min easy jog or brisk walk · warms up before lifting</div></div>
   </div>
   <div class="section-label">Exercises — tap to expand</div>
 
@@ -2150,7 +2330,7 @@
       </div>
       <div class="ex-weight-wrap">
         <div class="ex-weight-label">Weight (kg)</div>
-        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+        <input class="ex-weight-input" data-wkey="mon-flat-barbell-bench-press" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
       </div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
@@ -2176,7 +2356,7 @@
       </div>
       <div class="ex-weight-wrap">
         <div class="ex-weight-label">Weight (kg)</div>
-        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+        <input class="ex-weight-input" data-wkey="mon-incline-dumbbell-press" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
       </div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
@@ -2201,7 +2381,7 @@
       </div>
       <div class="ex-weight-wrap">
         <div class="ex-weight-label">Weight (kg)</div>
-        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+        <input class="ex-weight-input" data-wkey="mon-overhead-tricep-extension" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
       </div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
@@ -2226,7 +2406,7 @@
       </div>
       <div class="ex-weight-wrap">
         <div class="ex-weight-label">Weight (kg)</div>
-        <input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
+        <input class="ex-weight-input" data-wkey="mon-close-grip-bench-press" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()">
       </div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
@@ -2248,14 +2428,13 @@
     <div class="day-tag" style="background:rgba(92,189,138,0.12);color:var(--shoulders)">TUESDAY</div>
     <div class="day-heading">Shoulders &amp; Arms</div>
   </div>
-  <div class="cardio-block"><div class="cardio-icon"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="cardio-title">Run / Walk First</div><div class="cardio-detail">10 min · warm up before lifting</div></div></div>
   <div class="section-label">Exercises — tap to expand</div>
 
   <div class="exercise-card">
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">01</div>
       <div class="ex-info"><div class="ex-name">Standing DB Shoulder Press</div><div class="ex-sets">3 sets × 10–12 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-shoulders">SHOULDERS</span><span class="ex-tag tag-core">CORE</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="tue-standing-db-shoulder-press" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2268,7 +2447,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">02</div>
       <div class="ex-info"><div class="ex-name">Lateral Dumbbell Raise</div><div class="ex-sets">2 sets × 15 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-shoulders">SIDE DELTS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="tue-lateral-dumbbell-raise" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2281,7 +2460,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">03</div>
       <div class="ex-info"><div class="ex-name">Dumbbell Hammer Curl</div><div class="ex-sets">2 sets × 12 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">BRACHIALIS</span><span class="ex-tag tag-arms">FOREARMS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="tue-dumbbell-hammer-curl" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2294,7 +2473,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">04</div>
       <div class="ex-info"><div class="ex-name">Concentration Curl</div><div class="ex-sets">2 sets × 10 reps each arm · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">BICEP PEAK</span><span class="ex-tag tag-arms">ISOLATION</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="tue-concentration-curl" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2307,7 +2486,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">05</div>
       <div class="ex-info"><div class="ex-name">DB Skull Crusher</div><div class="ex-sets">2 sets × 12 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">TRICEPS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="tue-db-skull-crusher" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2323,14 +2502,13 @@
     <div class="day-tag" style="background:rgba(79,143,219,0.12);color:var(--back)">WEDNESDAY</div>
     <div class="day-heading">Back &amp; Biceps</div>
   </div>
-  <div class="cardio-block"><div class="cardio-icon"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="cardio-title">Run / Walk First</div><div class="cardio-detail">10 min · especially important - warms up the back before loading it</div></div></div>
   <div class="section-label">Exercises — tap to expand</div>
 
   <div class="exercise-card">
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">01</div>
       <div class="ex-info"><div class="ex-name">Barbell Bent-Over Row</div><div class="ex-sets">3 sets × 8–10 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">UPPER BACK</span><span class="ex-tag tag-back">LATS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="wed-barbell-bent-over-row" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2343,7 +2521,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">02</div>
       <div class="ex-info"><div class="ex-name">Single-Arm DB Row</div><div class="ex-sets">2 sets × 10 reps each side · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">LATS</span><span class="ex-tag tag-back">RHOMBOIDS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="wed-single-arm-db-row" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2356,7 +2534,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">03</div>
       <div class="ex-info"><div class="ex-name">Dumbbell Bicep Curl</div><div class="ex-sets">2 sets × 12 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-arms">BICEPS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="wed-dumbbell-bicep-curl" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2369,7 +2547,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">04</div>
       <div class="ex-info"><div class="ex-name">Bent-Over Rear Delt Raise</div><div class="ex-sets">2 sets × 15 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">REAR DELTS</span><span class="ex-tag tag-back">UPPER BACK</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="wed-bent-over-rear-delt-raise" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2397,7 +2575,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">01</div>
       <div class="ex-info"><div class="ex-name">Plank Hold</div><div class="ex-sets">3 sets × 25–40 sec · 30 sec rest</div><div class="ex-tags"><span class="ex-tag tag-core">CORE</span><span class="ex-tag tag-back">LOWER BACK</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Time (sec)</div><input class="ex-weight-input" type="number" min="0" placeholder="sec" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Time (sec)</div><input class="ex-weight-input" data-wkey="thu-plank-hold" type="number" min="0" placeholder="sec" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2410,7 +2588,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">02</div>
       <div class="ex-info"><div class="ex-name">Dead Bug</div><div class="ex-sets">2 sets × 10 reps each side · 30 sec rest</div><div class="ex-tags"><span class="ex-tag tag-core">DEEP CORE</span><span class="ex-tag tag-back">LOWER BACK</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Reps</div><input class="ex-weight-input" type="number" min="0" placeholder="reps" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Reps</div><input class="ex-weight-input" data-wkey="thu-dead-bug" type="number" min="0" placeholder="reps" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2423,7 +2601,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">03</div>
       <div class="ex-info"><div class="ex-name">DB Romanian Deadlift</div><div class="ex-sets">3 sets × 10 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">LOWER BACK</span><span class="ex-tag tag-core">HAMSTRINGS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="thu-db-romanian-deadlift" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2436,7 +2614,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">04</div>
       <div class="ex-info"><div class="ex-name">Mountain Climbers</div><div class="ex-sets">2 sets × 25 sec · 30 sec rest</div><div class="ex-tags"><span class="ex-tag tag-cardio">CARDIO</span><span class="ex-tag tag-core">CORE</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Time (sec)</div><input class="ex-weight-input" type="number" min="0" placeholder="sec" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Time (sec)</div><input class="ex-weight-input" data-wkey="thu-mountain-climbers" type="number" min="0" placeholder="sec" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2452,14 +2630,13 @@
     <div class="day-tag" style="background:rgba(242,165,63,0.12);color:var(--cardio)">FRIDAY · HIGHEST CALORIE BURN</div>
     <div class="day-heading">Full Body HIIT</div>
   </div>
-  <div class="cardio-block"><div class="cardio-icon"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="cardio-title">Run First</div><div class="cardio-detail">Push the pace today - highest calorie day of the week</div></div></div>
   <div class="section-label">Exercises — tap to expand</div>
 
   <div class="exercise-card">
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">01</div>
       <div class="ex-info"><div class="ex-name">Dumbbell Thruster</div><div class="ex-sets">3 sets × 10 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-cardio">FULL BODY</span><span class="ex-tag tag-shoulders">SHOULDERS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="fri-dumbbell-thruster" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2472,7 +2649,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">02</div>
       <div class="ex-info"><div class="ex-name">Renegade Row</div><div class="ex-sets">2 sets × 8 reps each arm · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">BACK</span><span class="ex-tag tag-chest">CHEST</span><span class="ex-tag tag-core">CORE</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="fri-renegade-row" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2485,7 +2662,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-navy">03</div>
       <div class="ex-info"><div class="ex-name">Push-Up</div><div class="ex-sets">2 sets × 10–15 reps · 45 sec rest</div><div class="ex-tags"><span class="ex-tag tag-chest">CHEST</span><span class="ex-tag tag-arms">TRICEPS</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Reps</div><input class="ex-weight-input" type="number" min="0" placeholder="reps" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Reps</div><input class="ex-weight-input" data-wkey="fri-push-up" type="number" min="0" placeholder="reps" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2498,7 +2675,7 @@
     <div class="ex-top" onclick="toggleEx(this)">
       <div class="ex-num num-green">04</div>
       <div class="ex-info"><div class="ex-name">Dumbbell Deadlift</div><div class="ex-sets">3 sets × 10 reps · 60 sec rest</div><div class="ex-tags"><span class="ex-tag tag-back">BACK</span><span class="ex-tag tag-core">CORE</span><span class="ex-tag tag-cardio">FAT BURN</span></div></div>
-      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="fri-dumbbell-deadlift" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
       <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="ex-detail">
@@ -2508,6 +2685,297 @@
   </div>
 </div>
 <!-- ══════════ END TRAINING DAYS ══════════ -->
+
+<!-- ══════════ 2-DAY SPLIT ══════════
+     Appended AFTER the five weekday views on purpose: weight inputs were keyed by
+     document position, so inserting earlier would have reassigned saved weights. -->
+<div id="day-push" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(226,102,92,0.12);color:var(--chest)">PUSH & ABS</div>
+    <div class="day-heading">Push &amp; Abs</div>
+  </div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">01</div>
+      <div class="ex-info">
+        <div class="ex-name">Bench Press</div>
+        <div class="ex-sets">3 sets · 10–12, 8–10, 6–8 reps · 60–90 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-chest">CHEST</span><span class="ex-tag tag-arms">TRICEPS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="push-bench-press" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Lie flat, feet planted. Grip slightly wider than shoulder-width, shoulder blades retracted.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower under control to mid-chest, elbows about 45° from the body.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Press back to the start. Weight climbs as the reps drop across the three sets.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">02</div>
+      <div class="ex-info">
+        <div class="ex-name">Standing Dumbbell Shoulder Press – Neutral Grip</div>
+        <div class="ex-sets">2 sets × 8–12 reps · 30–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-shoulders">SHOULDERS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="push-standing-dumbbell-shoulder-press-neutral-grip" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand tall, dumbbells at shoulder height, palms facing each other.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Press overhead without leaning back. Ribs down, glutes tight.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower under control to the start.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">03</div>
+      <div class="ex-info">
+        <div class="ex-name">30° Incline Dumbbell Chest Press – Pronated Grip</div>
+        <div class="ex-sets">2 sets × 8–12 reps · 30–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-chest">UPPER CHEST</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="push-30-incline-dumbbell-chest-press-pronated-grip" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Set the bench to 30°. Palms facing forward.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower to the upper chest, elbows about 45°.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Press up and slightly together without locking out hard.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">04</div>
+      <div class="ex-info">
+        <div class="ex-name">Dumbbell Lateral Raise</div>
+        <div class="ex-sets">2 sets × 10–12 reps · 30–60 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-shoulders">SIDE DELTS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="push-dumbbell-lateral-raise" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand with a slight forward lean, dumbbells at your sides.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Raise out to shoulder height, little fingers slightly high.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower slowly — this one is about control, not load.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">05</div>
+      <div class="ex-info">
+        <div class="ex-name">Bench Dips</div>
+        <div class="ex-sets">2 sets × 8–15 reps · 30–60 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-arms">TRICEPS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="push-bench-dips" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Hands on the bench behind you, legs out in front.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Lower until the elbows reach about 90°, elbows back not flared.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Press back up through the heels of the hands.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">06</div>
+      <div class="ex-info">
+        <div class="ex-name">Crunch</div>
+        <div class="ex-sets">2 sets × 10–15 reps · 10–30 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-core">ABS</span></div>
+      </div>
+      
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Lie on your back, knees bent, hands light at the temples.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Curl the shoulders up, lower back staying down.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower slowly. No pulling on the neck.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">07</div>
+      <div class="ex-info">
+        <div class="ex-name">Russian Twist</div>
+        <div class="ex-sets">2 sets × 20 reps total · 45–60 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-core">OBLIQUES</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="push-russian-twist" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Sit with knees bent, lean back to about 45°.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Rotate through the torso side to side, not just the arms.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Twenty touches in total, counting both sides.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="day-pull" class="day-view">
+  <div class="day-header">
+    <div class="day-tag" style="background:rgba(79,163,119,0.14);color:var(--shoulders)">PULL & LEGS</div>
+    <div class="day-heading">Pull &amp; Legs</div>
+  </div>
+  <div class="section-label">Exercises — tap to expand</div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">01</div>
+      <div class="ex-info">
+        <div class="ex-name">Goblet Squat</div>
+        <div class="ex-sets">3 sets × 8–12 reps · 45–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-legs">LEGS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="pull-goblet-squat" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Dumbbell held at the chest, elbows tucked in.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Sit down between the heels, chest tall.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Drive up through mid-foot.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">02</div>
+      <div class="ex-info">
+        <div class="ex-name">Barbell Bent Over Row – Clean Grip</div>
+        <div class="ex-sets">3 sets · 10–12, 10–12, 8–10 reps · 45–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-back">BACK</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="pull-barbell-bent-over-row-clean-grip" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Hinge at the hips, back flat, bar hanging at arm's length.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Row to the lower ribs, elbows past the body.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower under control. Third set is the heaviest.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">03</div>
+      <div class="ex-info">
+        <div class="ex-name">Single-Arm Dumbbell Row</div>
+        <div class="ex-sets">2 sets × 8–12 reps each side · 45–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-back">LATS</span><span class="ex-tag tag-back">BACK</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="pull-single-arm-dumbbell-row" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">One knee and one hand on the bench, back flat and level.</div></div>
+        <div class="inst-step"><div class="step-num">2</div><div class="step-text">Row the dumbbell to the hip, elbow close to the body — not out wide.</div></div>
+        <div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower to a full stretch at the bottom. Both sides count as one set.</div></div>
+        <div class="tip-box"><strong>Replaces the lat pulldown.</strong> Same job without the cable stack — let the shoulder blade travel at both ends of the rep rather than rowing with the arm alone.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">04</div>
+      <div class="ex-info">
+        <div class="ex-name">Dumbbell Walking Lunge</div>
+        <div class="ex-sets">2 sets × 16–24 reps total, alternating · 45–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-legs">LEGS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="pull-dumbbell-walking-lunge" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Dumbbells at your sides, torso upright.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Step forward, back knee toward the floor.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Drive through the front heel into the next step. Count both legs.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">05</div>
+      <div class="ex-info">
+        <div class="ex-name">Standing Dumbbell Bicep Curl</div>
+        <div class="ex-sets">2 sets × 8–10 reps · 45–80 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-arms">BICEPS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="pull-standing-dumbbell-bicep-curl" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Elbows pinned to the ribs, palms forward.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Curl without swinging the shoulders.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower slowly to a full stretch.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">06</div>
+      <div class="ex-info">
+        <div class="ex-name">Standing Hammer Curl</div>
+        <div class="ex-sets">2 sets × 12–15 reps · 10 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-arms">BICEPS</span></div>
+      </div>
+      <div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div><input class="ex-weight-input" data-wkey="pull-standing-hammer-curl" type="number" min="0" step="0.5" placeholder="0 kg" onclick="event.stopPropagation()"></div>
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Palms facing each other throughout.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Curl straight up, elbows still.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Ten seconds rest only — this one is meant to burn.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-card">
+    <div class="ex-top" onclick="toggleEx(this)">
+      <div class="ex-num num-navy">07</div>
+      <div class="ex-info">
+        <div class="ex-name">Standing Calf Raises</div>
+        <div class="ex-sets">2 sets × 12–15 reps · 30–60 sec rest</div>
+        <div class="ex-tags"><span class="ex-tag tag-legs">CALVES</span></div>
+      </div>
+      
+      <div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div class="ex-detail">
+      <div class="ex-illustration"><div class="img-placeholder" onclick="triggerUpload(this)"><svg width="34" height="34" viewBox="0 0 36 36" fill="none"><rect x="3" y="7" width="30" height="22" rx="3" stroke="#606470" stroke-width="1.5"/><circle cx="12" cy="15" r="3" stroke="#606470" stroke-width="1.5"/><path d="M3 24l8-6 6 5 4-4 8 7" stroke="#606470" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="img-placeholder-label">Tap to add exercise photo</div><div class="img-placeholder-hint">JPEG or PNG</div></div><input type="file" class="img-upload-input" accept="image/*" onchange="loadImage(this)"></div>
+      <div class="ex-instructions">
+        <div class="inst-title">How to perform</div>
+        <div class="inst-step"><div class="step-num">1</div><div class="step-text">Stand tall, feet hip-width.</div></div><div class="inst-step"><div class="step-num">2</div><div class="step-text">Rise onto the toes as high as you can and pause.</div></div><div class="inst-step"><div class="step-num">3</div><div class="step-text">Lower slowly below level if you have a step.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════ CIRCUIT ══════════
      The circuit is a session like any other now, so it lives beside the split days
@@ -2543,10 +3011,8 @@
   </div>
 </div>
 
-<div class="sess-pick-wrap">
-  <label class="sess-pick-label" for="sess-pick">Browse</label>
-  <select id="sess-pick" onchange="PLAN_BROWSING=true;showSession(this.value)"></select>
-</div>
+<div class="section-label" style="padding-top:22px">Programs</div>
+<div id="prog-list"></div>
 
 
 <div class="settings-link-wrap">
@@ -3233,6 +3699,23 @@ let PLAN_OFFSET = 0;                 // 0 = the week containing today
    The old fixed Monday-to-Friday split is now just the first program in this list,
    which is what lets a week mix a split session, a circuit and a run. Plans store the
    session NAME, as they always have, so existing weeks keep working untouched. */
+/* Each programme gets a colour and a glyph so the list reads as five distinct things.
+   Colours come from the existing muscle-group tokens, so nothing new is introduced. */
+const PROG_STYLE = {
+  split5:  { colour: 'var(--chest)',     tint: 'rgba(226,102,92,0.12)',  icon: 'bar' },
+  split2:  { colour: 'var(--shoulders)', tint: 'rgba(92,189,138,0.14)',  icon: 'bar' },
+  circuits:{ colour: 'var(--lime-dark)', tint: 'rgba(203,229,88,0.22)',  icon: 'bolt' },
+  running: { colour: 'var(--back)',      tint: 'rgba(79,143,219,0.12)',  icon: 'pulse' },
+  other:   { colour: 'var(--cardio)',    tint: 'rgba(242,165,63,0.14)',  icon: 'dot' },
+  mine:    { colour: 'var(--arms)',      tint: 'rgba(156,120,214,0.12)', icon: 'dot' }
+};
+const PROG_ICON = {
+  bar:   '<path d="M4 9v6M20 9v6M8 6v12M16 6v12M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  bolt:  '<path d="M13 3L5 14h6l-1 7 8-11h-6l1-7z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" fill="none"/>',
+  pulse: '<path d="M3 12h3.5l1.8-5 3 10 2.2-8 1.5 3H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+  dot:   '<circle cx="12" cy="12" r="5.5" stroke="currentColor" stroke-width="2" fill="none"/>'
+};
+
 const PROGRAMS = [
   { id: 'split5', name: '5-Day Split', sessions: [
     { name: 'Chest & Triceps',  measure: 'min', kind: 'view', view: 'mon' },
@@ -3241,12 +3724,29 @@ const PROGRAMS = [
     { name: 'Core & Cardio',    measure: 'min', kind: 'view', view: 'thu' },
     { name: 'Full Body HIIT',   measure: 'min', kind: 'view', view: 'fri' }
   ]},
+  { id: 'split2', name: '2-Day Split', sessions: [
+    { name: 'Push & Abs',  measure: 'min', kind: 'view', view: 'push' },
+    { name: 'Pull & Legs', measure: 'min', kind: 'view', view: 'pull' }
+  ],
+    /* His standard week, Saturday first. null is a rest day. Distances are left blank
+       on purpose — he sets the kilometres himself when he plans. */
+    week: [
+      { type: 'Walk' },                      // Sat — walk or run, walk by default
+      { type: 'Run' },                       // Sun
+      { type: 'Push & Abs', amount: 45 },    // Mon
+      { type: 'Run' },                       // Tue
+      { type: 'Pull & Legs', amount: 45 },   // Wed
+      null,                                  // Thu — rest
+      { type: 'Run' }                        // Fri
+    ]},
   { id: 'circuits', name: 'Quick Circuits', sessions: [
     { name: 'Full Body Circuit', measure: 'min', kind: 'circuit', circuit: 'CIRCUIT' }
   ]},
-  { id: 'cardio', name: 'Cardio & other', sessions: [
-    { name: 'Run',   measure: 'km',  kind: 'simple' },
-    { name: 'Walk',  measure: 'km',  kind: 'simple' },
+  { id: 'running', name: 'Running & Walking', sessions: [
+    { name: 'Run',  measure: 'km', kind: 'simple' },
+    { name: 'Walk', measure: 'km', kind: 'simple' }
+  ]},
+  { id: 'other', name: 'Other activity', sessions: [
     { name: 'Swim',  measure: 'min', kind: 'simple' },
     { name: 'Ride',  measure: 'km',  kind: 'simple' },
     { name: 'Other', measure: 'min', kind: 'simple' }
@@ -3476,8 +3976,10 @@ function renderPlan(o) {
   const editing = PLAN_EDIT || !plan.committed && !planned;
   const rowsEl = document.getElementById('plan-rows');
   const sumEl  = document.getElementById('plan-summary');
+  const fillEl = document.getElementById('plan-fill');
   if (rowsEl) rowsEl.hidden = !editing;
   if (sumEl)  sumEl.hidden  = editing;
+  if (fillEl) { fillEl.hidden = !editing; if (editing) renderFillProg(); }
   const edit = document.getElementById('plan-edit');
   if (edit) { edit.textContent = editing ? 'Done' : 'Edit'; edit.hidden = !!plan.committed && !editing ? false : false; }
 
@@ -3521,6 +4023,112 @@ function renderPlan(o) {
 let PLAN_BROWSING = false;
 let PLAN_EDIT = false;
 function togglePlanEdit() { PLAN_EDIT = !PLAN_EDIT; renderPlan(); }
+/* ── Fill the week from a programme ─────────────────────────────────────────
+   Choose a programme, tick the days, and its sessions are laid onto them in order.
+   Rest days are left alone and anything already planned is only overwritten on a day
+   you actually ticked — so this adds to a week rather than replacing it. */
+let FILL_DAYS = [];
+function renderFillProg() {
+  const sel = document.getElementById('fill-prog');
+  if (!sel) return;
+  const keep = sel.value;
+  sel.innerHTML = PROGRAMS.map(p =>
+    '<option value="' + esc(p.id) + '">' + esc(p.name) + ' · '
+    + p.sessions.length + ' session' + (p.sessions.length === 1 ? '' : 's') + '</option>').join('');
+  if (keep) sel.value = keep;
+  renderFillDays();
+}
+function renderFillDays() {
+  const host = document.getElementById('fill-days');
+  const sel = document.getElementById('fill-prog');
+  if (!host || !sel) return;
+  const prog = PROGRAMS.find(p => p.id === sel.value) || PROGRAMS[0];
+  const dates = planDates(planWeekStart());
+  const today = todayKey();
+  host.innerHTML = dates.map(d => {
+    const nm = new Date(d + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'short' });
+    const on = FILL_DAYS.indexOf(d) >= 0;
+    return '<button class="fill-day' + (on ? ' on' : '') + (d === today ? ' today' : '') + '"'
+      + ' onclick="toggleFillDay(\'' + d + '\')">' + nm + '</button>';
+  }).join('');
+  // A programme with a standard week offers it first — that is the one-tap path.
+  const std = document.getElementById('fill-std');
+  if (std) {
+    std.hidden = !prog.week;
+    if (prog.week) {
+      const days = planDates(planWeekStart());
+      document.getElementById('fill-std-note').innerHTML = prog.week.map((w, i) => {
+        const nm = new Date(days[i] + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'short' });
+        return '<span class="' + (w ? 'sw-on' : 'sw-off') + '">' + nm + ' ' + (w ? esc(w.type) : 'rest') + '</span>';
+      }).join('');
+    }
+  }
+  const note = document.getElementById('fill-note');
+  if (note) {
+    const n = FILL_DAYS.length, k = prog.sessions.length;
+    note.textContent = !n ? 'Pick the days you will train.'
+      : prog.sessions.map((se, i) => se.name).slice(0, n).join(', ')
+        + (n > k ? ' — then it starts again from ' + prog.sessions[0].name : '');
+  }
+  const btn = document.getElementById('fill-apply');
+  if (btn) btn.disabled = !FILL_DAYS.length;
+}
+function toggleFillDay(d) {
+  const i = FILL_DAYS.indexOf(d);
+  if (i >= 0) FILL_DAYS.splice(i, 1); else FILL_DAYS.push(d);
+  FILL_DAYS.sort();
+  renderFillDays();
+}
+/* Lay the whole standard week down in one go. It replaces what is there, because
+   "the standard week" means exactly that — but only for this week, and every day is
+   still editable underneath. */
+function applyStandardWeek() {
+  const sel = document.getElementById('fill-prog');
+  const prog = PROGRAMS.find(p => p.id === sel.value);
+  if (!prog || !prog.week) return;
+  const start = planWeekStart();
+  const plan = getPlan(start);
+  const dates = planDates(start);
+  const filled = Object.keys(plan.days).filter(d => (plan.days[d] || {}).type).length;
+  if (filled && !confirm('Replace this week with the standard ' + prog.name + ' week?')) return;
+  prog.week.forEach((w, i) => {
+    const d = dates[i];
+    if (!w) { delete plan.days[d]; return; }
+    const row = plan.days[d] || {};
+    row.type = w.type;
+    // Distances stay blank so he fills them in; a minutes session gets its default.
+    row.amount = w.amount != null ? w.amount : null;
+    plan.days[d] = row;
+  });
+  savePlan(start, plan);
+  FILL_DAYS = [];
+  renderPlan();
+}
+
+function applyFill() {
+  const sel = document.getElementById('fill-prog');
+  const prog = PROGRAMS.find(p => p.id === sel.value);
+  if (!prog || !FILL_DAYS.length) return;
+  const start = planWeekStart();
+  const plan = getPlan(start);
+  FILL_DAYS.forEach((d, i) => {
+    // More days than sessions: cycle. Two sessions over three days is push, pull, push.
+    const se = prog.sessions[i % prog.sessions.length];
+    const row = plan.days[d] || {};
+    row.type = se.name;
+    if (row.amount == null) row.amount = se.measure === 'km' ? null : 45;
+    plan.days[d] = row;
+  });
+  savePlan(start, plan);
+  FILL_DAYS = [];
+  renderPlan();
+}
+
+function openPlanEditor() {
+  PLAN_EDIT = true; renderPlan();
+  const card = document.querySelector('.plan-card');
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 /* From Friday morning, if next week has nothing in it. */
 function renderPlanNudge() {
   const el = document.getElementById('plan-nudge');
@@ -3682,21 +4290,51 @@ function renderToday() {
     strip.hidden = false;
     // No plan for today is not an error state — offer the quickest thing to do.
     strip.innerHTML = '<div class="today-line"><div class="today-name">Nothing planned</div>'
-      + '<div class="today-meta">Pick a session below, or start a circuit.</div></div>'
-      + '<button class="solid-btn" onclick="showSession(\'Full Body Circuit\')">20 min circuit</button>';
+      + '<div class="today-meta">Open a programme below to pick a session, '
+      + 'or set this week\u2019s plan.</div></div>'
+      + '<button class="solid-btn" onclick="openPlanEditor()">Plan the week</button>';
   }
 }
 
-/* One compact dropdown, grouped by program — the button grid was a screenful. */
+/* Programs, collapsed. A dropdown hid the structure — you could not see that the five
+   weekday sessions are one programme and the circuit is another. Each programme is a
+   card you open; inside, its sessions. Only the one holding the current session opens
+   by default, so the tab is short. */
 function renderSessionNav() {
-  const sel = document.getElementById('sess-pick');
-  if (!sel) return;
+  const host = document.getElementById('prog-list');
+  if (!host) return;
   const cur = CURRENT_SESSION ? CURRENT_SESSION.name : '';
+  const today = todaysPlanned();
   const mine = getWorkoutTypes().filter(t => !PROGRAMS.some(p => p.sessions.some(x => x.name === t.name)));
-  const opt = n => '<option value="' + esc(n) + '"' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>';
-  sel.innerHTML = PROGRAMS.map(p => '<optgroup label="' + esc(p.name) + '">'
-      + p.sessions.map(x => opt(x.name)).join('') + '</optgroup>').join('')
-    + (mine.length ? '<optgroup label="Mine">' + mine.map(t => opt(t.name)).join('') + '</optgroup>' : '');
+  const groups = PROGRAMS.concat(mine.length
+    ? [{ id: 'mine', name: 'Mine', sessions: mine.map(t => ({ name: t.name, measure: t.measure })) }] : []);
+
+  host.innerHTML = groups.map(p => {
+    const holdsCurrent = p.sessions.some(x => x.name === cur);
+    const n = p.sessions.length;
+    // With nothing on screen, open the first programme so there is something to act on.
+    const openIt = holdsCurrent || (!cur && p === groups[0]);
+    const st = PROG_STYLE[p.id] || PROG_STYLE.mine;
+    return '<details class="prog-card acc"' + (openIt ? ' open' : '')
+      + ' style="--prog-colour:' + st.colour + ';--prog-tint:' + st.tint + '">'
+      + '<summary class="acc-sum">'
+      +   '<span class="prog-icon" style="color:' + st.colour + '">'
+      +     '<svg viewBox="0 0 24 24" fill="none">' + PROG_ICON[st.icon] + '</svg></span>'
+      +   '<span class="prog-name">' + esc(p.name) + '</span>'
+      +   '<span class="prog-count">' + n + ' session' + (n === 1 ? '' : 's') + '</span>'
+      +   '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"'
+      +     ' stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+      + '</summary>'
+      + '<div class="prog-sessions">'
+      +   p.sessions.map(se =>
+            '<button class="prog-row' + (se.name === cur ? ' current' : '') + '"'
+            + ' onclick="PLAN_BROWSING=true;showSession(this.dataset.s)" data-s="' + esc(se.name) + '">'
+            + '<span class="prog-row-n">' + esc(se.name) + '</span>'
+            + (today && today.type === se.name ? '<span class="prog-tag">TODAY</span>' : '')
+            + '<span class="prog-go">' + (se.name === cur ? 'Showing' : 'Open') + '</span>'
+            + '</button>').join('')
+      + '</div></details>';
+  }).join('');
 }
 /* Put the timer inside the day band you are looking at, under the day's meta line.
    Moving the one element keeps a single timer-display / timer-actions pair, so the
@@ -3704,7 +4342,12 @@ function renderSessionNav() {
 function placeTimer() {
   const strip = document.getElementById('timer-strip');
   const head = document.querySelector('.day-view.active .day-header');
-  if (strip && head && strip.parentElement !== head) head.appendChild(strip);
+  if (!strip) return;
+  // With no session on screen the strip has no band to sit in, and was left floating
+  // edge-to-edge between the cards. Nothing to time, so nothing to show.
+  if (!head) { strip.hidden = true; return; }
+  if (strip.parentElement !== head) head.appendChild(strip);
+  if (CURRENT_SESSION && CURRENT_SESSION.kind !== 'circuit') strip.hidden = false;
 }
 
 /* Measure where the chat card actually starts and give it exactly the rest of the
@@ -3802,11 +4445,30 @@ async function loadImage(input) {
   input.value = '';
 }
 
+/* Weights used to be stored as workout-weight-<position in the document>. Adding a
+   session anywhere but the very end therefore reassigned every weight after it — a
+   40kg bench quietly becoming a lateral raise. Each input now carries its own
+   data-wkey, and this runs once to copy the old positional values across. The old
+   keys are LEFT IN PLACE: if anything here is wrong, nothing is lost. */
+function migrateWeightKeys() {
+  if (localStorage.getItem('wkeys-migrated')) return;
+  document.querySelectorAll('.ex-weight-input').forEach((input, index) => {
+    const wk = input.dataset.wkey;
+    if (!wk) return;
+    const old = localStorage.getItem('workout-weight-' + index);
+    if (old !== null && localStorage.getItem('workout-weight-' + wk) === null) {
+      localStorage.setItem('workout-weight-' + wk, old);
+    }
+  });
+  localStorage.setItem('wkeys-migrated', String(Date.now()));
+}
+
 function enableWeightPersistence() {
+  migrateWeightKeys();
   const inputs = document.querySelectorAll('.ex-weight-input');
 
   inputs.forEach((input, index) => {
-    const key = `workout-weight-${index}`;
+    const key = `workout-weight-${input.dataset.wkey || index}`;
     const savedValue = localStorage.getItem(key);
 
     if (savedValue !== null) {
@@ -4179,7 +4841,9 @@ function initTrackers() {
   migrateTargets2026();
   initTimer();
   renderPlan();          // also paints today's session and the browse strip
-  if (!CURRENT_SESSION) showSession('Chest & Triceps');   // nothing planned yet
+  // With nothing planned, show no session at all. Falling back to Chest & Triceps put
+  // a workout on screen he had not chosen, under a card saying "Nothing planned".
+  if (!todaysPlanned()) { renderToday(); renderSessionNav(); }
   placeTimer();
   renderCircuitList();
   paintCircuitThumbs();
@@ -6278,7 +6942,7 @@ function applyState(st) {
   if (Array.isArray(st.chat)) { CHAT = pruneChat(st.chat); saveChat(); renderChat(); }
   if (Array.isArray(st.recipes)) localStorage.setItem('recipes', JSON.stringify(st.recipes));
   document.querySelectorAll('.ex-weight-input').forEach((input, i) => {
-    const v = localStorage.getItem('workout-weight-' + i);
+    const v = localStorage.getItem('workout-weight-' + (input.dataset.wkey || i));
     if (v !== null && input.value !== v) input.value = v;
   });
 }
