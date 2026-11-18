@@ -4176,6 +4176,7 @@ function initTrackers() {
   initAfd();
   initFitnessStats();
   initResultsLog();
+  migrateTargets2026();
   initTimer();
   renderPlan();          // also paints today's session and the browse strip
   if (!CURRENT_SESSION) showSession('Chest & Triceps');   // nothing planned yet
@@ -4224,6 +4225,20 @@ const DEFAULT_TARGETS = {
   afd: 4,
   workouts: 5
 };
+
+/* Saved targets override the defaults, so changing DEFAULT_TARGETS did nothing for a
+   device that already had settings — his still read 2,000 kcal and 150g protein. These
+   are the numbers he gave from his own plan, applied ONCE and then never again, so a
+   later edit in Settings stands. The flag is what makes it once. */
+function migrateTargets2026() {
+  if (loadJSON('targets-macros-set', null)) return;
+  const want = { kcalIn: 1800, protein: 158, carbs: 158, fat: 60,
+                 sodium: 2300, sugar: 102, fibre: 30, weight: 90 };
+  const t = Object.assign({}, loadJSON('targets', {}) || {});
+  Object.keys(want).forEach(k => { t[k] = want[k]; });
+  saveJSON('targets', t);
+  saveJSON('targets-macros-set', Date.now());
+}
 
 function getTargets() {
   return Object.assign({}, DEFAULT_TARGETS, loadJSON('targets', {}));
