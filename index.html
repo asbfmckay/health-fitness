@@ -2317,6 +2317,74 @@
   }
   .scan-actions .run-min { border-color: rgba(255,255,255,.35); color: #fff; background: rgba(0,0,0,.35); }
 
+  .scan-torch {
+    position: absolute; top: calc(18px + env(safe-area-inset-top)); right: 18px;
+    width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.35); background: rgba(0,0,0,.4); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .scan-torch[hidden] { display: none; }
+  .scan-torch.on { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+  .scan-zoom-wrap {
+    position: absolute; left: 24px; right: 24px; bottom: calc(86px + env(safe-area-inset-bottom));
+    display: flex; align-items: center; gap: 12px;
+  }
+  .scan-zoom-wrap[hidden] { display: none; }
+  .scan-zoom-wrap span {
+    font: 600 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #fff;
+  }
+  #scan-zoom { flex: 1; accent-color: var(--lime); }
+
+/* Masking without a password field. -webkit-text-security is what every browser that
+   matters implements; the fallback keeps the text readable rather than lying about
+   being hidden, and the Show/Hide button still works either way. */
+  input.masked {
+    -webkit-text-security: disc;
+    text-security: disc;
+    letter-spacing: .08em;
+  }
+
+/* ── Session editor: inline fields and superset grouping ──────────────────── */
+  .sedit-row { position: relative; }
+  .sedit-row.open { background: var(--bg); }
+  .sedit-row .chev {
+    transform: rotate(-90deg); transition: transform .18s ease;
+    font-size: 17px; line-height: 1;
+  }
+  .sedit-row .chev.open { transform: rotate(90deg); }
+  /* The spine is the whole point of the grouping: two rows that run alternately have
+     to LOOK joined, or the only sign is a word in a chip. */
+  .sedit-row.sup { padding-left: 14px; }
+  .sup-spine {
+    position: absolute; left: 3px; top: 0; bottom: 0; width: 3px;
+    background: var(--lime); border-radius: var(--r-pill);
+  }
+  .sedit-row.sup-first .sup-spine { top: 8px; border-radius: var(--r-pill) var(--r-pill) 0 0; }
+  .sedit-row.sup-last .sup-spine { bottom: 8px; border-radius: 0 0 var(--r-pill) var(--r-pill); }
+  .sedit-row.sup:not(.sup-last) { border-bottom-color: transparent; }
+  .sup-chip {
+    margin-left: 8px; padding: 2px 7px; border-radius: var(--r-pill);
+    background: var(--green-bg); color: var(--green);
+    font: 600 9.5px/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+    vertical-align: 1px; white-space: nowrap; display: inline-block;
+  }
+  .sedit-edit {
+    padding: 2px 2px 14px; margin-bottom: 8px;
+    border-bottom: 1px solid var(--border); background: var(--bg);
+  }
+  .sedit-edit .ff-row:first-child { border-top: 1px solid var(--border); }
+  .sedit-edit-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .sedit-edit-actions .ghost-btn { flex: 1; min-width: 108px; }
+  .ghost-btn.danger { color: var(--chest); border-color: rgba(226,102,92,.4); }
+
+  .icon-btn.del { color: var(--chest); font-size: 19px; line-height: 1; }
+  .icon-btn.del:active { background: rgba(226,102,92,.12); }
+
+/* Four controls on a row leaves the name about half the width on a phone, so these
+   are tighter here than the icon buttons elsewhere. */
+  .sedit-row .icon-btn { width: 34px; height: 34px; flex: none; }
+  .sedit-row { gap: 5px; }
+
 </style>
 
 </head>
@@ -2536,12 +2604,21 @@
   <!-- The scanner. Full screen, because a barcode is easier to frame when the
        viewfinder is not a postage stamp at the top of a form. -->
   <div class="scan-sheet" id="scan-sheet" hidden>
-    <video id="scan-video" playsinline muted></video>
+    <video id="scan-video" playsinline muted onclick="scanTapFocus(event)"></video>
     <div class="scan-frame"></div>
     <div class="scan-note" id="scan-note">Starting the camera…</div>
+    <button class="scan-torch" id="scan-torch" onclick="toggleScanTorch()" hidden aria-label="Light">
+      <svg viewBox="0 0 24 24" fill="none" width="19" height="19"><path d="M9 3h6l-1 6h4l-8 12 1.5-8H7l2-10z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="scan-zoom-wrap" id="scan-zoom-wrap" hidden>
+      <span>Zoom</span>
+      <input type="range" id="scan-zoom" oninput="setScanZoom(this.value)">
+    </div>
     <div class="scan-actions">
-      <button class="run-min" onclick="scanTypeIn()">Type it instead</button>
+      <button class="run-min" onclick="document.getElementById('scan-photo').click()">Photo</button>
+      <button class="run-min" onclick="scanTypeIn()">Type it</button>
       <button class="run-min" onclick="closeScan()">Cancel</button>
+      <input type="file" id="scan-photo" accept="image/*" capture="environment" hidden onchange="scanFromPhoto(this)">
     </div>
   </div>
 
@@ -3201,7 +3278,14 @@
     <div class="log-field" style="margin-top:10px;">
       <label class="mini-label">Shared secret</label>
       <div style="display:flex; gap:6px; align-items:stretch;">
-        <input type="password" id="coach-secret" placeholder="SHARED_SECRET" autocomplete="off" style="flex:1;">
+        <!-- Not type="password". Chrome treats any password field on the page as a login
+             form and offers to save it to Google Password Manager whenever the app does
+             something that looks to it like a sign-in — which in a single-page app is
+             any sheet closing. The masking is done in CSS instead, so the field behaves
+             identically and Chrome has no credential to offer. -->
+        <input type="text" id="coach-secret" class="masked" placeholder="SHARED_SECRET"
+          autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+          data-lpignore="true" data-form-type="other" style="flex:1;">
         <button class="ghost-btn" type="button" onclick="toggleSecret()" id="secret-eye"
                 style="padding:0 12px; white-space:nowrap;">Show</button>
       </div>
@@ -3750,40 +3834,227 @@ function removeExercise() {
   paintLinkedExercises();
 }
 
-/* ── Editing the session as a whole ──────────────────────────────────────── */
-function openSessionEdit(view) {
+/* ── Editing the session as a whole ──────────────────────────────────────────
+   Everything editable in one place. The per-exercise sheet still exists and is still
+   reachable from the card, but having to open a second sheet to change a rep range
+   made a five-second edit feel like a form, so every row opens in place here.
+
+   SUPERSETS. Two exercises marked as one group are run alternately: A set 1, B set 1,
+   A set 2, B set 2. That is a different thing from reordering them, and it only reads
+   correctly if the data says so — which is what `sup` is. Rest is not special-cased:
+   each exercise keeps its own rest, so a 10-second rest on the first of a pair is the
+   swap and the second one's rest is the real break. He had already written it that
+   way by hand before any of this existed. */
+let SEDIT_OPEN = -1;
+
+function supGroups(ex) {
+  // Consecutive rows sharing a group id. Non-consecutive rows with the same id would
+  // mean nothing to the runner, so they are not treated as a group here either.
+  const out = [];
+  let i = 0;
+  while (i < ex.length) {
+    const g = ex[i].sup;
+    if (!g) { out.push([i]); i++; continue; }
+    let j = i;
+    while (j + 1 < ex.length && ex[j + 1].sup === g) j++;
+    out.push(Array.from({ length: j - i + 1 }, (_, k) => i + k));
+    i = j + 1;
+  }
+  return out;
+}
+function groupOf(ex, i) { return supGroups(ex).find(g => g.indexOf(i) >= 0) || [i]; }
+
+function openSessionEdit(view) { SEDIT_OPEN = -1; renderSessionEdit(view); document.getElementById('sedit-sheet').hidden = false; }
+function closeSessionEdit() { document.getElementById('sedit-sheet').hidden = true; }
+function toggleSeditRow(view, i) { SEDIT_OPEN = SEDIT_OPEN === i ? -1 : i; renderSessionEdit(view); }
+
+function renderSessionEdit(view) {
   const s = sessionDef(view);
-  const sheet = document.getElementById('sedit-sheet');
   document.getElementById('sedit-title').textContent = s.name;
+  const groups = supGroups(s.ex);
+  const inGroup = {};
+  groups.forEach(g => { if (g.length > 1) g.forEach((i, n) => { inGroup[i] = { first: n === 0, last: n === g.length - 1, n: n + 1, of: g.length }; }); });
+
   document.getElementById('sedit-body').innerHTML =
       '<div class="ff-hint">~' + sessionMinutes(s.ex) + ' min at these sets and rests. '
-    +   'Drag is not needed — use the arrows to reorder.</div>'
-    + s.ex.map((e, i) =>
-        '<div class="sedit-row">'
-        + '<div class="sedit-main" onclick="closeSessionEdit();editExercise(\'' + view + '\',' + i + ')">'
-        +   '<div class="sedit-name">' + esc(e.name) + '</div>'
-        +   '<div class="sedit-sub">' + esc(setsLine(e)) + '</div></div>'
+    +   'Tap an exercise to change its sets, reps, timing and weight.</div>'
+    + s.ex.map((e, i) => {
+        const g = inGroup[i];
+        return '<div class="sedit-row' + (g ? ' sup' + (g.first ? ' sup-first' : '') + (g.last ? ' sup-last' : '') : '')
+        +   (SEDIT_OPEN === i ? ' open' : '') + '">'
+        + (g ? '<div class="sup-spine"></div>' : '')
+        + '<div class="sedit-main" onclick="toggleSeditRow(\'' + view + '\',' + i + ')">'
+        +   '<div class="sedit-name">' + esc(e.name)
+        +     (g ? '<span class="sup-chip">Superset ' + g.n + '/' + g.of + '</span>' : '') + '</div>'
+        +   '<div class="sedit-sub">' + esc(setsLine(e)) + weightTag(e) + '</div></div>'
         + '<button class="icon-btn" onclick="moveEx(\'' + view + '\',' + i + ',-1)" '
-        +   (i === 0 ? 'disabled' : '') + ' aria-label="Up">↑</button>'
+        +   (i === 0 ? 'disabled' : '') + ' aria-label="Move up">↑</button>'
         + '<button class="icon-btn" onclick="moveEx(\'' + view + '\',' + i + ',1)" '
-        +   (i === s.ex.length - 1 ? 'disabled' : '') + ' aria-label="Down">↓</button>'
-        + '</div>').join('')
+        +   (i === s.ex.length - 1 ? 'disabled' : '') + ' aria-label="Move down">↓</button>'
+        + '<button class="icon-btn chev' + (SEDIT_OPEN === i ? ' open' : '') + '" '
+        +   'onclick="toggleSeditRow(\'' + view + '\',' + i + ')" aria-label="Edit">‹</button>'
+        + '<button class="icon-btn del" onclick="removeExerciseAt(\'' + view + '\',' + i + ')" '
+        +   'aria-label="Remove">×</button>'
+        + '</div>'
+        + (SEDIT_OPEN === i ? exInlineEditor(view, e, i, s.ex.length) : '');
+      }).join('')
     + '<div class="sedit-actions">'
     +   '<button class="solid-btn" onclick="addExerciseToSession(\'' + view + '\')">Add an exercise</button>'
     +   '<button class="ghost-btn" onclick="trimSession(\'' + view + '\')">Fit to 25 minutes</button>'
     + '</div>'
     + (s.edited ? '<button class="ghost-btn danger-btn" onclick="closeSessionEdit();resetSession(\'' + view + '\')">'
                   + 'Reset to the original</button>' : '');
-  sheet.hidden = false;
 }
-function closeSessionEdit() { document.getElementById('sedit-sheet').hidden = true; }
+function weightTag(e) {
+  const w = localStorage.getItem('workout-weight-' + e.key);
+  return w ? ' · <b>' + esc(w) + ' kg</b>' : '';
+}
+
+/* The same fields as the per-exercise sheet, inline. Each writes on change, so there
+   is no Save to forget — the only destructive action, Remove, still asks. */
+function exInlineEditor(view, e, i, count) {
+  const timed = e.mode === 'time';
+  const f = (field, attrs, val) =>
+    '<input class="ff-in' + (attrs.num ? ' num' : '') + '" type="' + (attrs.num ? 'number' : 'text') + '"'
+    + (attrs.min != null ? ' min="' + attrs.min + '"' : '') + (attrs.step ? ' step="' + attrs.step + '"' : '')
+    + (attrs.ph ? ' placeholder="' + esc(attrs.ph) + '"' : '')
+    + ' value="' + esc(val == null ? '' : String(val)) + '"'
+    + ' onchange="exField(\'' + view + '\',' + i + ',\'' + field + '\',this.value)">';
+  return '<div class="sedit-edit">'
+    + '<div class="ff-row"><span>Sets</span><span class="step-wrap">'
+    +   '<button class="step-btn" onclick="exField(\'' + view + '\',' + i + ',\'sets\',' + (e.sets - 1) + ')">−</button>'
+    +   f('sets', { num: true, min: 1 }, e.sets)
+    +   '<button class="step-btn" onclick="exField(\'' + view + '\',' + i + ',\'sets\',' + (e.sets + 1) + ')">+</button>'
+    + '</span></div>'
+    + '<div class="ff-row"><span>A set is</span><span class="mode-wrap">'
+    +   '<button class="mode-btn' + (timed ? '' : ' on') + '" onclick="exField(\'' + view + '\',' + i + ',\'mode\',\'reps\')">Reps</button>'
+    +   '<button class="mode-btn' + (timed ? ' on' : '') + '" onclick="exField(\'' + view + '\',' + i + ',\'mode\',\'time\')">Timed</button>'
+    + '</span></div>'
+    + (timed
+        ? '<div class="ff-row"><span>Seconds a set</span><span class="rng">'
+          + f('sec1', { num: true, min: 5 }, e.secs ? e.secs[0] : 30) + '<span class="rng-dash">to</span>'
+          + f('sec2', { num: true, min: 5 }, e.secs ? e.secs[1] : 30) + '</span></div>'
+        : '<div class="ff-row"><span>Reps</span>' + f('reps', { ph: '8–12' }, e.reps) + '</div>'
+          + '<div class="ff-hint">A range (8–12), one number (10), or a target per set (10–12, 8–10, 6–8).</div>')
+    + '<div class="ff-row"><span>Each side / total</span>' + f('note', { ph: 'neither' }, e.note || '') + '</div>'
+    + '<div class="ff-row"><span>Rest between sets</span><span class="rng">'
+    +   f('rest1', { num: true, min: 0 }, e.rest[0]) + '<span class="rng-dash">to</span>'
+    +   f('rest2', { num: true, min: 0 }, e.rest[1]) + '</span></div>'
+    + '<div class="ff-row"><span>Weight (kg)</span>'
+    +   f('weight', { num: true, min: 0, step: '0.5', ph: 'not set' },
+          localStorage.getItem('workout-weight-' + e.key) || '') + '</div>'
+    + '<div class="sedit-edit-actions">'
+    +   (i < count - 1
+          ? '<button class="ghost-btn tiny" onclick="toggleSuperset(\'' + view + '\',' + i + ')">'
+            + (e.sup && (sessionDef(view).ex[i + 1] || {}).sup === e.sup
+                ? 'Unlink from the next' : 'Superset with the next') + '</button>'
+          : '')
+    +   '<button class="ghost-btn tiny" onclick="swapExerciseAt(\'' + view + '\',' + i + ')">Swap for another</button>'
+    +   '<button class="ghost-btn tiny" onclick="closeSessionEdit();startSetRun(\'' + view + '\',' + i + ')">Start here</button>'
+    +   '<button class="ghost-btn tiny danger" onclick="removeExerciseAt(\'' + view + '\',' + i + ')">Remove</button>'
+    + '</div></div>';
+}
+
+/* One writer for every inline change, so validation lives in one place rather than
+   once per field. Anything that cannot be parsed leaves the stored value alone. */
+function exField(view, i, field, value) {
+  const list = JSON.parse(JSON.stringify(sessionDef(view).ex));
+  const e = list[i];
+  if (!e) return;
+  const n = parseFloat(value);
+  switch (field) {
+    case 'sets':   e.sets = Math.max(1, Math.min(12, isNaN(n) ? e.sets : Math.round(n))); break;
+    case 'mode':
+      if (value === 'time' && e.mode !== 'time') { e.mode = 'time'; e.secs = e.secs || [30, 30]; delete e.reps; }
+      if (value === 'reps' && e.mode === 'time') { e.mode = 'reps'; e.reps = e.reps || '8–12'; delete e.secs; }
+      break;
+    case 'reps':   e.reps = String(value || '').trim() || e.reps; break;
+    case 'sec1':   if (!isNaN(n)) { e.secs = [Math.max(5, n), Math.max(Math.max(5, n), e.secs ? e.secs[1] : n)]; } break;
+    case 'sec2':   if (!isNaN(n)) { e.secs = [e.secs ? e.secs[0] : n, Math.max(e.secs ? e.secs[0] : n, n)]; } break;
+    case 'note':   { const t = String(value || '').trim(); if (t) e.note = t; else delete e.note; break; }
+    case 'rest1':  if (!isNaN(n)) { e.rest = [Math.max(0, n), Math.max(Math.max(0, n), e.rest[1])]; } break;
+    case 'rest2':  if (!isNaN(n)) { e.rest = [e.rest[0], Math.max(e.rest[0], Math.max(0, n))]; } break;
+    case 'weight': {
+      const k = 'workout-weight-' + e.key;
+      if (String(value || '').trim() === '') localStorage.removeItem(k);
+      else localStorage.setItem(k, String(Math.max(0, isNaN(n) ? 0 : n)));
+      break;
+    }
+  }
+  saveSessionEx(view, list);
+  renderBuiltinSession(view); paintLinkedExercises();
+  renderSessionEdit(view);
+}
+
+/* Linking is always "this one and the one below", because that is the only pairing the
+   runner can express — alternating two exercises that are not next to each other would
+   be a reorder pretending to be a superset. Linking a third row to a pair extends it. */
+function toggleSuperset(view, i) {
+  const list = JSON.parse(JSON.stringify(sessionDef(view).ex));
+  const a = list[i], b = list[i + 1];
+  if (!a || !b) return;
+  if (a.sup && b.sup === a.sup) {
+    delete b.sup;
+    // A group of one is not a group: drop the marker rather than leave it dangling.
+    if (!list.some((x, k) => k !== i && x.sup === a.sup)) delete a.sup;
+  } else {
+    const id = a.sup || b.sup || ('s' + Date.now().toString(36));
+    a.sup = id; b.sup = id;
+  }
+  saveSessionEx(view, list);
+  renderBuiltinSession(view); paintLinkedExercises();
+  renderSessionEdit(view);
+}
+
 function moveEx(view, i, d) {
   const list = JSON.parse(JSON.stringify(sessionDef(view).ex));
   const j = i + d;
   if (j < 0 || j >= list.length) return;
   const t = list[i]; list[i] = list[j]; list[j] = t;
   saveSessionEx(view, list);
-  renderBuiltinSession(view); paintLinkedExercises(); openSessionEdit(view);
+  if (SEDIT_OPEN === i) SEDIT_OPEN = j; else if (SEDIT_OPEN === j) SEDIT_OPEN = i;
+  renderBuiltinSession(view); paintLinkedExercises(); renderSessionEdit(view);
+}
+function removeExerciseAt(view, i) {
+  const list = JSON.parse(JSON.stringify(sessionDef(view).ex));
+  if (list.length <= 1) return alert('A session needs at least one exercise.');
+  if (!confirm('Remove ' + list[i].name + ' from this session?')) return;
+  const gone = list[i].sup;
+  list.splice(i, 1);
+  if (gone && list.filter(x => x.sup === gone).length < 2) list.forEach(x => { if (x.sup === gone) delete x.sup; });
+  saveSessionEx(view, list);
+  SEDIT_OPEN = -1;
+  renderBuiltinSession(view); paintLinkedExercises(); renderSessionEdit(view);
+}
+/* Replace one exercise with another from the library, in place. Sets, reps, rest and
+   any superset link are kept, because swapping a lat pulldown for a dumbbell row does
+   not change how many sets of it you are doing. The WEIGHT is not carried across: it
+   is keyed to the exercise, and a weight that silently followed a different movement
+   would be worse than an empty box. */
+function swapExerciseAt(view, i) {
+  closeSessionEdit();
+  openLibrary(lib => {
+    const list = JSON.parse(JSON.stringify(sessionDef(view).ex));
+    const old = list[i];
+    if (!old) return;
+    const key = view + '-' + lib.id;
+    const row = {
+      key: key, name: lib.name, ex: lib.id,
+      sets: old.sets, mode: old.mode, reps: old.reps, secs: old.secs,
+      note: old.note, rest: old.rest, sup: old.sup,
+      tags: (lib.pri || []).slice(0, 2).map(m => ({ c: 'core', t: m.toUpperCase() })),
+      steps: lib.steps || []
+    };
+    Object.keys(row).forEach(k => { if (row[k] === undefined) delete row[k]; });
+    list[i] = row;
+    saveSessionEx(view, list);
+    setExLink(key, lib.id);
+    closeLibrary();
+    renderBuiltinSession(view); paintLinkedExercises();
+    SEDIT_OPEN = i;
+    renderSessionEdit(view);
+    document.getElementById('sedit-sheet').hidden = false;
+  });
 }
 function addExerciseToSession(view) {
   closeSessionEdit();
@@ -3806,9 +4077,10 @@ function trimSession(view) {
   if (keep.length === list.length) return alert('Already inside 25 minutes.');
   const dropped = list.filter(e => keep.indexOf(e) < 0).map(e => e.name);
   if (!confirm('Drop ' + dropped.join(', ') + '?\n\nThe compound lifts keep their sets.')) return;
+  keep.forEach(e => { if (e.sup && keep.filter(x => x.sup === e.sup).length < 2) delete e.sup; });
   saveSessionEx(view, keep);
-  closeSessionEdit();
-  renderBuiltinSession(view); paintLinkedExercises();
+  SEDIT_OPEN = -1;
+  renderBuiltinSession(view); paintLinkedExercises(); renderSessionEdit(view);
 }
 
 /* ══════════════════════════════════════════════════════
@@ -3828,12 +4100,21 @@ let RUN = null, RUN_TICK = null, RUN_WAKE = null;
 function buildRunSteps(view, from) {
   const s = sessionDef(view);
   const steps = [];
-  s.ex.forEach((e, i) => {
-    if (from != null && i < from) return;
-    for (let n = 0; n < e.sets; n++) {
-      steps.push({ kind: 'work', ex: i, set: n, name: e.name, key: e.key,
-                   mode: e.mode, secs: setWorkSecs(e), target: setTarget(e, n), sets: e.sets });
-      steps.push({ kind: 'rest', ex: i, set: n, name: e.name, secs: e.rest[0], sets: e.sets });
+  const push = (e, i, n, sup) => {
+    steps.push({ kind: 'work', ex: i, set: n, name: e.name, key: e.key, sup: sup,
+                 mode: e.mode, secs: setWorkSecs(e), target: setTarget(e, n), sets: e.sets });
+    steps.push({ kind: 'rest', ex: i, set: n, name: e.name, secs: e.rest[0], sets: e.sets, sup: sup });
+  };
+  // A superset is walked by SET, not by exercise: set 1 of each, then set 2 of each.
+  // Starting part-way in starts at the top of that exercise's group, because dropping
+  // into the middle of an alternating pair is not a thing you can actually do.
+  const groups = supGroups(s.ex);
+  const startGroup = from == null ? 0 : groups.findIndex(g => g.indexOf(from) >= 0);
+  groups.forEach((g, gi) => {
+    if (startGroup >= 0 && gi < startGroup) return;
+    const rounds = Math.max.apply(null, g.map(i => s.ex[i].sets));
+    for (let n = 0; n < rounds; n++) {
+      g.forEach(i => { const e = s.ex[i]; if (n < e.sets) push(e, i, n, g.length > 1 ? gi : null); });
     }
   });
   while (steps.length && steps[steps.length - 1].kind === 'rest') steps.pop();
@@ -3885,7 +4166,9 @@ function renderRun() {
   const work = st.kind === 'work';
   const dock = document.getElementById('set-run');
   dock.classList.toggle('resting', !work);
-  set('run-phase', work ? ('Set ' + (st.set + 1) + ' of ' + st.sets) : 'Rest');
+  set('run-phase', work
+    ? ('Set ' + (st.set + 1) + ' of ' + st.sets + (st.sup != null ? ' \u00b7 superset' : ''))
+    : (st.sup != null ? 'Swap' : 'Rest'));
   set('run-name', st.name);
   set('run-target', work ? st.target
     : 'Next: set ' + ((RUN.steps[RUN.i + 1] || {}).set + 1 || 1) + ' — '
@@ -3896,7 +4179,7 @@ function renderRun() {
   const bar = document.getElementById('run-bar');
   if (bar) bar.style.width = (timed || !work)
     ? Math.max(0, (RUN.left / Math.max(1, st.secs)) * 100) + '%' : '100%';
-  set('run-primary', work ? (timed ? 'Skip' : 'Set done') : 'Skip rest');
+  set('run-primary', work ? (timed ? 'Skip' : 'Set done') : (st.sup != null ? 'Go now' : 'Skip rest'));
   set('run-pause', RUN.paused ? 'Resume' : 'Pause');
   const done = RUN.steps.slice(0, RUN.i).filter(x => x.kind === 'work').length;
   const total = RUN.steps.filter(x => x.kind === 'work').length;
@@ -6171,8 +6454,19 @@ function foodMsg(html, kind) {
    BarcodeDetector is built into Chrome on Android, which is what he uses, and absent
    from Safari. Rather than ship a scanning library for a browser he does not use, the
    unsupported path asks for the digits — every barcode is printed beneath itself. */
-let SCAN_STREAM = null, SCAN_STOP = false;
+let SCAN_STREAM = null, SCAN_STOP = false, SCAN_TRACK = null, SCAN_TORCH = false;
 
+/* The first version asked for a camera and nothing else, and on a Samsung that means
+   the main lens at its default focus — which cannot focus closer than about 10cm.
+   Held close enough to fill the frame, the barcode is inside the lens's near limit and
+   never comes sharp. Three things fix it, in order of how much they help:
+
+     1. continuous autofocus, requested explicitly rather than hoped for
+     2. optical zoom, so the barcode can fill the frame from 20cm away instead of 8
+     3. a still photo through the phone's own camera, which focuses properly before
+        it fires — the escape hatch for a dark or curved packet
+
+   Torch too: barcodes printed on dark foil are the other common failure. */
 async function mealScan() {
   if (!foodApiReady()) return;
   if (!('BarcodeDetector' in window)) {
@@ -6185,9 +6479,18 @@ async function mealScan() {
   SCAN_STOP = false;
   const video = document.getElementById('scan-video');
   const note = document.getElementById('scan-note');
+  note.textContent = 'Starting the camera…';
   try {
     SCAN_STREAM = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false });
+      audio: false,
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1920 }, height: { ideal: 1080 },
+        // Not all of these are honoured; advanced constraints are requests, and an
+        // unsupported one is ignored rather than failing the whole call.
+        advanced: [{ focusMode: 'continuous' }, { focusDistance: 0.1 }]
+      }
+    });
   } catch (e) {
     closeScan();
     const typed = prompt('No camera available (' + (e.name || e) + ').\n\nType the barcode digits instead:');
@@ -6196,8 +6499,12 @@ async function mealScan() {
   }
   video.srcObject = SCAN_STREAM;
   await video.play().catch(() => {});
-  note.textContent = 'Hold the barcode inside the frame';
-  const det = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] });
+  SCAN_TRACK = SCAN_STREAM.getVideoTracks()[0];
+  await setupScanControls();
+  note.textContent = 'Hold it about 20cm away — zoom in rather than moving closer';
+
+  const det = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf'] });
+  let tries = 0;
   const tick = async () => {
     if (SCAN_STOP) return;
     try {
@@ -6205,20 +6512,75 @@ async function mealScan() {
       if (hits && hits.length) {
         const code = hits[0].rawValue;
         if (/^\d{6,14}$/.test(code)) {
-          cue('go');
+          cue('go'); beep('go');
           closeScan();
           return lookupBarcode(code);
         }
       }
     } catch (_) {}
+    // After about eight seconds of not reading it, say what usually fixes it rather
+    // than leaving the same hopeful line on screen indefinitely.
+    if (++tries === 36) note.textContent = 'Not reading it? Move further back, or tap Photo — '
+      + 'your camera focuses properly for a still.';
     setTimeout(tick, 220);     // ~4 reads a second: enough, and it does not cook the phone
   };
   tick();
 }
+
+/* Zoom and torch exist only on some devices, so each control is built from what the
+   track actually reports rather than shown and silently doing nothing. */
+async function setupScanControls() {
+  const caps = (SCAN_TRACK && SCAN_TRACK.getCapabilities) ? (SCAN_TRACK.getCapabilities() || {}) : {};
+  try {
+    if (caps.focusMode && caps.focusMode.indexOf('continuous') >= 0) {
+      await SCAN_TRACK.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+    }
+  } catch (_) {}
+  const zoomWrap = document.getElementById('scan-zoom-wrap');
+  const zoom = document.getElementById('scan-zoom');
+  if (caps.zoom && caps.zoom.max > caps.zoom.min) {
+    zoom.min = caps.zoom.min; zoom.max = Math.min(caps.zoom.max, caps.zoom.min * 4);
+    zoom.step = caps.zoom.step || 0.1;
+    // Start part-zoomed: filling the frame from arm's length is the whole trick.
+    const start = Math.min(Number(zoom.max), caps.zoom.min + (caps.zoom.max - caps.zoom.min) * 0.35);
+    zoom.value = start;
+    try { await SCAN_TRACK.applyConstraints({ advanced: [{ zoom: start }] }); } catch (_) {}
+    zoomWrap.hidden = false;
+  } else { zoomWrap.hidden = true; }
+  const torch = document.getElementById('scan-torch');
+  torch.hidden = !caps.torch;
+  SCAN_TORCH = false;
+  torch.classList.remove('on');
+}
+async function setScanZoom(v) {
+  try { await SCAN_TRACK.applyConstraints({ advanced: [{ zoom: Number(v) }] }); } catch (_) {}
+}
+async function toggleScanTorch() {
+  SCAN_TORCH = !SCAN_TORCH;
+  try { await SCAN_TRACK.applyConstraints({ advanced: [{ torch: SCAN_TORCH }] }); } catch (_) {}
+  document.getElementById('scan-torch').classList.toggle('on', SCAN_TORCH);
+}
+/* Tap the picture to refocus on that point, where the device supports it. On the rest
+   it is a harmless no-op rather than a button that lies about what it does. */
+async function scanTapFocus(ev) {
+  if (!SCAN_TRACK) return;
+  const caps = SCAN_TRACK.getCapabilities ? (SCAN_TRACK.getCapabilities() || {}) : {};
+  const r = ev.currentTarget.getBoundingClientRect();
+  const x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
+  const adv = [];
+  if (caps.pointsOfInterest) adv.push({ pointsOfInterest: [{ x: x, y: y }] });
+  if (caps.focusMode && caps.focusMode.indexOf('single-shot') >= 0) adv.push({ focusMode: 'single-shot' });
+  if (!adv.length) return;
+  try { await SCAN_TRACK.applyConstraints({ advanced: adv }); } catch (_) {}
+  const note = document.getElementById('scan-note');
+  if (note) note.textContent = 'Focusing…';
+  setTimeout(() => { if (note && !SCAN_STOP) note.textContent = 'Hold it about 20cm away — zoom in rather than moving closer'; }, 1200);
+}
+
 function closeScan() {
   SCAN_STOP = true;
   try { if (SCAN_STREAM) SCAN_STREAM.getTracks().forEach(t => t.stop()); } catch (_) {}
-  SCAN_STREAM = null;
+  SCAN_STREAM = null; SCAN_TRACK = null;
   const sheet = document.getElementById('scan-sheet');
   if (sheet) sheet.hidden = true;
 }
@@ -6226,6 +6588,40 @@ function scanTypeIn() {
   closeScan();
   const typed = prompt('Type the barcode digits:');
   if (typed) lookupBarcode(typed);
+}
+
+/* The reliable path. The phone's own camera app focuses, meters and fires a flash
+   before it hands over a photo, so a barcode it cannot read live it almost always
+   reads from a still. Two passes: the photo as taken, then the middle of it blown up,
+   which catches a code that was sharp but small in the frame. */
+async function scanFromPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  input.value = '';
+  const note = document.getElementById('scan-note');
+  if (note) note.textContent = 'Reading the photo…';
+  try {
+    const bmp = await createImageBitmap(file);
+    const det = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf'] });
+    let hits = await det.detect(bmp).catch(() => []);
+    if (!hits.length) {
+      const c = document.createElement('canvas');
+      const w = Math.round(bmp.width * 0.6), h = Math.round(bmp.height * 0.6);
+      c.width = w * 2; c.height = h * 2;
+      c.getContext('2d').drawImage(bmp, (bmp.width - w) / 2, (bmp.height - h) / 2, w, h, 0, 0, w * 2, h * 2);
+      hits = await det.detect(c).catch(() => []);
+    }
+    const code = (hits.find(x => /^\d{6,14}$/.test(x.rawValue)) || {}).rawValue;
+    if (!code) {
+      if (note) note.textContent = 'No barcode found in that photo — try again closer, or type it in.';
+      return;
+    }
+    cue('go'); beep('go');
+    closeScan();
+    lookupBarcode(code);
+  } catch (e) {
+    if (note) note.textContent = 'Could not read that photo — ' + (e.message || e);
+  }
 }
 
 async function lookupBarcode(code) {
@@ -7716,9 +8112,10 @@ function coachHeaders() {
 /* Cloudflare never shows a secret back, so this field is the only copy he can read. */
 function toggleSecret() {
   const i = document.getElementById('coach-secret'), b = document.getElementById('secret-eye');
-  const shown = i.type === 'text';
-  i.type = shown ? 'password' : 'text';
-  b.textContent = shown ? 'Show' : 'Hide';
+  // The field is always type="text"; only the CSS mask comes off. Flipping the type
+  // is what summoned the "save password?" prompt in the first place.
+  const hidden = i.classList.toggle('masked');
+  b.textContent = hidden ? 'Show' : 'Hide';
 }
 function saveCoachConfig() {
   COACH_VERIFIED = null;
