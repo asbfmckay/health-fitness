@@ -2245,6 +2245,78 @@
     font-variant-numeric: tabular-nums;
   }
 
+/* ── Finding a food: tools, results, scanner ──────────────────────────────── */
+  .ms-tools { display: flex; gap: 8px; margin-bottom: 12px; }
+  .ms-tool {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--ink);
+    border-radius: var(--r-pill); padding: 10px 8px; cursor: pointer;
+    font: 600 12.5px/1 var(--display);
+  }
+  .ms-tool:active { background: var(--bg-soft); }
+  .ms-tool svg { flex: none; }
+  .ms-results {
+    border: 1px solid var(--border); border-radius: var(--r-md);
+    background: var(--bg); margin-bottom: 14px; overflow: hidden;
+    max-height: 46vh; overflow-y: auto;
+  }
+  .ms-results[hidden] { display: none; }
+  .fr-head {
+    display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+    background: var(--bg-soft); border-bottom: 1px solid var(--border);
+    font: 600 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .fr-x { margin-left: auto; background: none; border: 0; font-size: 19px; line-height: 1;
+    color: var(--text-dim); cursor: pointer; }
+  .fr-msg { padding: 12px; font: 400 13px/1.5 var(--body-f); color: var(--text-body); }
+  .fr-msg.warn { color: var(--chest); }
+  .fr-row { display: flex; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  .fr-row:last-child { border-bottom: 0; }
+  .fr-img { width: 42px; height: 42px; flex: none; border-radius: var(--r-sm);
+    object-fit: cover; background: var(--bg-soft); }
+  .fr-main { flex: 1; min-width: 0; }
+  .fr-name { font: 700 13.5px/1.35 var(--display); color: var(--text-h); }
+  .fr-sub { font: 400 11.5px/1.45 var(--body-f); color: var(--text-dim); }
+  .fr-picks { display: flex; flex-direction: column; gap: 6px; margin-top: 7px; }
+  .fr-pick {
+    text-align: left; border: 1px solid var(--border); background: var(--bg-card);
+    color: var(--ink); border-radius: var(--r-sm); padding: 8px 10px; cursor: pointer;
+    font: 500 12px/1.3 var(--body-f); font-variant-numeric: tabular-nums;
+  }
+  .fr-pick:active { background: var(--green-bg); border-color: var(--green-bdr); }
+  .fr-check { align-items: flex-start; cursor: pointer; }
+  .fr-box { width: 19px; height: 19px; margin-top: 3px; flex: none; accent-color: var(--green); }
+  .fr-conf {
+    margin-left: 7px; padding: 2px 6px; border-radius: var(--r-pill);
+    font: 600 9.5px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+    background: var(--bg-soft); color: var(--text-dim); vertical-align: 1px;
+  }
+  .fr-conf.low { background: rgba(226,102,92,.14); color: var(--chest); }
+  .fr-conf.high { background: var(--green-bg); color: var(--green); }
+  .fr-add { width: calc(100% - 24px); margin: 12px; }
+
+  .scan-sheet {
+    position: fixed; inset: 0; z-index: 90; background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .scan-sheet[hidden] { display: none; }
+  #scan-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .scan-frame {
+    position: relative; width: 78%; max-width: 420px; aspect-ratio: 3 / 2;
+    border: 2px solid var(--lime); border-radius: var(--r-md);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,.52);
+  }
+  .scan-note {
+    position: relative; margin-top: 20px; color: #fff;
+    font: 500 13.5px/1.4 var(--body-f); text-align: center; padding: 0 24px;
+  }
+  .scan-actions {
+    position: absolute; left: 0; right: 0; bottom: calc(26px + env(safe-area-inset-bottom));
+    display: flex; gap: 10px; justify-content: center; padding: 0 20px;
+  }
+  .scan-actions .run-min { border-color: rgba(255,255,255,.35); color: #fff; background: rgba(0,0,0,.35); }
+
 </style>
 
 </head>
@@ -2461,12 +2533,39 @@
   <!-- Deliberately a form, not a food database. The coach reads a photo or a
        description and fills these in; this is for knowing the numbers yourself,
        or correcting its guess. -->
+  <!-- The scanner. Full screen, because a barcode is easier to frame when the
+       viewfinder is not a postage stamp at the top of a form. -->
+  <div class="scan-sheet" id="scan-sheet" hidden>
+    <video id="scan-video" playsinline muted></video>
+    <div class="scan-frame"></div>
+    <div class="scan-note" id="scan-note">Starting the camera…</div>
+    <div class="scan-actions">
+      <button class="run-min" onclick="scanTypeIn()">Type it instead</button>
+      <button class="run-min" onclick="closeScan()">Cancel</button>
+    </div>
+  </div>
+
   <div class="meal-sheet" id="meal-sheet" hidden>
     <div class="meal-sheet-card">
       <div class="meal-sheet-head">
         <div class="meal-sheet-title" id="meal-sheet-title">Add food</div>
         <button class="meal-del" onclick="closeMealEntry()" aria-label="Close">&times;</button>
       </div>
+      <!-- Three ways to fill this form. The form itself is unchanged: whatever a
+           lookup returns lands in these same fields and is still editable. -->
+      <div class="ms-tools">
+        <button class="ms-tool" onclick="mealScan()">
+          <svg viewBox="0 0 24 24" fill="none" width="15" height="15"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Scan</button>
+        <button class="ms-tool" onclick="mealSearch()">
+          <svg viewBox="0 0 24 24" fill="none" width="15" height="15"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Search</button>
+        <button class="ms-tool" onclick="document.getElementById('ms-photo').click()">
+          <svg viewBox="0 0 24 24" fill="none" width="15" height="15"><path d="M3 8.5A2.5 2.5 0 015.5 6h1.8l1.2-2h6l1.2 2h1.8A2.5 2.5 0 0120 8.5v8A2.5 2.5 0 0117.5 19h-11A2.5 2.5 0 014 16.5v-8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="3.2" stroke="currentColor" stroke-width="1.7"/></svg>
+          Photo</button>
+        <input type="file" id="ms-photo" accept="image/*" capture="environment" hidden onchange="mealPhoto(this)">
+      </div>
+      <div class="ms-results" id="ms-results" hidden></div>
       <div class="ms-grid">
         <div class="ms-field ms-wide"><label>Food</label>
           <input id="ms-name" type="text" autocomplete="off" data-lpignore="true" placeholder="Chicken salad"></div>
@@ -6037,6 +6136,226 @@ function saveMealEntry() {
     kcal: v('kcal'), protein: v('protein'), carbs: v('carbs'), fat: v('fat'),
     fibre: v('fibre'), sodium: v('sodium'), sugar: v('sugar')
   });
+  closeMealEntry();
+  renderFood(); refreshAllViews();
+}
+
+
+/* ══════════════════════════════════════════════════════
+   FINDING A FOOD — barcode, search, photo
+   ══════════════════════════════════════════════════════
+   Three ways in, all landing in the same place: the add-a-meal form, filled in but
+   not saved. Nothing logs itself. A barcode is a read panel and a photo is an
+   estimate, and the difference matters once the day is history — so both are shown
+   for confirmation and the figures stay editable. */
+
+function foodApiReady() {
+  if (COACH_READY()) return true;
+  alert('Connect the coach first — Settings → Coach connection. The lookup runs through your worker.');
+  return false;
+}
+async function foodApi(path, opts) {
+  const r = await fetch(COACH_URL() + path, Object.assign({ headers: coachHeaders() }, opts || {}));
+  const j = await r.json().catch(() => ({ error: 'HTTP ' + r.status }));
+  if (j.error) throw new Error(j.error);
+  return j;
+}
+function foodMsg(html, kind) {
+  const el = document.getElementById('ms-results');
+  if (!el) return;
+  el.hidden = false;
+  el.innerHTML = '<div class="fr-msg' + (kind ? ' ' + kind : '') + '">' + html + '</div>';
+}
+
+/* ── Barcode ────────────────────────────────────────────────────────────────
+   BarcodeDetector is built into Chrome on Android, which is what he uses, and absent
+   from Safari. Rather than ship a scanning library for a browser he does not use, the
+   unsupported path asks for the digits — every barcode is printed beneath itself. */
+let SCAN_STREAM = null, SCAN_STOP = false;
+
+async function mealScan() {
+  if (!foodApiReady()) return;
+  if (!('BarcodeDetector' in window)) {
+    const typed = prompt('This browser cannot use the camera to scan.\n\nType the barcode digits printed under the barcode:');
+    if (typed) lookupBarcode(typed);
+    return;
+  }
+  const sheet = document.getElementById('scan-sheet');
+  sheet.hidden = false;
+  SCAN_STOP = false;
+  const video = document.getElementById('scan-video');
+  const note = document.getElementById('scan-note');
+  try {
+    SCAN_STREAM = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false });
+  } catch (e) {
+    closeScan();
+    const typed = prompt('No camera available (' + (e.name || e) + ').\n\nType the barcode digits instead:');
+    if (typed) lookupBarcode(typed);
+    return;
+  }
+  video.srcObject = SCAN_STREAM;
+  await video.play().catch(() => {});
+  note.textContent = 'Hold the barcode inside the frame';
+  const det = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] });
+  const tick = async () => {
+    if (SCAN_STOP) return;
+    try {
+      const hits = await det.detect(video);
+      if (hits && hits.length) {
+        const code = hits[0].rawValue;
+        if (/^\d{6,14}$/.test(code)) {
+          cue('go');
+          closeScan();
+          return lookupBarcode(code);
+        }
+      }
+    } catch (_) {}
+    setTimeout(tick, 220);     // ~4 reads a second: enough, and it does not cook the phone
+  };
+  tick();
+}
+function closeScan() {
+  SCAN_STOP = true;
+  try { if (SCAN_STREAM) SCAN_STREAM.getTracks().forEach(t => t.stop()); } catch (_) {}
+  SCAN_STREAM = null;
+  const sheet = document.getElementById('scan-sheet');
+  if (sheet) sheet.hidden = true;
+}
+function scanTypeIn() {
+  closeScan();
+  const typed = prompt('Type the barcode digits:');
+  if (typed) lookupBarcode(typed);
+}
+
+async function lookupBarcode(code) {
+  const c = String(code || '').replace(/\D/g, '');
+  foodMsg('Looking up ' + esc(c) + '…');
+  try {
+    const j = await foodApi('/food/barcode?code=' + encodeURIComponent(c));
+    if (!j.product) {
+      return foodMsg('Nothing in Open Food Facts for <b>' + esc(c) + '</b>. '
+        + 'Type the panel in below — once it is in your log you will not need to again.', 'warn');
+    }
+    showFoodResults([j.product], j.cached ? 'From the cache' : 'Open Food Facts');
+  } catch (e) { foodMsg('Lookup failed — ' + esc(String(e.message || e)), 'warn'); }
+}
+
+/* ── Search by name ─────────────────────────────────────────────────────────
+   On submit, never per keystroke: Open Food Facts allows ten searches a minute and
+   asks in their documentation that it not be wired to typing. */
+async function mealSearch() {
+  if (!foodApiReady()) return;
+  const q = (document.getElementById('ms-name').value || '').trim();
+  if (q.length < 3) return foodMsg('Type at least three letters in Food first.', 'warn');
+  foodMsg('Searching for “' + esc(q) + '”…');
+  try {
+    const j = await foodApi('/food/search?q=' + encodeURIComponent(q));
+    if (!j.results || !j.results.length) {
+      return foodMsg('No match for “' + esc(q) + '”. Try the brand name, or scan the barcode.', 'warn');
+    }
+    showFoodResults(j.results, j.cached ? 'From the cache' : 'Open Food Facts');
+  } catch (e) { foodMsg('Search failed — ' + esc(String(e.message || e)), 'warn'); }
+}
+
+/* ── Showing what came back ─────────────────────────────────────────────────
+   Per serving and per 100 g are offered as separate taps rather than one guessed
+   number. A packet's serving is the manufacturer's idea of a serving, which is often
+   not the amount anyone eats, so the choice has to be his. */
+let FOOD_HITS = [];
+function showFoodResults(list, source) {
+  FOOD_HITS = list;
+  const el = document.getElementById('ms-results');
+  el.hidden = false;
+  el.innerHTML = '<div class="fr-head">' + esc(source || '') + ' · tap to fill the form'
+    + '<button class="fr-x" onclick="clearFoodResults()" aria-label="Close">&times;</button></div>'
+    + list.map((p, i) => {
+        const s = p.perServing, h = p.per100;
+        const line = n => n ? (n.kcal != null ? n.kcal + ' cal' : '— cal')
+          + (n.protein != null ? ' · ' + n.protein + 'P' : '')
+          + (n.carbs != null ? ' · ' + n.carbs + 'C' : '')
+          + (n.fat != null ? ' · ' + n.fat + 'F' : '') : null;
+        return '<div class="fr-row">'
+          + (p.image ? '<img class="fr-img" loading="lazy" src="' + esc(p.image) + '" alt="">' : '<span class="fr-img"></span>')
+          + '<div class="fr-main">'
+          +   '<div class="fr-name">' + esc(p.name) + '</div>'
+          +   '<div class="fr-sub">' + esc([p.brand, p.pack].filter(Boolean).join(' · ') || 'No brand recorded') + '</div>'
+          +   '<div class="fr-picks">'
+          +     (s ? '<button class="fr-pick" onclick="pickFood(' + i + ',\'serving\')">Serving'
+                   + (p.serving ? ' (' + esc(p.serving) + ')' : '') + ' — ' + esc(line(s)) + '</button>' : '')
+          +     (h ? '<button class="fr-pick" onclick="pickFood(' + i + ',\'100\')">100 g — '
+                   + esc(line(h)) + '</button>' : '')
+          +   '</div>'
+          + '</div></div>';
+      }).join('');
+}
+function clearFoodResults() {
+  const el = document.getElementById('ms-results');
+  if (el) { el.hidden = true; el.innerHTML = ''; }
+}
+function pickFood(i, basis) {
+  const p = FOOD_HITS[i];
+  if (!p) return;
+  const n = basis === 'serving' ? p.perServing : p.per100;
+  if (!n) return;
+  const set = (k, v) => { const el = document.getElementById('ms-' + k); if (el) el.value = v == null ? '' : v; };
+  set('name', [p.brand, p.name].filter(Boolean).join(' ').slice(0, 80));
+  set('qty', basis === 'serving' ? (p.serving || '1 serving') : '100 g');
+  ['kcal','protein','carbs','fat','fibre','sodium','sugar'].forEach(k => set(k, n[k]));
+  clearFoodResults();
+  const q = document.getElementById('ms-qty');
+  if (q) { q.focus(); q.select(); }     // the amount is the part he still has to decide
+}
+
+/* ── A photo of the plate ───────────────────────────────────────────────────
+   Estimates, shown as estimates. Each line is a tick-box so a wrong guess is dropped
+   rather than corrected, and every figure remains editable once added. */
+let PHOTO_ITEMS = [];
+async function mealPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  if (!foodApiReady()) { input.value = ''; return; }
+  const file = input.files[0];
+  input.value = '';
+  foodMsg('Reading the photo…');
+  try {
+    const dataUrl = await downscaleImage(file, 768, 0.6);
+    const j = await foodApi('/food/photo', { method: 'POST', headers: coachHeaders(),
+      body: JSON.stringify({ image: dataUrl, note: (document.getElementById('ms-name').value || '').trim() || null }) });
+    if (!j.items || !j.items.length) return foodMsg('Nothing recognisable in that photo.', 'warn');
+    PHOTO_ITEMS = j.items;
+    const el = document.getElementById('ms-results');
+    el.hidden = false;
+    el.innerHTML = '<div class="fr-head">Estimated from the photo — check before adding'
+      + '<button class="fr-x" onclick="clearFoodResults()" aria-label="Close">&times;</button></div>'
+      + j.items.map((it, i) =>
+          '<label class="fr-row fr-check">'
+          + '<input type="checkbox" class="fr-box" data-i="' + i + '" checked>'
+          + '<div class="fr-main"><div class="fr-name">' + esc(it.name || 'Food')
+          +   (it.confidence ? '<span class="fr-conf ' + esc(it.confidence) + '">' + esc(it.confidence) + '</span>' : '')
+          + '</div>'
+          + '<div class="fr-sub">' + esc(it.qty || '') + '</div>'
+          + '<div class="fr-sub">' + (it.kcal != null ? esc(String(Math.round(it.kcal))) + ' cal' : '— cal')
+          +   (it.protein != null ? ' · ' + esc(String(it.protein)) + 'P' : '')
+          +   (it.carbs != null ? ' · ' + esc(String(it.carbs)) + 'C' : '')
+          +   (it.fat != null ? ' · ' + esc(String(it.fat)) + 'F' : '') + '</div>'
+          + '</div></label>').join('')
+      + (j.note ? '<div class="fr-msg">' + esc(j.note) + '</div>' : '')
+      + '<button class="solid-btn fr-add" onclick="addPhotoItems()">Add the ticked items</button>';
+  } catch (e) { foodMsg('Could not read the photo — ' + esc(String(e.message || e)), 'warn'); }
+}
+function addPhotoItems() {
+  const sheet = document.getElementById('meal-sheet');
+  const slot = sheet.dataset.slot || 'snacks';
+  const picked = Array.from(document.querySelectorAll('.fr-box:checked')).map(b => PHOTO_ITEMS[Number(b.dataset.i)]);
+  if (!picked.length) return;
+  picked.forEach(it => addMeal(foodDate(), {
+    slot: slot, name: String(it.name || 'Food').slice(0, 80),
+    qty: it.qty ? String(it.qty).slice(0, 40) : null,
+    kcal: it.kcal, protein: it.protein, carbs: it.carbs, fat: it.fat,
+    fibre: it.fibre, sodium: it.sodium, sugar: it.sugar,
+    update: false            // two helpings of the same thing in one photo stay two rows
+  }));
+  clearFoodResults();
   closeMealEntry();
   renderFood(); refreshAllViews();
 }
