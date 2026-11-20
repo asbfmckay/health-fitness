@@ -140,20 +140,19 @@
     gap: 8px;
   }
 
-  .home-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
-    display: flex;
+  .home-lockup {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 9px;
+    padding: 6px 14px 6px 8px;
+    border-radius: 9px;
     background: var(--green-deep);
     border: none;
     text-decoration: none;
     flex-shrink: 0;
   }
 
-  .home-icon svg { width: 23px; height: 23px; }
+  .home-lockup svg { width: 26px; height: 26px; flex: none; }
 
   .header-eyebrow {
     font-family: var(--mono);
@@ -161,7 +160,7 @@
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--green);
+    color: var(--lime);     /* 12:1 on the navy lockup it now sits in */
   }
 
   .page-title {
@@ -277,7 +276,7 @@
   .day-header {
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--r-md);
     padding: 18px 18px 16px;
     margin: 0 16px 12px;
     box-shadow: var(--e1);
@@ -328,7 +327,7 @@
   .travel-note {
     margin: 0 16px 12px;
     padding: 13px 14px;
-    border-radius: 8px;
+    border-radius: var(--r-md);
     border: 1.5px solid var(--accent-border);
     background: var(--accent-bg);
     display: flex;
@@ -376,7 +375,7 @@
     margin: 0 16px 12px;
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--r-md);
     overflow: hidden;
     box-shadow: var(--e1);
   }
@@ -690,7 +689,7 @@
     margin: 0 16px 12px;
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--r-md);
     padding: 16px 16px 18px;
     box-shadow: var(--e1);
   }
@@ -1060,7 +1059,7 @@
   .stat-card {
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--r-md);
     padding: 14px 14px 15px;
     box-shadow: var(--e1);
     text-align: center;
@@ -1250,7 +1249,7 @@
   @media (max-height:640px){ .circuit-clock{font-size:76px} .circuit-now{font-size:21px} }
   /* ══════════ Weekly plan ══════════ */
   .plan-nudge{display:flex;align-items:center;gap:12px;justify-content:space-between;
-    margin:0 16px 12px;padding:13px 15px;border-radius:8px;
+    margin:0 16px 12px;padding:13px 15px;border-radius: var(--r-md);
     background:var(--green-deep);color:#fff;box-shadow:0 4px 16px rgba(23,27,46,.14)}
   .plan-nudge[hidden]{display:none}
   .plan-nudge-title{font-weight:700;font-size:14px;color:var(--lime)}
@@ -1259,7 +1258,7 @@
 
   /* ── Today's session, and the browse strip under it ───────────────────── */
   .today-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    background:var(--bg-card);border:1.5px solid var(--border);border-radius:8px;
+    background:var(--bg-card);border:1.5px solid var(--border);border-radius: var(--r-md);
     padding:13px 15px;margin:0 16px 12px}
   .today-strip[hidden]{display:none}
   .today-name{font-size:16px;font-weight:800;color:var(--text-h);letter-spacing:-.2px}
@@ -1699,7 +1698,7 @@
     margin: 0 16px 12px;
     background: var(--bg-card);
     border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--r-md);
     padding: 16px;
     box-shadow: var(--e1);
   }
@@ -1848,7 +1847,7 @@
     cursor:pointer;transition:all .15s ease}
   .hist-rbtn.active{background:var(--green-deep);color:var(--lime);box-shadow:0 2px 8px rgba(23,27,46,.25)}
   .hist-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-  .hist-stat{background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:10px 8px;
+  .hist-stat{background:var(--bg-soft);border:1px solid var(--border);border-radius: var(--r-md);padding:10px 8px;
     text-align:center}
   .hist-stat b{display:block;font-size:17px;font-weight:800;color:var(--text-h);letter-spacing:-0.02em}
   .hist-stat span{display:block;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;
@@ -1917,7 +1916,7 @@
   .stat-card.span2 .acc{text-align:left}
   .acc{margin-top:14px;border-top:1px solid var(--border);padding-top:4px}
   .acc-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
-    border-radius:8px;padding:0 16px 4px;box-shadow: var(--e1);border-top-width:1.5px}
+    border-radius: var(--r-md);padding:0 16px 4px;box-shadow: var(--e1);border-top-width:1.5px}
   .acc-card>.acc-sum{padding:15px 0}
   .acc>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;
     padding:11px 0;font-size:13px;font-weight:700;color:var(--text-h)}
@@ -1937,7 +1936,7 @@
 
   /* ══════════ Coach chat ══════════ */
   .chat-card{margin:0 16px 12px;background:var(--bg-card);border:1.5px solid var(--border);
-    border-radius:8px;box-shadow: var(--e1);overflow:hidden}
+    border-radius: var(--r-md);box-shadow: var(--e1);overflow:hidden}
   .chat-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1.5px solid var(--border)}
   .chat-avatar{width:30px;height:30px;border-radius:8px;background:var(--green-deep);display:grid;
     place-items:center;flex:none}
@@ -2015,7 +2014,7 @@
   #page-coach{padding-bottom:16px}
   /* ══════════ Date bar ══════════ */
   .datebar{display:flex;align-items:center;gap:8px;margin:0 16px 12px;background:var(--bg-card);
-    border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;
+    border:1.5px solid var(--border);border-radius: var(--r-md);padding:8px 10px;
     box-shadow: var(--e1)}
   .dnav{width:32px;height:32px;border-radius:7px;border:1px solid var(--border-md);background:var(--bg-soft);
     display:grid;place-items:center;cursor:pointer;color:var(--text-body);flex:none}
@@ -2507,7 +2506,6 @@
     padding-top: calc(12px + env(safe-area-inset-top));
     background: var(--bg-card); border-bottom: 1px solid var(--border);
   }
-  .k-x { background: none; border: 0; font-size: 22px; line-height: 1; color: var(--ink); cursor: pointer; padding: 0 4px; }
   .k-title { flex: 1; font: 700 17px/1.2 var(--display); color: var(--text-h); }
   .k-head-btn {
     border: 1px solid var(--border); background: var(--bg); color: var(--text-body);
@@ -2546,12 +2544,6 @@
   .k-empty { padding: 18px 2px; }
   .k-empty-h { font: 700 15px/1.35 var(--display); color: var(--text-h); margin-bottom: 6px; }
   .k-empty-p { font: 400 13px/1.6 var(--body-f); color: var(--text-dim); }
-  .k-seeds { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
-  .k-seed {
-    text-align: left; border: 1px solid var(--border); background: var(--bg-card);
-    color: var(--text-body); border-radius: var(--r-sm); padding: 11px 13px; cursor: pointer;
-    font: 500 12.5px/1.45 var(--body-f);
-  }
 
   .k-recipe {
     align-self: stretch; background: var(--bg-card); border: 1.5px solid var(--green-bdr);
@@ -2803,7 +2795,11 @@
 <div class="hero-band">
 <div class="page-header">
   <div class="header-top">
-    <a href="https://asbfmckay.github.io/home" class="home-icon" aria-label="Home">
+    <!-- Glyph and wordmark are one lockup now. Lime on the page background is 1.33:1,
+         which is not a colour choice but an invisible one; on the navy it is 12:1. So
+         the chip grew to hold the name rather than the name being painted a colour it
+         cannot be read in. -->
+    <a href="https://asbfmckay.github.io/home" class="home-lockup" aria-label="Home">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
            stroke="var(--lime)" stroke-linecap="round">
         <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
@@ -2811,8 +2807,8 @@
         <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
               stroke-width="1.42" stroke-linejoin="round"/>
       </svg>
+      <span class="header-eyebrow">Health &amp; Fitness</span>
     </a>
-    <span class="header-eyebrow">Health &amp; Fitness</span>
   </div>
   <div class="page-title" id="header-greeting">Good morning, Andrew</div>
   <div class="page-rule"></div>
@@ -2980,7 +2976,7 @@
 
   <div class="kitchen-sheet" id="kitchen-sheet" hidden>
     <div class="k-head">
-      <button class="k-x" onclick="closeKitchen()" aria-label="Close">&larr;</button>
+      <button class="ghost-btn wk-arrow" onclick="closeKitchen()" aria-label="Back">&lsaquo;</button>
       <div class="k-title">Kitchen</div>
       <button class="k-head-btn" id="k-saved-btn" onclick="toggleKitchenRecipes()">Recipes</button>
       <button class="k-head-btn" onclick="clearKitchen()" aria-label="Clear">Clear</button>
@@ -3255,7 +3251,7 @@
         stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg></div>
       <div style="flex:1;min-width:0;">
         <div class="tracker-title">Coach</div>
-        <div class="tracker-sub">Meals, weight, questions, blood results</div>
+        <div class="tracker-sub">Meals, weight, training, questions</div>
       </div>
       <span class="connect-status" id="chat-status">OFFLINE</span>
     </div>
@@ -4719,13 +4715,7 @@ function renderKChat() {
       + '<div class="k-empty-p">What you have in the house, what a packet comes to, '
       + 'how to make a Thermomix version of something, what to use when you have run out '
       + 'of an ingredient. Photos work too.</div>'
-      + '<div class="k-seeds">'
-      + ['What can I make with chicken, rice and whatever greens are left?',
-         'Thermomix version of my green smoothie',
-         'How many calories in a Medjool date?'].map(q =>
-          '<button class="k-seed" onclick="kitchenSeed(' + JSON.stringify(q).replace(/"/g, '&quot;') + ')">'
-          + esc(q) + '</button>').join('')
-      + '</div></div>';
+      + '</div>';
     return;
   }
   box.innerHTML = KCHAT.map((m, i) => {
@@ -4740,10 +4730,6 @@ function renderKChat() {
       + (m.recipe ? recipeCardHTML(m.recipe, i) : '');
   }).join('');
   box.scrollTop = box.scrollHeight;
-}
-function kitchenSeed(q) {
-  const ta = document.getElementById('k-in');
-  ta.value = q; sendKitchen();
 }
 
 /* ── The recipe card ────────────────────────────────────────────────────────
