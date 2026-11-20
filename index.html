@@ -14,7 +14,10 @@
      browser takes them, and they are the same artwork the installed app uses. -->
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='%23171b2e'/%3E%3Cg%20fill='none'%20stroke='%23cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%2015.81%205.54%20A%207.5%207.5%200%200%201%2011.41%2019.48'%20stroke-width='2.1'/%3E%3Cpath%20d='M%208.19%2018.46%20A%207.5%207.5%200%200%201%2012.59%204.52'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
+<!-- Scaled to match the PNGs. A browser prefers an SVG icon over a PNG one, so
+     without this the tab icon would have stayed the small glyph while every other
+     icon grew. Every # is %23: a bare one ends a data URL at that point. -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3E%3Crect%20width='24'%20height='24'%20rx='5.5'%20fill='%23171b2e'/%3E%3Cg%20transform='translate%28-0.36%20-0.37%29%20translate%2812%2012%29%20scale%281.26%29%20translate%28-12%20-12%29'%20fill='none'%20stroke='%23cbe558'%20stroke-linecap='round'%3E%3Cpath%20d='M%2015.81%205.54%20A%207.5%207.5%200%200%201%2011.41%2019.48'%20stroke-width='2.1'/%3E%3Cpath%20d='M%208.19%2018.46%20A%207.5%207.5%200%200%201%2012.59%204.52'%20stroke-width='2.1'/%3E%3Cpath%20d='M%206.95%2012.17%20H%209.60%20L%2011.30%207.95%20L%2012.75%2015.55%20L%2013.60%2012.17%20H%2017.05'%20stroke-width='1.42'%20stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -64,7 +67,10 @@
     /* Ring colours darkened where they fell below 3:1 against the card, for use as
        chart fills. The rings keep the originals — thick strokes read fine. */
     --c-steps:#9c78d6; --c-active:#4fa377; --c-kcal:#c28432; --c-sleep:#4f8fdb;
-    --c-kcalIn:#e2665c; --c-protein:#5c7a1f; --c-veg:#37a0ab;
+    /* --c-veg was #37a0ab, chroma 0.095 — just under the 0.1 floor where a hue
+       starts reading as grey. Same teal, slightly richer, so it holds up as a
+       chart fill as well as a progress bar. */
+    --c-kcalIn:#e2665c; --c-protein:#5c7a1f; --c-veg:#27a5b4;
     --accent-bg: var(--green-bg);
     --accent-border: var(--green-bdr);
     --tag-active-bg: rgba(203,229,88,0.28);
@@ -2806,18 +2812,24 @@
          which is not a colour choice but an invisible one; on the navy it is 12:1. So
          the chip grew to hold the name rather than the name being painted a colour it
          cannot be read in. -->
-    <a href="https://asbfmckay.github.io/home" class="home-lockup" aria-label="Home">
+    <div class="home-lockup">
       <span class="mark">
+        <!-- translate(-0.26 -0.24) is an OPTICAL centring, measured from the ink
+             centroid of the rendered mark rather than its bounding box: the ring's
+             gaps and the trace put more weight bottom-right, so geometric centre
+             looks low and right. -->
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
              stroke="var(--lime)" stroke-linecap="round">
-          <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
-          <path d="M 8.19 18.46 A 7.5 7.5 0 0 1 12.59 4.52" stroke-width="2.1"/>
-          <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
-                stroke-width="1.42" stroke-linejoin="round"/>
+          <g transform="translate(-0.36 -0.37)">
+            <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
+            <path d="M 8.19 18.46 A 7.5 7.5 0 0 1 12.59 4.52" stroke-width="2.1"/>
+            <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
+                  stroke-width="1.42" stroke-linejoin="round"/>
+          </g>
         </svg>
       </span>
       <span class="header-eyebrow">Health &amp; Fitness</span>
-    </a>
+    </div>
   </div>
   <div class="page-title" id="header-greeting">Good morning, Andrew</div>
   <div class="page-rule"></div>
@@ -7231,14 +7243,15 @@ function renderFood() {
    place here: the question is "what proportion of this meal was fat", which is a
    part-to-whole reading of one meal, not a comparison between meals.
 
-   The three colours were run through the palette validator rather than chosen by eye:
-   lightness band, chroma floor, contrast against the card, and colour-blind separation
-   all pass (worst adjacent pair ΔE 23.6 protan, 13.9 tritan). They are also the ones
-   the rest of the app already uses for protein, carbohydrate and fat. */
+   The colours are the SAME TOKENS as the macro bars at the top of the tab, because a
+   colour has to mean one thing within a screen: protein olive here and green there is
+   two charts, not one. Validated as a set — lightness band, chroma floor, contrast on
+   the card and colour-blind separation all pass (worst adjacent pair ΔE 13.9 deutan,
+   16.4 tritan), after lifting --c-veg's chroma slightly; see the token. */
 const MACRO_SPLIT = [
-  { key: 'protein', name: 'Protein', cal: 4, colour: '#5c7a1f' },
-  { key: 'carbs',   name: 'Carbs',   cal: 4, colour: '#4f8fdb' },
-  { key: 'fat',     name: 'Fat',     cal: 9, colour: '#c28432' }
+  { key: 'protein', name: 'Protein', cal: 4, colour: 'var(--c-protein)' },
+  { key: 'carbs',   name: 'Carbs',   cal: 4, colour: 'var(--c-veg)' },
+  { key: 'fat',     name: 'Fat',     cal: 9, colour: 'var(--c-kcalIn)' }
 ];
 
 function macroSplit(t) {
