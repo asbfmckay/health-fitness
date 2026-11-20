@@ -143,24 +143,31 @@
   .home-lockup {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
-    padding: 6px 14px 6px 8px;
-    border-radius: 9px;
-    background: var(--green-deep);
+    gap: 10px;
     border: none;
     text-decoration: none;
     flex-shrink: 0;
   }
+  /* The mark: a navy tile, the one place the lime is legible, sized so the glyph
+     fills it rather than floating in it. */
+  .home-lockup .mark {
+    width: 34px; height: 34px; flex: none;
+    border-radius: 10px;
+    background: var(--green-deep);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--e1);
+  }
 
-  .home-lockup svg { width: 26px; height: 26px; flex: none; }
+  .home-lockup svg { width: 27px; height: 27px; flex: none; }
 
   .header-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: var(--lime);     /* 12:1 on the navy lockup it now sits in */
+    color: var(--text-h);
+    line-height: 1;
   }
 
   .page-title {
@@ -2800,13 +2807,15 @@
          the chip grew to hold the name rather than the name being painted a colour it
          cannot be read in. -->
     <a href="https://asbfmckay.github.io/home" class="home-lockup" aria-label="Home">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
-           stroke="var(--lime)" stroke-linecap="round">
-        <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
-        <path d="M 8.19 18.46 A 7.5 7.5 0 0 1 12.59 4.52" stroke-width="2.1"/>
-        <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
-              stroke-width="1.42" stroke-linejoin="round"/>
-      </svg>
+      <span class="mark">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"
+             stroke="var(--lime)" stroke-linecap="round">
+          <path d="M 15.81 5.54 A 7.5 7.5 0 0 1 11.41 19.48" stroke-width="2.1"/>
+          <path d="M 8.19 18.46 A 7.5 7.5 0 0 1 12.59 4.52" stroke-width="2.1"/>
+          <path d="M 6.95 12.17 H 9.60 L 11.30 7.95 L 12.75 15.55 L 13.60 12.17 H 17.05"
+                stroke-width="1.42" stroke-linejoin="round"/>
+        </svg>
+      </span>
       <span class="header-eyebrow">Health &amp; Fitness</span>
     </a>
   </div>
