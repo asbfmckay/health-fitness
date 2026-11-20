@@ -1425,8 +1425,13 @@
     -webkit-appearance:none;margin:0}
   .ms-save{width:100%;margin-top:14px}
 
-  .prog-switch{display:flex;gap:4px;margin:0 16px 14px;background:var(--bg-soft);
-    border:1.5px solid var(--border);border-radius:8px;padding:4px}
+  /* This sits OUTSIDE .page-section, which is what caps everything else at 520px and
+     centres it. Left as margin:0 16px it therefore ran the full width of a desktop
+     window while every card below it stayed 488px — the one element on the page not
+     lining up with the rest. Same width, same centring, same gutters on a phone. */
+  .prog-switch{display:flex;gap:4px;width:calc(100% - 32px);max-width:488px;
+    margin:0 auto 14px;background:var(--bg-soft);
+    border:1.5px solid var(--border);border-radius:8px;padding:4px;box-sizing:border-box}
   .prog-switch[hidden]{display:none}
   .prog-btn{flex:1;border:none;background:transparent;border-radius:6px;padding:9px 4px;
     font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.03em;
@@ -1509,9 +1514,15 @@
   .ex-weight-label,.timer-label{font-family:var(--mono);letter-spacing:.06em}
 
   /* ══════════ Exercise library ══════════ */
-  .lib-open-wrap{margin:14px 16px 4px}
-  .lib-open{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+  /* The two library buttons were siblings in a plain block, so they touched —
+     two separate actions reading as one control. A grid with a gap fixes both
+     wrappers at once, and the second wrapper gets room above it so the coach
+     button is not mistaken for a third library button. */
+  .lib-open-wrap{margin:14px 16px 4px;display:grid;gap:10px}
+  .lib-open-wrap + .lib-open-wrap{margin-top:22px}
+  .lib-open{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;
     padding:13px 14px;font-weight:700}
+  .lib-open svg{flex:none;display:block}
   .lib-sheet{position:fixed;inset:0;z-index:70;background:rgba(42,42,24,.42);
     backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center}
   .lib-sheet[hidden]{display:none}
@@ -2856,11 +2867,11 @@
 
 <div class="lib-open-wrap">
   <button class="ghost-btn lib-open" onclick="openLinkReview()">
-    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M9 12a3 3 0 013-3h2.5a3.5 3.5 0 010 7H13M15 12a3 3 0 01-3 3H9.5a3.5 3.5 0 010-7H11" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Link my exercises to the library
   </button>
   <button class="ghost-btn lib-open" onclick="openLibrary()">
-    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
     Browse the exercise library
   </button>
 </div>
