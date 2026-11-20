@@ -2464,19 +2464,161 @@
     /* A chat line that runs the full width of a laptop is hard to read; the bubbles
        keep a sensible measure and the column around them does the widening. */
     .msg { max-width: 72%; }
-    /* The charts are SVGs with a fixed 360×168 viewBox scaled to 100% width, so a
-       wider card does not give them more room — it magnifies them, axis labels and
-       all, until a three-point weight line is half a metre tall. Capping the height
-       keeps them at a sane size and centres them in the card. */
-    #weight-chart-wrap > svg, #hist-chart > svg {
-      max-height: 300px; width: auto; max-width: 100%; margin: 0 auto;
-    }
   }
   @media (min-width: 1240px) {
     .page-section, .page-header, .day-view { max-width: 1060px; }
     .page-nav, .prog-switch { max-width: 1028px; }
     .set-run { width: min(100%, 1060px); }
   }
+
+/* ── Kitchen ──────────────────────────────────────────────────────────────── */
+  .kitchen-open-btn {
+    display: flex; align-items: center; gap: 12px; width: calc(100% - 32px);
+    margin: 4px 16px 14px; padding: 14px; cursor: pointer; text-align: left;
+    background: var(--bg-card); border: 1.5px solid var(--border);
+    border-radius: var(--r-md); box-shadow: var(--e1); color: var(--ink);
+  }
+  .kitchen-open-btn:active { box-shadow: var(--e-press); }
+  .kitchen-icon {
+    width: 38px; height: 38px; flex: none; border-radius: var(--r-sm);
+    background: var(--green-bg); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .kitchen-open-txt { flex: 1; min-width: 0; display: block; }
+  .kitchen-open-txt b { display: block; font: 700 14.5px/1.3 var(--display); color: var(--text-h); }
+  .kitchen-open-txt span { display: block; font: 400 12px/1.45 var(--body-f); color: var(--text-dim); }
+  .kitchen-chev { transform: rotate(-90deg); color: var(--text-dim); flex: none; }
+
+  .kitchen-sheet {
+    position: fixed; inset: 0; z-index: 85; background: var(--bg);
+    display: flex; flex-direction: column;
+  }
+  .kitchen-sheet[hidden] { display: none; }
+  .k-head {
+    display: flex; align-items: center; gap: 8px; padding: 12px 14px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    background: var(--bg-card); border-bottom: 1px solid var(--border);
+  }
+  .k-x { background: none; border: 0; font-size: 22px; line-height: 1; color: var(--ink); cursor: pointer; padding: 0 4px; }
+  .k-title { flex: 1; font: 700 17px/1.2 var(--display); color: var(--text-h); }
+  .k-head-btn {
+    border: 1px solid var(--border); background: var(--bg); color: var(--text-body);
+    border-radius: var(--r-pill); padding: 7px 12px; cursor: pointer;
+    font: 600 11.5px/1 var(--display);
+  }
+  .k-head-btn.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  .k-saved { background: var(--bg-card); border-bottom: 1px solid var(--border); max-height: 42vh; overflow-y: auto; }
+  .k-saved[hidden] { display: none; }
+  .k-saved-row { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  .k-saved-row:last-child { border-bottom: 0; }
+  .k-saved-main { flex: 1; min-width: 0; cursor: pointer; }
+  .k-saved-name { font: 700 13.5px/1.35 var(--display); color: var(--text-h); }
+  .k-saved-sub { font: 400 11.5px/1.4 var(--body-f); color: var(--text-dim); }
+
+  .k-log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .k-msg { max-width: 86%; font-size: 13.5px; line-height: 1.6; }
+  .k-me { align-self: flex-end; background: var(--green-deep); color: #fff; padding: 10px 13px;
+    border-radius: 14px 14px 4px 14px; }
+  .k-them { align-self: flex-start; color: var(--text-body); max-width: 100%; }
+  .k-them p { margin: 0 0 8px; } .k-them p:last-child { margin-bottom: 0; }
+  .k-them ul { margin: 0 0 8px; padding-left: 20px; }
+  .k-sys { align-self: flex-start; font: 600 11.5px/1.5 var(--body-f); color: var(--green);
+    background: var(--green-bg); border: 1px solid var(--green-bdr);
+    border-radius: var(--r-sm); padding: 7px 11px; }
+  .k-shots { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .k-shots img { width: 76px; height: 76px; object-fit: cover; border-radius: var(--r-sm); }
+  .k-typing { align-self: flex-start; display: flex; gap: 4px; padding: 8px 2px; }
+  .k-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim);
+    animation: ktype 1.1s infinite ease-in-out; }
+  .k-typing i:nth-child(2) { animation-delay: .15s; }
+  .k-typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes ktype { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
+
+  .k-empty { padding: 18px 2px; }
+  .k-empty-h { font: 700 15px/1.35 var(--display); color: var(--text-h); margin-bottom: 6px; }
+  .k-empty-p { font: 400 13px/1.6 var(--body-f); color: var(--text-dim); }
+  .k-seeds { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .k-seed {
+    text-align: left; border: 1px solid var(--border); background: var(--bg-card);
+    color: var(--text-body); border-radius: var(--r-sm); padding: 11px 13px; cursor: pointer;
+    font: 500 12.5px/1.45 var(--body-f);
+  }
+
+  .k-recipe {
+    align-self: stretch; background: var(--bg-card); border: 1.5px solid var(--green-bdr);
+    border-radius: var(--r-md); overflow: hidden; box-shadow: var(--e1);
+  }
+  .k-rec-head { padding: 13px 14px 10px; }
+  .k-rec-name { font: 700 15.5px/1.3 var(--display); color: var(--text-h); }
+  .k-rec-sub { font: 400 11.5px/1.45 var(--body-f); color: var(--text-dim); margin-top: 2px; }
+  .k-macros { display: flex; gap: 1px; background: var(--border); border-block: 1px solid var(--border); }
+  .k-macro { flex: 1; background: var(--bg); padding: 9px 4px; text-align: center; }
+  .k-macro b { display: block; font: 700 16px/1.1 var(--display); color: var(--text-h);
+    font-variant-numeric: tabular-nums; }
+  .k-macro span { font: 500 9.5px/1.4 var(--mono); letter-spacing: .06em;
+    text-transform: uppercase; color: var(--text-dim); }
+  .k-rec-det { border-bottom: 1px solid var(--border); }
+  /* Without a marker these read as two dead labels rather than as things that open. */
+  .k-rec-det > summary { padding: 11px 14px; cursor: pointer; list-style: none;
+    display: flex; align-items: center; gap: 8px;
+    font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+  .k-rec-det > summary::after {
+    content: ''; margin-left: auto; width: 7px; height: 7px;
+    border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor;
+    transform: rotate(45deg) translate(-2px, -2px); transition: transform .18s ease;
+  }
+  .k-rec-det[open] > summary::after { transform: rotate(-135deg) translate(-3px, -3px); }
+  .k-rec-det > summary::-webkit-details-marker { display: none; }
+  .k-rec-det ul, .k-rec-det ol { margin: 0; padding: 0 16px 14px 34px;
+    font: 400 13px/1.65 var(--body-f); color: var(--text-body); }
+  .k-rec-det li { margin-bottom: 4px; }
+  .k-rec-note { padding: 11px 14px; font: 400 12.5px/1.55 var(--body-f); color: var(--text-body);
+    background: var(--green-soft); border-bottom: 1px solid var(--border); }
+  .k-rec-log { display: flex; align-items: center; gap: 10px; padding: 12px 14px 4px; flex-wrap: wrap; }
+  .k-serves { display: flex; align-items: center; gap: 7px; }
+  .k-serve-n { min-width: 26px; text-align: center; font: 700 16px/1 var(--display);
+    color: var(--text-h); font-variant-numeric: tabular-nums; }
+  .k-serve-lab { font: 500 12px/1 var(--body-f); color: var(--text-dim); }
+  .k-slot {
+    margin-left: auto; border: 1px solid var(--border); background: var(--bg);
+    border-radius: var(--r-sm); padding: 8px 10px; color: var(--ink);
+    font: 500 12.5px/1 var(--body-f);
+  }
+  .k-rec-sum { padding: 6px 14px 0; font: 500 12px/1.5 var(--body-f); color: var(--text-dim);
+    font-variant-numeric: tabular-nums; }
+  .k-rec-actions { display: flex; gap: 8px; padding: 12px 14px 14px; }
+  .k-rec-actions button { flex: 1; }
+
+  .k-compose { border-top: 1px solid var(--border); background: var(--bg-card);
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
+  .k-row { display: flex; align-items: flex-end; gap: 8px; }
+  .k-row textarea {
+    flex: 1; resize: none; max-height: 120px; border: 1px solid var(--border);
+    border-radius: 18px; padding: 10px 14px; background: var(--bg); color: var(--ink);
+    font: 400 16px/1.4 var(--body-f); outline: none;
+  }
+  .k-tray { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .k-tray[hidden] { display: none; }
+  .k-shot { position: relative; }
+  .k-shot img { width: 54px; height: 54px; object-fit: cover; border-radius: var(--r-sm); display: block; }
+  .k-shot button { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+    border-radius: 50%; border: 0; background: var(--ink); color: #fff; font-size: 13px;
+    line-height: 1; cursor: pointer; }
+  @media (min-width: 900px) {
+    .k-head, .k-log, .k-compose > .k-row, .k-saved-row { max-width: 880px; margin-inline: auto; width: 100%; }
+    .k-msg { max-width: 72%; }
+  }
+
+  .fr-est {
+    display: block; width: 100%; margin-top: 10px; cursor: pointer;
+    border: 1px solid var(--green-bdr); background: var(--green-bg); color: var(--green);
+    border-radius: var(--r-pill); padding: 10px 12px;
+    font: 600 12.5px/1.3 var(--display);
+  }
+  .fr-foot { padding: 10px 12px 12px; border-top: 1px solid var(--border);
+    font: 400 12px/1.4 var(--body-f); color: var(--text-dim); }
+  .fr-foot .fr-est { margin-top: 7px; }
 
 </style>
 
@@ -2692,6 +2834,19 @@
   <div class="section-label">Meals</div>
   <div id="meal-slots"></div>
 
+  <!-- A second conversation, for food rather than for the day. Its own thread and its
+       own prompt, so a question about a smoothie cannot put calories in Tuesday. -->
+  <button class="kitchen-open-btn" onclick="openKitchen()">
+    <span class="kitchen-icon">
+      <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M5 3v8a3 3 0 006 0V3M8 11v10M15 3c-1.5 2-2 4-2 6s.5 3 2 3v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <span class="kitchen-open-txt">
+      <b>Kitchen</b>
+      <span>Recipes, swaps, calories — ask, then add what you made</span>
+    </span>
+    <svg viewBox="0 0 14 8" fill="none" width="13" class="kitchen-chev"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
   <details class="food-card food-more acc" id="day-report-acc">
     <summary class="acc-sum"><span>Day report</span>
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -2720,6 +2875,36 @@
       <button class="run-min" onclick="scanTypeIn()">Type it</button>
       <button class="run-min" onclick="closeScan()">Cancel</button>
       <input type="file" id="scan-photo" accept="image/*" capture="environment" hidden onchange="scanFromPhoto(this)">
+    </div>
+  </div>
+
+  <div class="kitchen-sheet" id="kitchen-sheet" hidden>
+    <div class="k-head">
+      <button class="k-x" onclick="closeKitchen()" aria-label="Close">&larr;</button>
+      <div class="k-title">Kitchen</div>
+      <button class="k-head-btn" id="k-saved-btn" onclick="toggleKitchenRecipes()">Recipes</button>
+      <button class="k-head-btn" onclick="clearKitchen()" aria-label="Clear">Clear</button>
+    </div>
+    <div class="k-saved" id="k-saved" hidden></div>
+    <div class="k-log" id="k-log"></div>
+    <div class="k-compose">
+      <div class="k-tray" id="k-tray" hidden></div>
+      <div class="k-row">
+        <label class="cam-btn" for="k-cam" title="Take a photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </label>
+        <input id="k-cam" type="file" accept="image/*" capture="environment" class="vis-hidden" onchange="addKShot(this)">
+        <label class="cam-btn" for="k-lib" title="Choose from photos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
+        </label>
+        <input id="k-lib" type="file" accept="image/*" multiple class="vis-hidden" onchange="addKShot(this)">
+        <textarea id="k-in" rows="1" placeholder="What are you making?"></textarea>
+        <button class="send-btn" onclick="sendKitchen()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+      </div>
     </div>
   </div>
 
@@ -4388,6 +4573,285 @@ function askForProgression() {
 }
 
 /* ══════════════════════════════════════════════════════
+   THE KITCHEN  —  a second conversation, for food
+   ══════════════════════════════════════════════════════
+   Deliberately not the coach. The coach's job is the day: it logs meals, weights and
+   workouts, and its instructions are mostly rules about writing to the diary. Working
+   out whether rocket stands in for spinach is a different conversation, and mixing the
+   two means a question about a smoothie can put calories in Tuesday by accident.
+
+   So: its own thread, its own history, its own endpoint and prompt on the worker. The
+   only thing it can produce is a RECIPE, and a recipe does nothing on its own — it is
+   a card with a serving count and an Add button, and nothing reaches the food log
+   until that button is pressed. */
+let KCHAT = loadJSON('kitchen-chat', []) || [];
+let KSHOTS = [];
+function saveKChat() {
+  try { localStorage.setItem('kitchen-chat', JSON.stringify(KCHAT)); }
+  catch (_) { KCHAT = KCHAT.slice(-Math.ceil(KCHAT.length / 2));
+              try { localStorage.setItem('kitchen-chat', JSON.stringify(KCHAT)); } catch (_) {} }
+}
+function kitchenRecipes() { return loadJSON('kitchen-recipes', []) || []; }
+function saveKitchenRecipes(l) { saveJSON('kitchen-recipes', l.slice(-60)); }
+
+function openKitchen() {
+  document.getElementById('kitchen-sheet').hidden = false;
+  document.body.classList.add('kitchen-open');
+  renderKChat();
+  setTimeout(() => { const b = document.getElementById('k-log'); if (b) b.scrollTop = b.scrollHeight; }, 50);
+}
+function closeKitchen() {
+  document.getElementById('kitchen-sheet').hidden = true;
+  document.body.classList.remove('kitchen-open');
+}
+function clearKitchen() {
+  if (!confirm('Clear this conversation?\n\nSaved recipes are kept.')) return;
+  KCHAT = []; saveKChat(); renderKChat();
+}
+
+/* ── The thread ─────────────────────────────────────────────────────────────── */
+function renderKChat() {
+  const box = document.getElementById('k-log');
+  if (!box) return;
+  if (!KCHAT.length) {
+    box.innerHTML = '<div class="k-empty">'
+      + '<div class="k-empty-h">Ask about food, or build a recipe.</div>'
+      + '<div class="k-empty-p">What you have in the house, what a packet comes to, '
+      + 'how to make a Thermomix version of something, what to use when you have run out '
+      + 'of an ingredient. Photos work too.</div>'
+      + '<div class="k-seeds">'
+      + ['What can I make with chicken, rice and whatever greens are left?',
+         'Thermomix version of my green smoothie',
+         'How many calories in a Medjool date?'].map(q =>
+          '<button class="k-seed" onclick="kitchenSeed(' + JSON.stringify(q).replace(/"/g, '&quot;') + ')">'
+          + esc(q) + '</button>').join('')
+      + '</div></div>';
+    return;
+  }
+  box.innerHTML = KCHAT.map((m, i) => {
+    if (m.role === 'user') {
+      return '<div class="k-msg k-me">' + esc(m.content)
+        + (m.images && m.images.length ? '<div class="k-shots">'
+            + m.images.map(s => '<img src="' + s + '" alt="">').join('') + '</div>' : '')
+        + '</div>';
+    }
+    if (m.system) return '<div class="k-msg k-sys">' + esc(m.content) + '</div>';
+    return '<div class="k-msg k-them">' + md(m.content) + '</div>'
+      + (m.recipe ? recipeCardHTML(m.recipe, i) : '');
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function kitchenSeed(q) {
+  const ta = document.getElementById('k-in');
+  ta.value = q; sendKitchen();
+}
+
+/* ── The recipe card ────────────────────────────────────────────────────────
+   Per serve on the card, because that is the number he can compare to a target. The
+   stepper decides what actually gets logged, and the figures underneath it move as he
+   changes it — a card that said 380 cal and logged 760 would be a trap. */
+function recipeCardHTML(r, i) {
+  const n = r._serves || 1;
+  const p = r.perServe || {};
+  const saved = kitchenRecipes().some(x => x.name.toLowerCase() === String(r.name || '').toLowerCase());
+  const line = (k, suffix) => p[k] != null ? Math.round(p[k] * n * 10) / 10 + suffix : null;
+  return '<div class="k-recipe" id="krec-' + i + '">'
+    + '<div class="k-rec-head">'
+    +   '<div class="k-rec-name">' + esc(r.name || 'Recipe') + '</div>'
+    +   '<div class="k-rec-sub">Makes ' + esc(String(r.serves || 1)) + ' serve'
+    +     ((r.serves || 1) == 1 ? '' : 's')
+    +     (r.method === 'thermomix' ? ' · Thermomix' : '') + '</div>'
+    + '</div>'
+    + '<div class="k-macros">'
+    +   ['kcal|cal', 'protein|g P', 'carbs|g C', 'fat|g F'].map(spec => {
+          const [k, lab] = spec.split('|');
+          return p[k] == null ? '' : '<div class="k-macro"><b>' + Math.round(p[k]) + '</b><span>'
+            + esc(lab.trim()) + ' / serve</span></div>';
+        }).join('')
+    + '</div>'
+    + (r.ingredients && r.ingredients.length
+        ? '<details class="k-rec-det"><summary>Ingredients</summary><ul>'
+          + r.ingredients.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></details>' : '')
+    + (r.steps && r.steps.length
+        ? '<details class="k-rec-det"><summary>Method</summary><ol>'
+          + r.steps.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol></details>' : '')
+    + (r.notes ? '<div class="k-rec-note">' + esc(r.notes) + '</div>' : '')
+    + '<div class="k-rec-log">'
+    +   '<div class="k-serves">'
+    +     '<button class="step-btn" onclick="bumpRecipeServes(' + i + ',-1)">−</button>'
+    +     '<span class="k-serve-n">' + n + '</span>'
+    +     '<button class="step-btn" onclick="bumpRecipeServes(' + i + ',1)">+</button>'
+    +     '<span class="k-serve-lab">serve' + (n === 1 ? '' : 's') + ' eaten</span>'
+    +   '</div>'
+    +   '<select class="k-slot" id="kslot-' + i + '">'
+    +     MEAL_SLOTS.map(sl => '<option value="' + sl.key + '"'
+          + (sl.key === defaultSlot() ? ' selected' : '') + '>' + esc(sl.name) + '</option>').join('')
+    +   '</select>'
+    + '</div>'
+    + '<div class="k-rec-sum">That logs '
+    +   [line('kcal', ' cal'), line('protein', 'g protein'), line('carbs', 'g carbs'), line('fat', 'g fat')]
+        .filter(Boolean).join(' · ') + '</div>'
+    + '<div class="k-rec-actions">'
+    +   '<button class="solid-btn" onclick="logRecipeFromChat(' + i + ')">Add to the food log</button>'
+    +   '<button class="ghost-btn" onclick="saveKitchenRecipe(' + i + ')">'
+    +     (saved ? 'Saved ✓' : 'Save recipe') + '</button>'
+    + '</div></div>';
+}
+function defaultSlot() {
+  const h = new Date().getHours();
+  return h < 10.5 ? 'breakfast' : h < 15 ? 'lunch' : h < 21 ? 'dinner' : 'snacks';
+}
+function bumpRecipeServes(i, d) {
+  const m = KCHAT[i];
+  if (!m || !m.recipe) return;
+  m.recipe._serves = Math.max(0.5, Math.round(((m.recipe._serves || 1) + d * 0.5) * 2) / 2);
+  saveKChat(); renderKChat();
+}
+function logRecipeFromChat(i) {
+  const m = KCHAT[i];
+  if (!m || !m.recipe) return;
+  const r = m.recipe, n = r._serves || 1, p = r.perServe || {};
+  const slot = (document.getElementById('kslot-' + i) || {}).value || defaultSlot();
+  const row = { slot: slot, name: String(r.name || 'Recipe').slice(0, 80),
+                qty: n + ' serve' + (n === 1 ? '' : 's'), update: false };
+  ['kcal', 'protein', 'carbs', 'fat', 'fibre', 'sodium', 'sugar'].forEach(k => {
+    if (p[k] != null) row[k] = Math.round(p[k] * n * 10) / 10;
+  });
+  addMeal(foodDate(), row);
+  renderFood(); refreshAllViews();
+  KCHAT.push({ role: 'assistant', system: true,
+    content: 'Added ' + row.name + ' · ' + row.qty + ' to ' + slotName(slot)
+             + (row.kcal != null ? ' · ' + Math.round(row.kcal) + ' cal' : '') });
+  saveKChat(); renderKChat();
+}
+function saveKitchenRecipe(i) {
+  const m = KCHAT[i];
+  if (!m || !m.recipe) return;
+  const list = kitchenRecipes();
+  const r = Object.assign({}, m.recipe, { at: Date.now() });
+  delete r._serves;
+  const k = String(r.name || '').trim().toLowerCase();
+  const at = list.findIndex(x => String(x.name).trim().toLowerCase() === k);
+  if (at >= 0) list[at] = r; else list.push(r);
+  saveKitchenRecipes(list);
+  renderKChat(); renderKitchenRecipes();
+}
+
+/* ── Saved recipes ──────────────────────────────────────────────────────────── */
+function toggleKitchenRecipes() {
+  const el = document.getElementById('k-saved');
+  el.hidden = !el.hidden;
+  document.getElementById('k-saved-btn').classList.toggle('on', !el.hidden);
+  if (!el.hidden) renderKitchenRecipes();
+}
+function renderKitchenRecipes() {
+  const el = document.getElementById('k-saved');
+  if (!el) return;
+  const list = kitchenRecipes().slice().sort((a, b) => a.name.localeCompare(b.name));
+  if (!list.length) {
+    el.innerHTML = '<div class="k-empty-p" style="padding:14px 16px">Nothing saved yet. '
+      + 'Save a recipe from the conversation and it lands here.</div>';
+    return;
+  }
+  el.innerHTML = list.map((r, i) =>
+    '<div class="k-saved-row">'
+    + '<div class="k-saved-main" onclick="reopenRecipe(' + i + ')">'
+    +   '<div class="k-saved-name">' + esc(r.name) + '</div>'
+    +   '<div class="k-saved-sub">' + esc(String(r.serves || 1)) + ' serve'
+    +     ((r.serves || 1) == 1 ? '' : 's')
+    +     ((r.perServe && r.perServe.kcal != null) ? ' · ' + Math.round(r.perServe.kcal) + ' cal each' : '')
+    +   '</div></div>'
+    + '<button class="icon-btn del" onclick="deleteKitchenRecipe(' + i + ')" aria-label="Delete">×</button>'
+    + '</div>').join('');
+}
+function sortedKitchenRecipes() { return kitchenRecipes().slice().sort((a, b) => a.name.localeCompare(b.name)); }
+/* Re-opening puts the saved recipe back into the thread as a fresh card, which is the
+   quickest route to logging it again — and it can be talked about from there. */
+function reopenRecipe(i) {
+  const r = sortedKitchenRecipes()[i];
+  if (!r) return;
+  KCHAT.push({ role: 'assistant', content: r.name + ' — from your saved recipes.',
+               recipe: Object.assign({}, r, { _serves: 1 }) });
+  saveKChat();
+  document.getElementById('k-saved').hidden = true;
+  document.getElementById('k-saved-btn').classList.remove('on');
+  renderKChat();
+}
+function deleteKitchenRecipe(i) {
+  const r = sortedKitchenRecipes()[i];
+  if (!r || !confirm('Delete ' + r.name + '?')) return;
+  saveKitchenRecipes(kitchenRecipes().filter(x => x.name !== r.name));
+  renderKitchenRecipes();
+}
+
+/* ── Photos ─────────────────────────────────────────────────────────────────── */
+async function addKShot(input) {
+  const files = Array.from(input.files || []).slice(0, 4 - KSHOTS.length);
+  for (const f of files) {
+    if (!f.type.startsWith('image/')) continue;
+    KSHOTS.push(await downscaleImage(f, 768, 0.6));
+  }
+  input.value = '';
+  renderKShots();
+}
+function dropKShot(i) { KSHOTS.splice(i, 1); renderKShots(); }
+function renderKShots() {
+  const t = document.getElementById('k-tray');
+  if (!t) return;
+  t.hidden = !KSHOTS.length;
+  t.innerHTML = KSHOTS.map((s, i) =>
+    '<div class="k-shot"><img src="' + s + '" alt="">'
+    + '<button onclick="dropKShot(' + i + ')" aria-label="Remove">×</button></div>').join('');
+}
+
+/* ── Sending ────────────────────────────────────────────────────────────────── */
+let KBUSY = false;
+async function sendKitchen() {
+  const ta = document.getElementById('k-in');
+  const text = (ta.value || '').trim();
+  if ((!text && !KSHOTS.length) || KBUSY) return;
+  if (!COACH_READY()) { alert('Connect the coach first — Settings → Coach connection. '
+    + 'The kitchen runs through the same worker.'); return; }
+  const images = KSHOTS.slice();
+  KCHAT.push({ role: 'user', content: text || '(photo)', images: images });
+  KSHOTS = []; renderKShots(); ta.value = ''; ta.style.height = '';
+  saveKChat(); renderKChat();
+  KBUSY = true;
+  const box = document.getElementById('k-log');
+  const dots = document.createElement('div');
+  dots.className = 'k-typing'; dots.innerHTML = '<i></i><i></i><i></i>';
+  box.appendChild(dots); box.scrollTop = box.scrollHeight;
+  try {
+    const res = await fetch(COACH_URL() + '/kitchen', {
+      method: 'POST', headers: coachHeaders(),
+      body: JSON.stringify({
+        messages: KCHAT.filter(m => !m.system).slice(-30).map(m => ({ role: m.role, content: m.content })),
+        images: images, state: kitchenState() })
+    });
+    const j = await res.json();
+    if (j.error) throw new Error(j.error);
+    const msg = { role: 'assistant', content: j.reply || '' };
+    if (j.recipe && j.recipe.name) msg.recipe = Object.assign({}, j.recipe, { _serves: 1 });
+    KCHAT.push(msg);
+  } catch (e) {
+    KCHAT.push({ role: 'assistant', system: true, content: 'Could not reach the kitchen — ' + (e.message || e) });
+  }
+  KBUSY = false;
+  saveKChat(); renderKChat();
+}
+/* Enough for it to answer "does this fit in what's left today" without handing a food
+   conversation his blood results. */
+function kitchenState() {
+  const d = getFitnessData(foodDate()) || {};
+  return {
+    today: { kcalIn: d.kcalIn, protein: d.protein, carbs: d.carbs, fat: d.fat },
+    targets: getTargets(),
+    recipes: kitchenRecipes().map(r => ({ name: r.name, serves: r.serves,
+      kcal: r.perServe && r.perServe.kcal != null ? Math.round(r.perServe.kcal) : null }))
+  };
+}
+
+/* ══════════════════════════════════════════════════════
    THE SET RUNNER
    ══════════════════════════════════════════════════════
    One dock, pinned to the bottom, visible from the moment the session starts until it
@@ -5723,6 +6187,7 @@ function initTrackers() {
   // a workout on screen he had not chosen, under a card saying "Nothing planned".
   if (!todaysPlanned()) { renderToday(); renderSessionNav(); }
   placeTimer();
+  observeCharts();
   renderCircuitList();
   paintCircuitThumbs();
   rehomeFoodSections();
@@ -6965,10 +7430,65 @@ async function mealSearch() {
   try {
     const j = await foodApi('/food/search?q=' + encodeURIComponent(q));
     if (!j.results || !j.results.length) {
-      return foodMsg('No match for “' + esc(q) + '”. Try the brand name, or scan the barcode.', 'warn');
+      return foodMsg('Nothing in Open Food Facts for “' + esc(q) + '”. It catalogues packets, '
+        + 'so a cafe coffee or a home-cooked meal will not be in it.' + estimateBtn(q), 'warn');
     }
-    showFoodResults(j.results, j.cached ? 'From the cache' : 'Open Food Facts');
-  } catch (e) { foodMsg('Search failed — ' + esc(String(e.message || e)), 'warn'); }
+    showFoodResults(j.results, j.cached ? 'From the cache' : 'Open Food Facts', q);
+  } catch (e) {
+    // Their 503 means their server is busy, not that he did anything wrong — and it is
+    // no reason to leave him with an empty form when an estimate is one tap away.
+    foodMsg('Search failed — ' + esc(String(e.message || e)) + '.' + estimateBtn(q), 'warn');
+  }
+}
+function estimateBtn(q) {
+  return '<button class="fr-est" onclick="estimateFood(' + JSON.stringify(q).replace(/"/g, '&quot;')
+    + ')">Estimate “' + esc(q) + '” instead</button>';
+}
+
+/* Open Food Facts is a database of PACKETS. A medium skim latte has no barcode and
+   never will. That is not a failed search, it is a different question — so it gets a
+   different answer, labelled as an estimate with the portion it assumed shown, rather
+   than a number presented as if it had been read off a label. */
+let EST_ITEM = null;
+async function estimateFood(q) {
+  if (!foodApiReady()) return;
+  const term = String(q || (document.getElementById('ms-name').value || '')).trim();
+  if (term.length < 2) return;
+  foodMsg('Estimating “' + esc(term) + '”…');
+  try {
+    const j = await foodApi('/food/estimate?q=' + encodeURIComponent(term));
+    const it = j.item;
+    EST_ITEM = it;
+    const el = document.getElementById('ms-results');
+    el.hidden = false;
+    el.innerHTML = '<div class="fr-head">Estimate · not from a label'
+      + '<button class="fr-x" onclick="clearFoodResults()" aria-label="Close">&times;</button></div>'
+      + '<div class="fr-row"><div class="fr-main">'
+      +   '<div class="fr-name">' + esc(it.name)
+      +     (it.confidence ? '<span class="fr-conf ' + esc(it.confidence) + '">' + esc(it.confidence) + '</span>' : '')
+      +   '</div>'
+      +   '<div class="fr-sub">' + esc(it.basis || it.qty || '') + '</div>'
+      +   '<div class="fr-picks"><button class="fr-pick" onclick="useEstimate()">'
+      +     (it.kcal != null ? Math.round(it.kcal) + ' cal' : '— cal')
+      +     (it.protein != null ? ' · ' + it.protein + 'P' : '')
+      +     (it.carbs != null ? ' · ' + it.carbs + 'C' : '')
+      +     (it.fat != null ? ' · ' + it.fat + 'F' : '')
+      +   '</button></div>'
+      + '</div></div>'
+      + '<div class="fr-msg">Check it against the packet or the menu where you can — '
+      + 'this is judged from the description, not measured.</div>';
+  } catch (e) { foodMsg('Could not estimate that — ' + esc(String(e.message || e)), 'warn'); }
+}
+function useEstimate() {
+  const it = EST_ITEM;
+  if (!it) return;
+  const set = (k, v) => { const el = document.getElementById('ms-' + k); if (el) el.value = v == null ? '' : v; };
+  set('name', String(it.name).slice(0, 80));
+  set('qty', it.qty || it.basis || '');
+  ['kcal','protein','carbs','fat','fibre','sodium','sugar'].forEach(k => set(k, it[k]));
+  clearFoodResults();
+  const q = document.getElementById('ms-qty');
+  if (q) { q.focus(); q.select(); }
 }
 
 /* ── Showing what came back ─────────────────────────────────────────────────
@@ -6976,7 +7496,7 @@ async function mealSearch() {
    number. A packet's serving is the manufacturer's idea of a serving, which is often
    not the amount anyone eats, so the choice has to be his. */
 let FOOD_HITS = [];
-function showFoodResults(list, source) {
+function showFoodResults(list, source, q) {
   FOOD_HITS = list;
   const el = document.getElementById('ms-results');
   el.hidden = false;
@@ -7000,7 +7520,8 @@ function showFoodResults(list, source) {
                    + esc(line(h)) + '</button>' : '')
           +   '</div>'
           + '</div></div>';
-      }).join('');
+      }).join('')
+    + (q ? '<div class="fr-foot">None of these? ' + estimateBtn(q) + '</div>' : '');
 }
 function clearFoodResults() {
   const el = document.getElementById('ms-results');
@@ -7741,6 +8262,18 @@ function renderWeightHeader() {
   if (target) out.push(`<span class="w-badge flat">${Math.max(0, trend - target).toFixed(1)}kg to ${target}kg</span>`);
   badges.innerHTML = out.join('');
 }
+/* ── Charts are drawn at their real size, not scaled up ──────────────────────
+   Both charts are SVGs with a fixed viewBox stretched to 100% width. On a phone that
+   is exactly right. On a laptop the card is twice as wide, so the whole drawing —
+   axis labels, line thickness, the dots — is magnified with it, and a weight chart
+   ends up looking like a poster. Measuring the container and drawing at that width
+   instead keeps every stroke and every label at the size it was authored, and gives
+   the extra room to the plot where it belongs. */
+function chartWidth(el, fallback) {
+  const w = el && el.clientWidth ? Math.round(el.clientWidth) : 0;
+  return Math.max(300, Math.min(w || fallback, 1100));
+}
+
 function renderWeightChart() {
   const wrap = document.getElementById('weight-chart-wrap');
   if (!wrap) return;
@@ -7753,7 +8286,7 @@ function renderWeightChart() {
   }
   const entries = all.slice(-30);
   const base = all.length - entries.length;
-  const W = 360, H = 168, M = { l: 38, r: 46, t: 14, b: 26 };
+  const W = chartWidth(wrap, 360), H = 168, M = { l: 38, r: 46, t: 14, b: 26 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
   const trends = entries.map((_, i) => trendAt(all, base + i));
   // Scale to the weigh-ins only. Folding a goal 16kg away into the range flattens
@@ -7788,7 +8321,7 @@ function renderWeightChart() {
   const xlabs = [0, entries.length - 1].filter((v, i, a) => a.indexOf(v) === i)
     .map(i => `<text x="${X(i).toFixed(1)}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : 'end'}"
         font-size="9.5" fill="var(--text-dim)">${formatDate(entries[i].date)}</text>`).join('');
-  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible;">
+  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;overflow:visible;">
     ${grid}${tLine}
     <path d="${area}" fill="var(--lime)" opacity="0.16"/>
     <path d="${trendPath}" fill="none" stroke="var(--green-deep)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
@@ -8203,6 +8736,28 @@ async function syncStepsNow() {
   if (btn) { btn.disabled = false; btn.classList.remove('spin'); }
   setTimeout(() => { if (lbl) lbl.textContent = 'Sync'; }, 2500);
 }
+/* A chart drawn to a measured width is wrong the moment that width changes — and the
+   first paint happens while the page is still display:none, where everything measures
+   zero and the fallback width is used. A resize listener fixes the second case and not
+   the first. A ResizeObserver fixes both with one mechanism: it fires when the element
+   first gets a size, when the tab it lives on is shown, and when the window changes.
+   Guarded on a real change so re-rendering cannot feed itself. */
+const CHART_W_SEEN = {};
+function observeChart(id, draw) {
+  const el = document.getElementById(id);
+  if (!el || typeof ResizeObserver !== 'function') return;
+  new ResizeObserver(() => {
+    const w = el.clientWidth;
+    if (!w || Math.abs((CHART_W_SEEN[id] || 0) - w) < 5) return;
+    CHART_W_SEEN[id] = w;
+    try { draw(); } catch (_) {}
+  }).observe(el);
+}
+function observeCharts() {
+  observeChart('weight-chart-wrap', renderWeightChart);
+  observeChart('hist-chart', renderHistory);
+}
+
 function renderHistory() {
   const m = metricDef(HIST_KEY);
   if (!m) return;
@@ -8234,7 +8789,7 @@ function renderHistory() {
     return;
   }
 
-  const W = 360, H = 190, M = { l: 38, r: 14, t: 12, b: 26 };
+  const W = chartWidth(chart, 360), H = 190, M = { l: 38, r: 14, t: 12, b: 26 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
   const peak = Math.max(...logged.map(r => r.value), target || 0);
   const hi = peak * 1.12 || 1;
@@ -8276,6 +8831,7 @@ function renderHistory() {
         fill="var(--text-dim)">${r.label}</text>` : '').join('');
 
   chart.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"
+      style="width:100%;height:${H}px;display:block;overflow:visible;"
       aria-label="${m.name}, ${HIST_RANGE}">${ticks}${tLine}${bars}${xlabs}${hits}</svg>`;
   const legend = target ? `<span class="hist-key"><i class="hist-dash"></i>target ${fmtV(target)}</span>` : '';
   const baseTip = avg != null
