@@ -2385,6 +2385,47 @@
   .sedit-row .icon-btn { width: 34px; height: 34px; flex: none; }
   .sedit-row { gap: 5px; }
 
+/* ── The weight control in the dock ──────────────────────────────────────── */
+  .run-weight { display: flex; align-items: center; gap: 8px; }
+  .run-weight[hidden] { display: none; }
+  .run-wlab {
+    font: 600 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-dim); margin-right: auto;
+  }
+  .run-wbtn {
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--border); background: var(--bg); color: var(--ink);
+    font: 600 18px/1 var(--display);
+  }
+  #run-w {
+    width: 74px; text-align: center; border: 1px solid var(--border);
+    border-radius: var(--r-sm); background: var(--bg); color: var(--ink);
+    padding: 8px 4px; font: 600 16px/1 var(--display); font-variant-numeric: tabular-nums;
+  }
+  .run-wunit { font: 500 12px/1 var(--body-f); color: var(--text-dim); }
+
+/* ── Coach suggestions on a session ──────────────────────────────────────── */
+  .sugg-card {
+    margin: 10px 20px 4px; border: 1px solid var(--green-bdr); border-radius: var(--r-md);
+    background: var(--green-bg); overflow: hidden;
+  }
+  .sugg-head {
+    padding: 9px 13px; font: 600 10.5px/1.3 var(--mono); letter-spacing: .1em;
+    text-transform: uppercase; color: var(--green); border-bottom: 1px solid var(--green-bdr);
+  }
+  .sugg-row { display: flex; align-items: center; gap: 8px; padding: 10px 13px; flex-wrap: wrap; }
+  .sugg-row + .sugg-row { border-top: 1px solid var(--green-bdr); }
+  .sugg-main { flex: 1 1 100%; min-width: 0; }
+  .sugg-line { font: 500 13.5px/1.4 var(--body-f); color: var(--text-h); font-variant-numeric: tabular-nums; }
+  .sugg-line b { font-family: var(--display); font-weight: 700; }
+  .sugg-why { font: 400 12px/1.45 var(--body-f); color: var(--text-body); margin-top: 3px; }
+  .sugg-yes, .sugg-no {
+    flex: 1; border-radius: var(--r-pill); padding: 9px 12px; cursor: pointer;
+    font: 600 12.5px/1 var(--display);
+  }
+  .sugg-yes { background: var(--ink); color: #fff; border: 0; }
+  .sugg-no { background: transparent; color: var(--text-body); border: 1px solid var(--green-bdr); }
+
 </style>
 
 </head>
@@ -2525,6 +2566,14 @@
     <div class="run-clock" id="run-clock">0</div>
   </div>
   <div class="run-bar"><div class="run-bar-fill" id="run-bar"></div></div>
+  <div class="run-weight" id="run-weight" hidden>
+    <span class="run-wlab" id="run-wlab">Weight</span>
+    <button class="run-wbtn" onclick="bumpRunWeight(-2.5)" aria-label="Less">&minus;</button>
+    <input id="run-w" type="number" min="0" step="0.5" inputmode="decimal" placeholder="—"
+      onchange="setRunWeight(this.value)" onclick="event.stopPropagation()">
+    <span class="run-wunit">kg</span>
+    <button class="run-wbtn" onclick="bumpRunWeight(2.5)" aria-label="More">+</button>
+  </div>
   <div class="run-actions">
     <button class="run-primary" id="run-primary" onclick="runPrimary()">Set done</button>
     <button class="run-min" onclick="addRunTime(15)">+15s</button>
@@ -2795,6 +2844,15 @@
 
 <div class="section-label" style="padding-top:22px">Programs</div>
 <div id="prog-list"></div>
+
+<div class="lib-open-wrap">
+  <!-- Asking for a read rather than waiting for one: the button for "am I due to go
+       up?" on a Sunday night. The coach sees the log either way. -->
+  <button class="ghost-btn lib-open" onclick="askForProgression()">
+    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 18l5-6 4 3 7-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Ask the coach about my weights
+  </button>
+</div>
 
 <div class="lib-open-wrap">
   <button class="ghost-btn lib-open" onclick="openLinkReview()">
@@ -3684,6 +3742,7 @@ function renderBuiltinSession(view) {
     +   '<button class="solid-btn run-btn" onclick="startSetRun(\'' + view + '\')">Start the session</button>'
     +   '<span class="sess-mins">~' + sessionMinutes(s.ex) + ' min</span>'
     + '</div>'
+    + suggestionCardHTML(view)
     + '<div class="section-label sess-label">Exercises — tap to expand'
     +   '<button class="link-btn" onclick="openSessionEdit(\'' + view + '\')">Edit</button></div>'
     + s.ex.map((e, i) => exerciseCardHTML(view, e, i)).join('');
@@ -3710,7 +3769,7 @@ function exerciseCardHTML(view, e, i) {
                 '<span class="ex-tag tag-' + esc(t.c) + '">' + esc(t.t) + '</span>').join('') + '</div>'
             : '')
     +   '</div>'
-    +   '<div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div>'
+    +   '<div class="ex-weight-wrap"><div class="ex-weight-label">' + esc(weightLabel(e.key)) + '</div>'
     +     '<input class="ex-weight-input" data-wkey="' + esc(e.key) + '" type="number" min="0" step="0.5" '
     +     'placeholder="' + (e.weight != null ? esc(String(e.weight)) : '0') + ' kg" onclick="event.stopPropagation()"></div>'
     +   '<div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
@@ -3940,7 +3999,7 @@ function exInlineEditor(view, e, i, count) {
     + '<div class="ff-row"><span>Rest between sets</span><span class="rng">'
     +   f('rest1', { num: true, min: 0 }, e.rest[0]) + '<span class="rng-dash">to</span>'
     +   f('rest2', { num: true, min: 0 }, e.rest[1]) + '</span></div>'
-    + '<div class="ff-row"><span>Weight (kg)</span>'
+    + '<div class="ff-row"><span>' + esc(weightLabel(e.key)) + '</span>'
     +   f('weight', { num: true, min: 0, step: '0.5', ph: 'not set' },
           localStorage.getItem('workout-weight-' + e.key) || '') + '</div>'
     + '<div class="sedit-edit-actions">'
@@ -4084,6 +4143,199 @@ function trimSession(view) {
 }
 
 /* ══════════════════════════════════════════════════════
+   WHAT WAS ACTUALLY LIFTED  —  and the coach's read on it
+   ══════════════════════════════════════════════════════
+   Until now the app stored the weight he INTENDS to lift: one number per exercise,
+   overwritten each time. Nothing recorded that he did three sets of ten at 40kg on a
+   Monday, so nothing could say whether 42.5 was due. Progression needs history, and
+   history is what this writes.
+
+   The runner is the right place to capture it because it already knows when a set
+   finished. The only thing it cannot know is the weight, so the dock asks — once per
+   exercise, two taps, and only if the number has changed. */
+function strengthLog() { return loadJSON('strength-log', []) || []; }
+function saveStrengthLog(l) { saveJSON('strength-log', l.slice(-200)); }
+
+/* Dumbbell weights are logged PER DUMBBELL — 10kg, not 20, for a pair of tens. That
+   is the convention the library and every lifting app uses, it matches what is printed
+   on the dumbbell, and it makes the next increment "the next pair on the rack". The
+   only thing that truly matters is consistency week to week, so rather than rely on
+   remembering it, the label says so wherever a weight is typed. The library's own
+   equipment field decides; an exercise that is not linked says nothing rather than
+   guessing. */
+function isDumbbell(key) {
+  const id = exLinks()[key];
+  if (!id) return false;
+  const lib = exById(id);
+  return !!lib && lib.eq === 'dumbbell';
+}
+function weightLabel(key) { return isDumbbell(key) ? 'Weight (per dumbbell)' : 'Weight (kg)'; }
+
+function exWeight(key) {
+  const v = parseFloat(localStorage.getItem('workout-weight-' + key));
+  return isNaN(v) ? null : v;
+}
+function setExWeight(key, v) {
+  if (v == null || v === '') localStorage.removeItem('workout-weight-' + key);
+  else localStorage.setItem('workout-weight-' + key, String(Math.max(0, Number(v))));
+}
+
+/* Only the sets he actually got through are written down. Quitting half way through
+   logs half a session, which is the truth and is what a progression rule should see —
+   three sets prescribed and two completed is not evidence for adding weight. */
+function logStrengthSession(view, steps, upto) {
+  const s = sessionDef(view);
+  if (!s) return null;
+  const rows = [];
+  const byEx = {};
+  steps.slice(0, upto).forEach(st => {
+    if (st.kind !== 'work') return;
+    const e = s.ex[st.ex];
+    if (!e) return;
+    let r = byEx[st.ex];
+    if (!r) {
+      r = byEx[st.ex] = { key: e.key, name: e.name, mode: e.mode, planned: e.sets, sets: 0,
+                          reps: e.reps || null, secs: e.secs || null, weight: exWeight(e.key),
+                          perDumbbell: isDumbbell(e.key) || undefined };
+      rows.push(r);
+    }
+    r.sets++;
+    const w = exWeight(e.key);
+    if (w != null) r.weight = w;     // whatever it ended the exercise at
+  });
+  if (!rows.length) return null;
+  const entry = { id: genId(), date: todayKey(), at: Date.now(), view: view, name: s.name, ex: rows };
+  const log = strengthLog();
+  log.push(entry);
+  saveStrengthLog(log);
+  return entry;
+}
+
+/* ── The weight control in the dock ─────────────────────────────────────────
+   2.5kg a tap because that is a pair of dumbbells going up one rack position, and
+   the field itself takes anything for the in-between cases. */
+function renderRunWeight(st) {
+  const wrap = document.getElementById('run-weight');
+  if (!wrap) return;
+  const work = st && st.kind === 'work';
+  wrap.hidden = !work;
+  if (!work) return;
+  const lab = document.getElementById('run-wlab');
+  if (lab) lab.textContent = isDumbbell(st.key) ? 'Weight \u00b7 each' : 'Weight';
+  const input = document.getElementById('run-w');
+  if (document.activeElement !== input) {
+    const w = exWeight(st.key);
+    input.value = w == null ? '' : w;
+  }
+}
+function bumpRunWeight(d) {
+  if (!RUN) return;
+  const st = RUN.steps[RUN.i];
+  const cur = exWeight(st.key) || 0;
+  setExWeight(st.key, Math.max(0, Math.round((cur + d) * 2) / 2));
+  renderRun();
+  cue('tick');
+}
+function setRunWeight(v) {
+  if (!RUN) return;
+  setExWeight(RUN.steps[RUN.i].key, v);
+  renderBuiltinSession(RUN.view);
+  paintLinkedExercises();
+}
+
+/* ══════════════════════════════════════════════════════
+   THE COACH'S SUGGESTIONS
+   ══════════════════════════════════════════════════════
+   Suggestions, not changes. The coach reads the log and proposes; nothing moves until
+   he accepts. A programme that quietly rewrote itself after a workout would be a
+   programme he could not trust, and the first time it guessed wrong he would stop
+   believing any of it. */
+function trainSuggestions() { return loadJSON('train-suggest', []) || []; }
+function saveTrainSuggestions(l) { saveJSON('train-suggest', l.slice(-40)); }
+
+function addTrainSuggestions(list) {
+  const cur = trainSuggestions();
+  const out = [];
+  [].concat(list || []).forEach(r => {
+    if (!r || !r.key) return;
+    const view = Object.keys(BUILTIN_SESSIONS).find(v =>
+      sessionDef(v).ex.some(e => e.key === r.key));
+    if (!view) return;                       // a key the coach invented: ignore it
+    const e = sessionDef(view).ex.find(x => x.key === r.key);
+    const row = { id: genId(), at: Date.now(), view: view, key: r.key, name: e.name,
+                  why: String(r.why || '').slice(0, 200) };
+    if (r.weight != null && !isNaN(Number(r.weight))) { row.field = 'weight'; row.from = exWeight(r.key); row.to = Number(r.weight); }
+    else if (r.sets != null && !isNaN(Number(r.sets)))  { row.field = 'sets';   row.from = e.sets; row.to = Math.max(1, Math.min(12, Math.round(Number(r.sets)))); }
+    else if (r.reps != null)                            { row.field = 'reps';   row.from = e.reps; row.to = String(r.reps).slice(0, 30); }
+    else if (r.secs != null && !isNaN(Number(r.secs)))  { row.field = 'secs';   row.from = e.secs ? e.secs[1] : null; row.to = Number(r.secs); }
+    else return;
+    if (String(row.from) === String(row.to)) return;    // nothing to suggest
+    // One live suggestion per exercise and field: a newer read replaces an older one.
+    const i = cur.findIndex(x => x.key === row.key && x.field === row.field);
+    if (i >= 0) cur.splice(i, 1);
+    cur.push(row); out.push(row);
+  });
+  saveTrainSuggestions(cur);
+  if (out.length) { refreshAllViews(); Object.keys(BUILTIN_SESSIONS).forEach(renderBuiltinSession); paintLinkedExercises(); }
+  return out;
+}
+function suggestionsFor(view) { return trainSuggestions().filter(s => s.view === view); }
+function suggestLine(s) {
+  const unit = s.field === 'weight' ? ' kg' : s.field === 'secs' ? ' sec' : '';
+  const from = s.from == null ? 'not set' : s.from + unit;
+  return esc(s.name) + ': ' + esc(String(from)) + ' → <b>' + esc(String(s.to) + unit) + '</b>';
+}
+function acceptSuggestion(id) {
+  const all = trainSuggestions();
+  const s = all.find(x => x.id === id);
+  if (!s) return;
+  if (s.field === 'weight') setExWeight(s.key, s.to);
+  else {
+    const list = JSON.parse(JSON.stringify(sessionDef(s.view).ex));
+    const e = list.find(x => x.key === s.key);
+    if (e) {
+      if (s.field === 'sets') e.sets = s.to;
+      if (s.field === 'reps') { e.reps = s.to; e.mode = 'reps'; delete e.secs; }
+      if (s.field === 'secs') { e.mode = 'time'; e.secs = [s.to, s.to]; delete e.reps; }
+      saveSessionEx(s.view, list);
+    }
+  }
+  dismissSuggestion(id);
+}
+function dismissSuggestion(id) {
+  saveTrainSuggestions(trainSuggestions().filter(x => x.id !== id));
+  Object.keys(BUILTIN_SESSIONS).forEach(renderBuiltinSession);
+  paintLinkedExercises();
+  refreshAllViews();
+}
+function suggestionCardHTML(view) {
+  const list = suggestionsFor(view);
+  if (!list.length) return '';
+  return '<div class="sugg-card">'
+    + '<div class="sugg-head">Coach · suggested for this session</div>'
+    + list.map(s =>
+        '<div class="sugg-row"><div class="sugg-main">'
+        + '<div class="sugg-line">' + suggestLine(s) + '</div>'
+        + (s.why ? '<div class="sugg-why">' + esc(s.why) + '</div>' : '')
+        + '</div>'
+        + '<button class="sugg-yes" onclick="acceptSuggestion(\'' + s.id + '\')">Use it</button>'
+        + '<button class="sugg-no" onclick="dismissSuggestion(\'' + s.id + '\')">Not yet</button>'
+        + '</div>').join('')
+    + '</div>';
+}
+
+/* Asking for a read rather than waiting for one. The coach sees the log either way;
+   this is the button for "am I due to go up?" on a Sunday night. */
+function askForProgression() {
+  if (!COACH_READY()) return alert('Connect the coach first — Settings → Coach connection.');
+  showPage('coach');
+  const box = document.getElementById('chat-in');
+  if (box) box.value = 'Review my strength training. Look at what I have actually been lifting and tell me where to go up, '
+    + 'where to hold, and anything worth swapping. Keep it brief.';
+  sendChat();
+}
+
+/* ══════════════════════════════════════════════════════
    THE SET RUNNER
    ══════════════════════════════════════════════════════
    One dock, pinned to the bottom, visible from the moment the session starts until it
@@ -4181,6 +4433,7 @@ function renderRun() {
     ? Math.max(0, (RUN.left / Math.max(1, st.secs)) * 100) + '%' : '100%';
   set('run-primary', work ? (timed ? 'Skip' : 'Set done') : (st.sup != null ? 'Go now' : 'Skip rest'));
   set('run-pause', RUN.paused ? 'Resume' : 'Pause');
+  renderRunWeight(st);
   const done = RUN.steps.slice(0, RUN.i).filter(x => x.kind === 'work').length;
   const total = RUN.steps.filter(x => x.kind === 'work').length;
   set('run-left', done + ' of ' + total + ' sets');
@@ -4215,7 +4468,13 @@ function beep(kind) {
   } catch (_) {}
 }
 function quitSetRun() {
-  if (RUN && RUN.elapsed > 60 && !confirm('Stop the session? Nothing will be logged.')) return;
+  const partial = RUN ? RUN.steps.slice(0, RUN.i).filter(x => x.kind === 'work').length : 0;
+  if (RUN && RUN.elapsed > 60 && !confirm('Stop the session?\n\n'
+      + (partial ? partial + ' set' + (partial === 1 ? '' : 's') + ' will be recorded.'
+                 : 'Nothing will be recorded.'))) return;
+  // Half a session is the truth, and a progression rule should see it: three sets
+  // prescribed and two completed is not evidence for adding weight.
+  if (RUN && partial) logStrengthSession(RUN.view, RUN.steps, RUN.i);
   endSetRun();
 }
 function endSetRun() {
@@ -4230,6 +4489,8 @@ function endSetRun() {
 function finishSetRun() {
   const secs = RUN ? RUN.elapsed : 0;
   const name = RUN ? sessionDef(RUN.view).name : 'Session';
+  // Written BEFORE endSetRun clears RUN: this is the only record of what was lifted.
+  if (RUN) logStrengthSession(RUN.view, RUN.steps, RUN.steps.length);
   endSetRun();
   beep('go'); cue('go');
   if (secs >= 60) {
@@ -5962,6 +6223,10 @@ async function ensureLibraryLinks() {
   try { await loadExDB(); } catch (_) { LINKS_READY = false; return; }
   autoLinkExact();
   seedExerciseLinks();
+  // The cards were drawn at boot, before any of this was known. Anything that reads
+  // the library — the per-dumbbell label above all — is stale until they are drawn
+  // again, and painting pictures onto them does not fix a label.
+  Object.keys(BUILTIN_SESSIONS).forEach(renderBuiltinSession);
   paintLinkedExercises();
 }
 
@@ -6088,7 +6353,7 @@ function renderDataSession(prog, sess) {
                      '<span class="ex-tag tag-core">' + esc(m.toUpperCase()) + '</span>').join('') + '</div>'
                  : '')
           +   '</div>'
-          +   '<div class="ex-weight-wrap"><div class="ex-weight-label">Weight (kg)</div>'
+          +   '<div class="ex-weight-wrap"><div class="ex-weight-label">' + esc(weightLabel(e.key)) + '</div>'
           +     '<input class="ex-weight-input" data-wkey="' + esc(key) + '" type="number" min="0" '
           +     'step="0.5" placeholder="' + (e.weight != null ? esc(String(e.weight)) : '0') + ' kg" '
           +     'onclick="event.stopPropagation()"></div>'
@@ -8918,8 +9183,28 @@ function coachState() {
     today: todayKey(), reviewDue: reviewDue(), labs: getLabs().slice(0, 120),
     plan: { thisWeek: getPlan(planWeekStart(0)), nextWeek: getPlan(planWeekStart(1)),
             weekStart: isoOf(planWeekStart(0)) },
-    supplements: getSupps(), profile: loadJSON('coach-profile', null) };
+    supplements: getSupps(), profile: loadJSON('coach-profile', null),
+    // What he is prescribed, and what he has actually been lifting. Without both, a
+    // suggestion to add weight is a guess about a number the coach cannot see.
+    programs: trainingPrescription(),
+    strength: strengthLog().slice(-40),
+    openSuggestions: trainSuggestions().map(s => ({ key: s.key, field: s.field, to: s.to })) };
 }
+/* The current prescription, trimmed to what a progression decision needs: no
+   instructions, no tags, no photos — those are kilobytes the coach cannot act on. */
+function trainingPrescription() {
+  const out = {};
+  Object.keys(BUILTIN_SESSIONS).forEach(v => {
+    const s = sessionDef(v);
+    out[v] = { name: s.name, ex: s.ex.map(e => ({
+      key: e.key, name: e.name, sets: e.sets, mode: e.mode,
+      reps: e.reps || null, secs: e.secs || null, rest: e.rest,
+      weight: exWeight(e.key), perDumbbell: isDumbbell(e.key) || undefined,
+      superset: e.sup ? true : undefined })) };
+  });
+  return out;
+}
+
 /* Which day still owes him a full review. Today once it is past 8pm; otherwise the most
    recent finished day he never got one for — so an evening missed surfaces next morning
    as a wrap of THAT day rather than being silently skipped. Capped at 3 days so a week
@@ -8965,6 +9250,13 @@ function applyCoachPatch(p) {
   // Meals the coach read off a photo or a description. Each lands in a slot on a day,
   // and the day's totals re-derive from them — so the dials move without the coach
   // ever sending a calorie total of its own.
+  // Training changes arrive as SUGGESTIONS and wait for him. The coach may be reading
+  // a session he cut short or a weight he never updated, and a programme that rewrote
+  // itself after every workout is one he would stop trusting the first time it was wrong.
+  if (p.training) {
+    const made = addTrainSuggestions(p.training);
+    if (made.length) applied.push(made.length + ' training suggestion' + (made.length === 1 ? '' : 's'));
+  }
   [].concat(p.meals || []).forEach(m => {
     if (!m || !m.name) return;
     let when = /^\d{4}-\d{2}-\d{2}$/.test(m.date || '') ? m.date : todayKey();
