@@ -2437,6 +2437,47 @@
   .sugg-yes { background: var(--ink); color: #fff; border: 0; }
   .sugg-no { background: transparent; color: var(--text-body); border: 1px solid var(--green-bdr); }
 
+/* ══════════════════════════════════════════════════════
+   DESKTOP
+   ══════════════════════════════════════════════════════
+   The whole app is a 520px column, which is right on a phone and leaves a laptop
+   mostly empty. Rather than a second layout — two codebases in one file, and every
+   future change made twice — the column simply widens and the one grid that can use
+   the room gets more columns. Everything keeps its place; there is just more of it
+   on screen at once.
+
+   Each constraint is listed explicitly because they are not all the same number: the
+   section is 520 and the things inside it sit 16px in, so the nav and the Day/Week
+   switch are 488. Widening only .page-section would leave those two stranded at the
+   old width — which is exactly the bug that put the switch out of line. */
+  @media (min-width: 900px) {
+    .page-section, .page-header, .day-view { max-width: 880px; }
+    .page-nav, .prog-switch { max-width: 848px; }
+    /* Four dials across instead of two: on a wide column the two-up grid stretched
+       each tile into a letterbox. */
+    .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    /* The runner dock is fixed to the viewport, so it has to be centred by hand or it
+       spans the whole screen while the session it belongs to sits in the middle. */
+    .set-run { left: 50%; transform: translateX(-50%); width: min(100%, 880px);
+      border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+      border-radius: var(--r-lg) var(--r-lg) 0 0; }
+    /* A chat line that runs the full width of a laptop is hard to read; the bubbles
+       keep a sensible measure and the column around them does the widening. */
+    .msg { max-width: 72%; }
+    /* The charts are SVGs with a fixed 360×168 viewBox scaled to 100% width, so a
+       wider card does not give them more room — it magnifies them, axis labels and
+       all, until a three-point weight line is half a metre tall. Capping the height
+       keeps them at a sane size and centres them in the card. */
+    #weight-chart-wrap > svg, #hist-chart > svg {
+      max-height: 300px; width: auto; max-width: 100%; margin: 0 auto;
+    }
+  }
+  @media (min-width: 1240px) {
+    .page-section, .page-header, .day-view { max-width: 1060px; }
+    .page-nav, .prog-switch { max-width: 1028px; }
+    .set-run { width: min(100%, 1060px); }
+  }
+
 </style>
 
 </head>
