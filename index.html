@@ -2509,55 +2509,39 @@
   .kitchen-open-txt span { display: block; font: 400 12px/1.45 var(--body-f); color: var(--text-dim); }
   .kitchen-chev { transform: rotate(-90deg); color: var(--text-dim); flex: none; }
 
-  /* Sized in JS from the visual viewport so the keyboard can push it; the height here
-     is only the fallback before that runs. */
-  .kitchen-sheet {
-    position: fixed; left: 0; right: 0; top: 0; z-index: 85;
-    height: 100%; background: var(--bg);
-    display: flex; flex-direction: column;
-  }
-  .kitchen-sheet[hidden] { display: none; }
-
-  /* One column for every band, so no part of the sheet finds its own edge. */
-  .k-band { width: 100%; max-width: 488px; margin: 0 auto;
-    display: flex; align-items: center; gap: 10px; }
-  .k-band-col { display: block; }
-
-  .k-head { flex: none; padding: 10px 16px;
-    padding-top: calc(10px + env(safe-area-inset-top));
-    background: var(--bg-card); border-bottom: 1px solid var(--border); }
-  .k-id { flex: 1; min-width: 0; }
-  .k-title { font: 700 17px/1.2 var(--display); color: var(--text-h); }
-  .k-sub { font: 400 11.5px/1.4 var(--body-f); color: var(--text-dim); }
-  .k-head-btn { flex: none; display: inline-flex; align-items: center; gap: 6px;
+  /* The Kitchen is the Coach's card with a different conversation in it, so it uses
+     the Coach's shell — .chat-card, .chat-full, .chat-top — and only the parts that
+     differ are styled here. */
+  .k-back { padding: 2px 9px; min-width: 34px; flex: none; }
+  .k-head-btn {
+    flex: none; display: inline-flex; align-items: center; gap: 6px;
     border: 1px solid var(--border); background: var(--bg); color: var(--text-body);
-    border-radius: var(--r-pill); padding: 8px 12px; cursor: pointer;
-    font: 600 11.5px/1 var(--display); }
+    border-radius: var(--r-pill); padding: 7px 11px; cursor: pointer;
+    font: 600 11px/1 var(--display);
+  }
   .k-head-btn.on { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .k-head-icon { padding: 8px; }
+  .k-head-icon { padding: 7px; }
 
-  .k-saved { flex: none; background: var(--bg-card); border-bottom: 1px solid var(--border);
-    max-height: 42vh; overflow-y: auto; padding: 0 16px; }
+  .k-saved { flex: none; border-bottom: 1.5px solid var(--border); background: var(--bg);
+    max-height: 38vh; overflow-y: auto; padding: 0 16px; }
   .k-saved[hidden] { display: none; }
   .k-saved-row { display: flex; align-items: center; gap: 8px; padding: 11px 0;
-    border-bottom: 1px solid var(--border); max-width: 488px; margin: 0 auto; width: 100%; }
+    border-bottom: 1px solid var(--border); }
   .k-saved-row:last-child { border-bottom: 0; }
   .k-saved-main { flex: 1; min-width: 0; cursor: pointer; }
   .k-saved-name { font: 700 13.5px/1.35 var(--display); color: var(--text-h); }
   .k-saved-sub { font: 400 11.5px/1.4 var(--body-f); color: var(--text-dim); }
 
-  .k-log { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; }
-  .k-col { max-width: 488px; margin: 0 auto; }
+  .k-log { flex: 1; min-height: 120px; overflow-y: auto; overscroll-behavior: contain;
+    padding: 16px; }
+  .k-col { max-width: 100%; }
   .k-msg { margin-bottom: 12px; font-size: 13.5px; line-height: 1.6; }
   .k-me { background: var(--green-deep); color: #fff; padding: 11px 14px;
     border-radius: 16px 16px 5px 16px; width: fit-content; max-width: 86%;
     margin-left: auto; margin-right: 0; }
-  /* A reply is a card with a name on it, like the coach's, not loose text on the page. */
-  .k-them { background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 16px 16px 16px 5px; padding: 12px 14px; color: var(--text-body);
-    box-shadow: var(--e1); max-width: 94%; width: fit-content; margin-right: auto; }
+  .k-them { color: var(--text-body); max-width: 100%; }
   .k-who { font: 600 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
-    color: var(--green); margin-bottom: 7px; }
+    color: var(--green); margin-bottom: 6px; }
   .k-them p { margin: 0 0 8px; } .k-them p:last-child { margin-bottom: 0; }
   .k-them ul { margin: 0 0 8px; padding-left: 19px; }
   .k-them b { color: var(--text-h); }
@@ -2566,30 +2550,27 @@
     border-radius: var(--r-pill); padding: 7px 13px; }
   .k-shots { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
   .k-shots img { width: 76px; height: 76px; object-fit: cover; border-radius: var(--r-sm); }
-  .k-typing { display: flex; gap: 4px; padding: 10px 4px; }
+  .k-typing { display: flex; gap: 4px; padding: 6px 2px; }
   .k-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim);
     animation: ktype 1.1s infinite ease-in-out; }
   .k-typing i:nth-child(2) { animation-delay: .15s; }
   .k-typing i:nth-child(3) { animation-delay: .3s; }
   @keyframes ktype { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
 
-  .k-empty { padding: 26px 4px; text-align: center; }
-  .k-empty-mark { width: 52px; height: 52px; margin: 0 auto 14px; border-radius: var(--r-md);
+  .k-empty { padding: 10px 0 4px; }
+  .k-empty-mark { width: 44px; height: 44px; margin-bottom: 12px; border-radius: var(--r-sm);
     background: var(--green-bg); color: var(--green);
     display: flex; align-items: center; justify-content: center; }
-  .k-empty-h { font: 700 16px/1.35 var(--display); color: var(--text-h); margin-bottom: 7px; }
-  .k-empty-p { font: 400 13px/1.65 var(--body-f); color: var(--text-dim); max-width: 34em; margin: 0 auto; }
+  .k-empty-h { font: 700 15px/1.35 var(--display); color: var(--text-h); margin-bottom: 6px; }
+  .k-empty-p { font: 400 13px/1.6 var(--body-f); color: var(--text-dim); }
 
-  /* The card lines up with the replies rather than running wider than them: it is
-     part of the same conversation, not a banner across it. */
-  .k-recipe { background: var(--bg-card); border: 1.5px solid var(--green-bdr);
-    border-radius: var(--r-md); overflow: hidden; box-shadow: var(--e1);
-    margin: 0 0 12px; max-width: 94%; }
+  .k-recipe { background: var(--bg); border: 1.5px solid var(--green-bdr);
+    border-radius: var(--r-md); overflow: hidden; margin: 0 0 12px; }
   .k-rec-head { padding: 13px 14px 10px; }
   .k-rec-name { font: 700 15.5px/1.3 var(--display); color: var(--text-h); }
   .k-rec-sub { font: 400 11.5px/1.45 var(--body-f); color: var(--text-dim); margin-top: 2px; }
   .k-macros { display: flex; gap: 1px; background: var(--border); border-block: 1px solid var(--border); }
-  .k-macro { flex: 1; background: var(--bg); padding: 9px 4px; text-align: center; }
+  .k-macro { flex: 1; background: var(--bg-card); padding: 9px 4px; text-align: center; }
   .k-macro b { display: block; font: 700 16px/1.1 var(--display); color: var(--text-h);
     font-variant-numeric: tabular-nums; }
   .k-macro span { font: 500 9.5px/1.4 var(--mono); letter-spacing: .06em;
@@ -2613,20 +2594,27 @@
   .k-serve-n { min-width: 26px; text-align: center; font: 700 16px/1 var(--display);
     color: var(--text-h); font-variant-numeric: tabular-nums; }
   .k-serve-lab { font: 500 12px/1 var(--body-f); color: var(--text-dim); }
-  .k-slot { margin-left: auto; border: 1px solid var(--border); background: var(--bg);
+  .k-slot { margin-left: auto; border: 1px solid var(--border); background: var(--bg-card);
     border-radius: var(--r-sm); padding: 8px 10px; color: var(--ink); font: 500 12.5px/1 var(--body-f); }
   .k-rec-sum { padding: 6px 14px 0; font: 500 12px/1.5 var(--body-f); color: var(--text-dim);
     font-variant-numeric: tabular-nums; }
   .k-rec-actions { display: flex; gap: 8px; padding: 12px 14px 14px; }
   .k-rec-actions button { flex: 1; }
 
-  .k-compose { flex: none; border-top: 1px solid var(--border); background: var(--bg-card);
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .k-compose { flex: none; border-top: 1.5px solid var(--border); background: var(--bg-card);
+    padding: 10px 12px; }
   .k-row { display: flex; align-items: flex-end; gap: 7px; }
-  .k-row .cam-btn { flex: none; }
-  .k-row textarea { flex: 1; min-width: 0; resize: none; max-height: 132px; border: 1px solid var(--border);
-    border-radius: 18px; padding: 10px 14px; background: var(--bg); color: var(--ink);
-    font: 400 16px/1.4 var(--body-f); outline: none; }
+  .k-row .cam-btn, .k-row .send-btn { flex: none; }
+  @media (max-width: 520px) {
+    .k-row .cam-btn, .k-row .send-btn { width: 40px; height: 40px; }
+    .k-row .cam-btn svg { width: 17px; height: 17px; }
+    /* The label goes, the bookmark stays — on a phone the icon carries it. */
+    .k-head-btn span { display: none; }
+    .k-head-btn { padding: 7px; }
+  }
+  .k-row textarea { flex: 1; min-width: 0; resize: none; max-height: 132px;
+    border: 1px solid var(--border); border-radius: 18px; padding: 10px 14px;
+    background: var(--bg); color: var(--ink); font: 400 16px/1.4 var(--body-f); outline: none; }
   .k-row textarea:focus { border-color: var(--green-bdr); }
   .k-scan-note { font: 500 12px/1.4 var(--body-f); color: var(--text-dim); padding: 2px 2px 8px; }
   .k-scan-note[hidden] { display: none; }
@@ -2637,17 +2625,6 @@
   .k-shot button { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
     border-radius: 50%; border: 0; background: var(--ink); color: #fff; font-size: 13px;
     line-height: 1; cursor: pointer; }
-
-  /* Desktop: the column widths the rest of the app uses, so the Kitchen does not read
-     as a different app opened inside this one. */
-  @media (min-width: 900px) {
-    .k-band, .k-col, .k-saved-row { max-width: 848px; }
-    .k-them, .k-recipe { max-width: 76%; }
-    .k-me { max-width: 66%; }
-  }
-  @media (min-width: 1240px) {
-    .k-band, .k-col, .k-saved-row { max-width: 1028px; }
-  }
 
   .fr-est {
     display: block; width: 100%; margin-top: 10px; cursor: pointer;
@@ -2751,10 +2728,16 @@
   }
   .wk-action svg { flex: none; color: var(--green); }
 
+  /* The greeting is the Coach's. Everywhere else it is a line of furniture above the
+     thing you opened the tab for, so it is hidden rather than repeated. */
+  .page-title, .page-rule { display: none; }
+  body.greeting .page-title { display: block; }
+  body.greeting .page-rule { display: block; }
+
 </style>
 
 </head>
-<body>
+<body class="greeting">
 
 <!-- ══════════ Lock screen ══════════ -->
 <div class="lock-screen" id="lock-screen">
@@ -3018,57 +3001,6 @@
       <button class="run-min" onclick="scanTypeIn()">Type it</button>
       <button class="run-min" onclick="closeScan()">Cancel</button>
       <input type="file" id="scan-photo" accept="image/*" capture="environment" hidden onchange="scanFromPhoto(this)">
-    </div>
-  </div>
-
-  <div class="kitchen-sheet" id="kitchen-sheet" hidden>
-    <!-- Every band gets the same inner wrapper, so the header, the list, the thread
-         and the composer share one column and one set of gutters at every width.
-         Without it each band found its own edge and nothing lined up on a laptop. -->
-    <div class="k-head">
-      <div class="k-band">
-        <button class="ghost-btn wk-arrow" onclick="closeKitchen()" aria-label="Back">&lsaquo;</button>
-        <div class="k-id">
-          <div class="k-title">Kitchen</div>
-          <div class="k-sub">Recipes, swaps and calories</div>
-        </div>
-        <button class="k-head-btn" id="k-saved-btn" onclick="toggleKitchenRecipes()">
-          <svg viewBox="0 0 24 24" fill="none" width="15" height="15"><path d="M5 4.5A1.5 1.5 0 016.5 3h11A1.5 1.5 0 0119 4.5V21l-7-4-7 4V4.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          <span>Recipes</span>
-        </button>
-        <button class="k-head-btn k-head-icon" onclick="clearKitchen()" aria-label="Clear the conversation" title="Clear">
-          <svg viewBox="0 0 24 24" fill="none" width="15" height="15"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="k-saved" id="k-saved" hidden></div>
-    <div class="k-log" id="k-log"></div>
-    <div class="k-compose">
-      <div class="k-band k-band-col">
-        <div class="k-scan-note" id="k-scan-note" hidden></div>
-        <div class="k-tray" id="k-tray" hidden></div>
-        <div class="k-row">
-          <label class="cam-btn" for="k-cam" title="Take a photo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          </label>
-          <input id="k-cam" type="file" accept="image/*" capture="environment" class="vis-hidden" onchange="addKShot(this)">
-          <label class="cam-btn" for="k-lib" title="Choose from photos">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
-          </label>
-          <input id="k-lib" type="file" accept="image/*" multiple class="vis-hidden" onchange="addKShot(this)">
-          <button class="cam-btn" onclick="kitchenScan()" title="Scan a barcode" aria-label="Scan a barcode">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-              <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg>
-          </button>
-          <textarea id="k-in" rows="1" placeholder="Ask or describe…"
-            oninput="growKitchenInput(this)"></textarea>
-          <button class="send-btn" onclick="sendKitchen()" title="Send">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -3338,6 +3270,10 @@
             <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
         </label>
         <input id="chat-lib" type="file" accept="image/*" multiple class="vis-hidden">
+        <button class="cam-btn" onclick="coachScan()" title="Scan a barcode" aria-label="Scan a barcode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg>
+        </button>
         <textarea id="chat-in" rows="1" placeholder="Log a meal or ask…"></textarea>
         <button class="send-btn" onclick="sendChat()" title="Send">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3347,6 +3283,55 @@
   </div>
 
 </div><!-- /page-coach -->
+
+<div id="page-kitchen" class="page-section">
+
+  <div class="chat-card chat-full">
+    <div class="chat-top">
+      <button class="ghost-btn wk-arrow k-back" onclick="showPage('food')" aria-label="Back to Food">&lsaquo;</button>
+      <div class="chat-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="1.9"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v8a3 3 0 006 0V3M8 11v10M15 3c-1.5 2-2 4-2 6s.5 3 2 3v9"/></svg></div>
+      <div style="flex:1;min-width:0;">
+        <div class="tracker-title">Kitchen</div>
+        <div class="tracker-sub">Recipes and swaps</div>
+      </div>
+      <button class="k-head-btn" id="k-saved-btn" onclick="toggleKitchenRecipes()">
+        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 4.5A1.5 1.5 0 016.5 3h11A1.5 1.5 0 0119 4.5V21l-7-4-7 4V4.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span>Recipes</span>
+      </button>
+      <button class="k-head-btn k-head-icon" onclick="clearKitchen()" aria-label="Clear the conversation" title="Clear">
+        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="k-saved" id="k-saved" hidden></div>
+    <div class="k-log" id="k-log"></div>
+    <div class="k-compose">
+      <div class="k-scan-note" id="k-scan-note" hidden></div>
+      <div class="k-tray" id="k-tray" hidden></div>
+      <div class="k-row">
+        <label class="cam-btn" for="k-cam" title="Take a photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </label>
+        <input id="k-cam" type="file" accept="image/*" capture="environment" class="vis-hidden" onchange="addKShot(this)">
+        <label class="cam-btn" for="k-lib" title="Choose from photos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
+        </label>
+        <input id="k-lib" type="file" accept="image/*" multiple class="vis-hidden" onchange="addKShot(this)">
+        <button class="cam-btn" onclick="kitchenScan()" title="Scan a barcode" aria-label="Scan a barcode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+            <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg>
+        </button>
+        <textarea id="k-in" rows="1" placeholder="Ask or describe…" oninput="growKitchenInput(this)"></textarea>
+        <button class="send-btn" onclick="sendKitchen()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-kitchen -->
 
 <div id="page-review" class="page-section">
 
@@ -4758,27 +4743,6 @@ function saveKChat() {
 function kitchenRecipes() { return loadJSON('kitchen-recipes', []) || []; }
 function saveKitchenRecipes(l) { saveJSON('kitchen-recipes', l.slice(-60)); }
 
-/* ── Making room for the keyboard ───────────────────────────────────────────
-   A fixed, inset:0 sheet is laid out against the LAYOUT viewport, and Android does not
-   shrink that when the keyboard opens — so the header scrolled away off the top and
-   the composer sat underneath the keys. visualViewport is the one that knows the
-   keyboard is there. Sizing the sheet from it is the only reliable fix; there is no
-   CSS unit that does this on Android. */
-function sizeKitchen() {
-  const el = document.getElementById('kitchen-sheet');
-  if (!el || el.hidden) return;
-  const vv = window.visualViewport;
-  if (vv) {
-    el.style.height = vv.height + 'px';
-    el.style.transform = 'translateY(' + vv.offsetTop + 'px)';
-  } else {
-    el.style.height = ''; el.style.transform = '';
-  }
-}
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => { sizeKitchen(); kLogToBottom(); });
-  window.visualViewport.addEventListener('scroll', sizeKitchen);
-}
 function kLogToBottom() {
   const b = document.getElementById('k-log');
   if (b) b.scrollTop = b.scrollHeight;
@@ -4789,19 +4753,8 @@ function growKitchenInput(ta) {
   ta.style.height = Math.min(ta.scrollHeight, 132) + 'px';
 }
 
-function openKitchen() {
-  document.getElementById('kitchen-sheet').hidden = false;
-  document.body.classList.add('kitchen-open');
-  renderKChat();
-  sizeKitchen();
-  setTimeout(() => { sizeKitchen(); kLogToBottom(); }, 50);
-}
-function closeKitchen() {
-  const el = document.getElementById('kitchen-sheet');
-  el.hidden = true;
-  el.style.height = ''; el.style.transform = '';
-  document.body.classList.remove('kitchen-open');
-}
+function openKitchen() { showPage('kitchen'); }
+function closeKitchen() { if (document.getElementById('page-kitchen').classList.contains('active')) showPage('food'); }
 function clearKitchen() {
   if (!confirm('Clear this conversation?\n\nSaved recipes are kept.')) return;
   KCHAT = []; saveKChat(); renderKChat();
@@ -4978,20 +4931,24 @@ function deleteKitchenRecipe(i) {
   renderKitchenRecipes();
 }
 
-/* ── A packet, scanned into the conversation ────────────────────────────────
+/* ── A packet, scanned into a conversation ──────────────────────────────────
    The same camera as the Food tab, but the result lands in the MESSAGE BOX rather
-   than in a form: he is usually holding the tub because he is about to put some of it
-   in something, and the next thing he types is what he is doing with it. */
-async function lookupBarcodeForKitchen(code) {
+   than in a form: he is usually holding the tub because he is about to do something
+   with it, and the next thing he types is what that is. Both threads want this — the
+   Kitchen to cook with, the Coach to log — so the lookup does not care which box it
+   is writing into. */
+async function barcodeIntoBox(code, boxId, noteId) {
   const c = String(code || '').replace(/\D/g, '');
-  const ta = document.getElementById('k-in');
-  const note = document.getElementById('k-scan-note');
+  const ta = document.getElementById(boxId);
+  const note = noteId ? document.getElementById(noteId) : null;
+  if (!ta) return;
   if (note) { note.hidden = false; note.textContent = 'Looking up ' + c + '\u2026'; }
   try {
     const j = await foodApi('/food/barcode?code=' + encodeURIComponent(c));
     if (!j.product) {
-      if (note) note.textContent = 'Nothing in Open Food Facts for ' + c + '. Describe it instead.';
-      setTimeout(() => { if (note) note.hidden = true; }, 4000);
+      const msg = 'Nothing in Open Food Facts for ' + c + '. Describe it instead.';
+      if (note) { note.textContent = msg; setTimeout(() => { note.hidden = true; }, 4000); }
+      else alert(msg);
       return;
     }
     const p = j.product, n = p.per100 || p.perServing, basis = p.per100 ? 'per 100g' : 'per serving';
@@ -5005,15 +4962,19 @@ async function lookupBarcodeForKitchen(code) {
       + ' (' + basis + ': ' + bits + ')'
       + (p.serving ? ' \u00b7 serving ' + p.serving : '') + ' \u2014 ';
     ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + line;
-    growKitchenInput(ta);
+    if (boxId === 'k-in') growKitchenInput(ta); else sizeChat();
     ta.focus();
     ta.setSelectionRange(ta.value.length, ta.value.length);
     if (note) note.hidden = true;
   } catch (e) {
-    if (note) note.textContent = 'Lookup failed \u2014 ' + (e.message || e);
-    setTimeout(() => { if (note) note.hidden = true; }, 4000);
+    const msg = 'Lookup failed \u2014 ' + (e.message || e);
+    if (note) { note.textContent = msg; setTimeout(() => { note.hidden = true; }, 4000); }
+    else alert(msg);
   }
 }
+function lookupBarcodeForKitchen(code) { return barcodeIntoBox(code, 'k-in', 'k-scan-note'); }
+function lookupBarcodeForCoach(code)   { return barcodeIntoBox(code, 'chat-in', null); }
+function coachScan() { return openScanner(lookupBarcodeForCoach); }
 
 /* ── Photos ─────────────────────────────────────────────────────────────────── */
 async function addKShot(input) {
@@ -5905,8 +5866,10 @@ function placeTimer() {
    visualViewport is the one that shrinks when the keyboard opens — innerHeight does not
    on Android, which is why a typed message used to push the send button out of reach. */
 function sizeChat() {
-  const card = document.querySelector('.chat-full');
-  if (!card || !document.getElementById('page-coach').classList.contains('active')) return;
+  const page = document.querySelector('#page-coach.active, #page-kitchen.active');
+  if (!page) return;
+  const card = page.querySelector('.chat-full');
+  if (!card) return;
   const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
   const top = card.getBoundingClientRect().top + (window.scrollY || 0);
   const gap = 10;                       // breathing room under the compose bar
@@ -5943,14 +5906,19 @@ function showPage(id) {
     const btn0 = document.querySelector('.page-btn[data-page="progress"]');
     if (btn0) btn0.classList.add('active');
     document.body.classList.remove('coach-open');
+    document.body.classList.remove('greeting');
     showProgress(PROGRESS_VIEW);
     return;
   }
   document.getElementById('page-' + id).classList.add('active');
-  const btn = document.querySelector(`.page-btn[data-page="${id}"]`);
+  // The Kitchen is reached from Food and belongs to it, so Food stays lit rather than
+  // the nav going blank on a page that has no tab of its own.
+  const navFor = id === 'kitchen' ? 'food' : id;
+  const btn = document.querySelector(`.page-btn[data-page="${navFor}"]`);
   if (btn) btn.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'instant' });
-  document.body.classList.toggle('coach-open', id === 'coach');
+  document.body.classList.toggle('coach-open', id === 'coach' || id === 'kitchen');
+  document.body.classList.toggle('greeting', id === 'coach');
   if (id === 'coach') {
     // Two frames: one for the class to apply, one for layout to settle before measuring.
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -5958,6 +5926,10 @@ function showPage(id) {
       const box = document.getElementById('chat-log');
       if (box) box.scrollTop = box.scrollHeight;
     }));
+  }
+  if (id === 'kitchen') {
+    renderKChat();
+    requestAnimationFrame(() => requestAnimationFrame(() => { sizeChat(); kLogToBottom(); }));
   }
   if (id === 'workout') ensureLibraryLinks();
   if (id === 'review') renderWeek();
