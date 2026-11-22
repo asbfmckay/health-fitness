@@ -1511,6 +1511,56 @@
   .lib-sheet{position:fixed;inset:0;z-index:70;background:rgba(42,42,24,.42);
     backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center}
   .lib-sheet[hidden]{display:none}
+  /* ══════════ Programme builder ══════════ */
+  .pb-sheet{z-index:65}                     /* under the library, which opens on top to pick */
+  .pb-body{flex:1;overflow-y:auto;padding:4px 16px 16px}
+  .pb-foot{display:flex;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border)}
+  .pb-foot .solid-btn{flex:1}
+  .pb-foot[hidden],.pb-del[hidden]{display:none!important}
+  .pb-del{color:var(--chest);margin-right:auto}
+  .pb-start{display:grid;gap:10px;padding-top:6px}
+  .pb-choice{display:block;text-align:left;width:100%;border:1.5px solid var(--border);background:var(--bg-soft);
+    border-radius:var(--r-md);padding:14px 16px;cursor:pointer;font-family:inherit;color:var(--text-body)}
+  .pb-choice b{display:block;font:700 15px var(--display);color:var(--text-h);margin-bottom:3px}
+  .pb-choice span{font-size:12.5px;color:var(--text-dim)}
+  .pb-copy{cursor:default}
+  .pb-copy-row{display:flex;gap:8px;margin-top:10px}
+  .pb-copy-row select{flex:1;min-width:0;padding:10px;border-radius:var(--r-sm);border:1.5px solid var(--border-md);background:var(--bg-card);font:600 13.5px var(--body-f)}
+  .pb-in{width:100%;background:var(--bg-soft);border:1.5px solid var(--border-md);border-radius:var(--r-sm);
+    padding:10px 12px;font:600 14px var(--body-f);color:var(--text-h);-webkit-appearance:none}
+  .pb-in:focus{outline:none;border-color:var(--lime-dark)}
+  .pb-in.sm{padding:8px 4px;text-align:center;font-size:13px;font-variant-numeric:tabular-nums}
+  .pb-name{font:700 16px var(--display);margin-top:4px}
+  .pb-look{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap}
+  .pb-swatches,.pb-icons{display:flex;gap:7px;margin-top:5px}
+  .pb-sw{width:30px;height:30px;border-radius:50%;border:3px solid var(--bg-card);box-shadow:0 0 0 1.5px var(--border-md);cursor:pointer}
+  .pb-sw.on{box-shadow:0 0 0 2.5px var(--text-h)}
+  .pb-ic{width:36px;height:34px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--bg-soft);color:var(--text-body);cursor:pointer;display:grid;place-items:center}
+  .pb-ic svg{width:18px;height:18px}
+  .pb-ic.on{border-color:var(--text-h);background:var(--bg-card);color:var(--text-h)}
+  .pb-sess{border:1.5px solid var(--border);border-radius:var(--r-md);padding:12px;margin-top:10px;background:var(--bg-card)}
+  .pb-sess-h{display:flex;gap:8px;align-items:center}
+  .pb-sname{font:700 14.5px var(--display)}
+  .pb-meta{font-size:12px;color:var(--text-dim);margin:7px 2px}
+  .pb-meta select{font:600 12px var(--body-f);padding:2px 4px;border-radius:6px;border:1px solid var(--border-md);background:var(--bg-card)}
+  .pb-grid-h,.pb-row{display:grid;grid-template-columns:minmax(0,1fr) 42px 52px 46px 46px 74px;gap:5px;align-items:center}
+  .pb-grid-h{font:700 9.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);padding:4px 0}
+  .pb-grid-h span:not(:first-child){text-align:center}
+  .pb-row{padding:5px 0;border-top:1px solid var(--border)}
+  .pb-ex{font-size:12.5px;font-weight:700;color:var(--text-h);line-height:1.25;overflow-wrap:anywhere}
+  .pb-acts{display:flex;gap:2px;justify-content:flex-end}
+  .pb-acts button{width:23px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg-soft);color:var(--text-body);cursor:pointer;font-size:12px;padding:0}
+  .pb-add{width:100%;margin-top:8px}
+  .pb-addsess{display:flex;gap:8px;margin-top:12px}
+  .pb-addsess .ghost-btn{flex:1}
+  .pb-err{color:var(--chest);font-size:13px;font-weight:700;margin-top:12px;min-height:18px}
+  .prog-tools{display:flex;gap:8px;margin:0 16px 10px}
+  #prog-q{flex:1;min-width:0;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--r-sm);
+    padding:11px 12px;font:600 14px var(--body-f);color:var(--text-h);-webkit-appearance:none}
+  .prog-new{flex:none;padding:0 16px}
+  .prog-none{margin:4px 16px 12px;font-size:13px;color:var(--text-dim)}
+  .prog-edit{display:block;width:100%;border:none;border-top:1px solid var(--border);background:transparent;
+    padding:11px 15px;text-align:left;font:700 12.5px var(--body-f);color:var(--lime-dark);cursor:pointer}
   .lib-card{width:100%;max-width:560px;height:92vh;display:flex;flex-direction:column;
     background:var(--bg-card);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--e3)}
   .lib-head{display:flex;align-items:center;gap:10px;padding:16px 16px 10px}
@@ -3191,6 +3241,11 @@
 </div>
 
 <div class="section-label" style="padding-top:22px">Programs</div>
+<div class="prog-tools">
+  <input id="prog-q" type="search" placeholder="Search programmes, sessions, exercises…" autocomplete="off"
+         data-lpignore="true" oninput="progSearch(this.value)">
+  <button class="solid-btn prog-new" onclick="openProgramBuilder()">+ New</button>
+</div>
 <div id="prog-list"></div>
 
 <!-- One row, three things, and the Workout tab's own Settings button rather than
@@ -3228,6 +3283,20 @@
 </div>
 
 <!-- 876 exercises, free-exercise-db, public domain. Images are local under ex/. -->
+<div class="lib-sheet pb-sheet" id="pb-sheet" hidden>
+  <div class="lib-card">
+    <div class="lib-head">
+      <div class="lib-title" id="pb-title">New programme</div>
+      <button class="meal-del" onclick="closeProgramBuilder()" aria-label="Close">&times;</button>
+    </div>
+    <div class="pb-body" id="pb-body"></div>
+    <div class="pb-foot" id="pb-foot" hidden>
+      <button class="ghost-btn pb-del" id="pb-del" onclick="deleteProgramBuilder()">Delete</button>
+      <button class="ghost-btn" onclick="closeProgramBuilder()">Cancel</button>
+      <button class="solid-btn" onclick="saveProgramBuilder()">Save programme</button>
+    </div>
+  </div>
+</div>
 <div class="lib-sheet" id="lib-sheet" hidden>
   <div class="lib-card">
     <div class="lib-head">
@@ -5344,7 +5413,7 @@ function getWorkoutTypes() {
   // The programs always come first; "workout-types" now holds only his own additions.
   const mine = (loadJSON('workout-types', []) || [])
     .filter(t => !PROGRAMS.some(p => p.sessions.some(s => s.name === t.name)));
-  return DEFAULT_WORKOUT_TYPES.concat(mine);
+  return allSessions().map(s => ({ name: s.name, measure: s.measure })).concat(mine);
 }
 function addWorkoutType() {
   const name = (prompt('Name the workout type') || '').trim();
@@ -5960,14 +6029,24 @@ function renderSessionNav() {
   const cur = CURRENT_SESSION ? CURRENT_SESSION.name : '';
   const today = todaysPlanned();
   const mine = getWorkoutTypes().filter(t => !PROGRAMS.some(p => p.sessions.some(x => x.name === t.name)));
-  const groups = PROGRAMS.concat(mine.length
+  let groups = PROGRAMS.concat(mine.length
     ? [{ id: 'mine', name: 'Mine', sessions: mine.map(t => ({ name: t.name, measure: t.measure })) }] : []);
+  // Search: a programme matches on its own name, a session name, or any exercise in it.
+  const q = String(PROG_Q || '').trim().toLowerCase();
+  if (q) {
+    groups = groups.filter(p => p.name.toLowerCase().includes(q) || p.sessions.some(se => {
+      if (se.name.toLowerCase().includes(q)) return true;
+      const d = se.kind === 'view' ? sessionDef(se.view) : null;
+      return !!(d && d.ex.some(e => String(e.name).toLowerCase().includes(q)));
+    }));
+    if (!groups.length) { host.innerHTML = '<div class="prog-none">Nothing matches “' + esc(PROG_Q) + '”.</div>'; return; }
+  }
 
   host.innerHTML = groups.map(p => {
     const holdsCurrent = p.sessions.some(x => x.name === cur);
     const n = p.sessions.length;
     // With nothing on screen, open the first programme so there is something to act on.
-    const openIt = holdsCurrent || (!cur && p === groups[0]);
+    const openIt = !!q || holdsCurrent || (!cur && p === groups[0]);
     const st = PROG_STYLE[p.id] || PROG_STYLE.mine;
     return '<details class="prog-card acc"' + (openIt ? ' open' : '')
       + ' style="--prog-colour:' + st.colour + ';--prog-tint:' + st.tint + '">'
@@ -5987,6 +6066,7 @@ function renderSessionNav() {
             + (today && today.type === se.name ? '<span class="prog-tag">TODAY</span>' : '')
             + '<span class="prog-go">' + (se.name === cur ? 'Showing' : 'Open') + '</span>'
             + '</button>').join('')
+      + (p.user ? '<button class="prog-edit" onclick="openProgramBuilder(\'' + esc(p.id) + '\')">Edit programme</button>' : '')
       + '</div></details>';
   }).join('');
 }
@@ -6436,6 +6516,7 @@ function seedHistory() {
 
 async function bootApp() {
   seedHistory();
+  syncUserPrograms();
   renderAllBuiltins();
   enableWeightPersistence();
   enableDragAndDrop();
@@ -7143,6 +7224,289 @@ async function paintLinkedExercises() {
     wrap.insertBefore(img, wrap.firstChild);
   });
 }
+
+/* ══════════════════════════════════════════════════════
+   PROGRAMME BUILDER  —  his own programmes (23 Nov 2026)
+   ══════════════════════════════════════════════════════
+   Stored as 'user-programs' (the programmes) and 'user-sessions' (each exercise
+   session's rows, keyed by a view id). At boot, and after every save, they are
+   REGISTERED into PROGRAMS and BUILTIN_SESSIONS, and each session gets its own
+   .day-view — so the planner, Fill, the session page, the runner, the weights and the
+   coach's progression all treat them exactly like the shipped ones, with no second code
+   path. Plans store session NAMES, so session names must be unique across everything.
+   Exercise rows have the shipped shape {key, name, sets, mode, reps|secs, rest, tags,
+   steps}; a row picked from the library is keyed "lib-<id>", so the same exercise in two
+   sessions shares one weight history. */
+const PB_COLOURS = [
+  { k: 'red',    colour: 'var(--chest)',     tint: 'rgba(226,102,92,0.12)' },
+  { k: 'green',  colour: 'var(--shoulders)', tint: 'rgba(92,189,138,0.14)' },
+  { k: 'blue',   colour: 'var(--back)',      tint: 'rgba(79,143,219,0.12)' },
+  { k: 'purple', colour: 'var(--arms)',      tint: 'rgba(156,120,214,0.12)' },
+  { k: 'orange', colour: 'var(--cardio)',    tint: 'rgba(242,165,63,0.14)' },
+  { k: 'lime',   colour: 'var(--lime-dark)', tint: 'rgba(203,229,88,0.22)' }
+];
+const PB_MUSCLE_TAG = m => /chest|pector/.test(m) ? 'chest' : /lat|back|trap|rhomb/.test(m) ? 'back'
+  : /bicep|tricep|forearm/.test(m) ? 'arms' : /shoulder|delt/.test(m) ? 'shoulders'
+  : /quad|hamstring|glute|calf|calves|adduct|abduct|leg/.test(m) ? 'legs' : /abdom|oblique|core|lower back/.test(m) ? 'core' : 'cardio';
+function userSessions() { return loadJSON('user-sessions', {}) || {}; }
+let USER_VIEWS = new Set();
+function syncUserPrograms() {
+  // Out with the last registration…
+  for (let i = PROGRAMS.length - 1; i >= 0; i--) if (PROGRAMS[i].user) PROGRAMS.splice(i, 1);
+  USER_VIEWS.forEach(v => { delete BUILTIN_SESSIONS[v]; });
+  const keep = new Set();
+  // …in with the current one, straight after the shipped strength programmes.
+  const at = Math.max(0, PROGRAMS.findIndex(p => p.id === 'split2') + 1);
+  const progs = userPrograms(), sess = userSessions();
+  progs.forEach((p, n) => {
+    const st = PB_COLOURS.find(c => c.k === p.colour) || PB_COLOURS[3];
+    PROG_STYLE[p.id] = { colour: st.colour, tint: st.tint, icon: p.icon || 'bar' };
+    PROGRAMS.splice(at + n, 0, { id: p.id, name: p.name, user: true, sessions: p.sessions.map(s => {
+      if (s.kind === 'view' && sess[s.view]) {
+        BUILTIN_SESSIONS[s.view] = { name: s.name, tag: p.name.toUpperCase(),
+          tagStyle: 'background:' + st.tint + ';color:' + st.colour, ex: sess[s.view].ex || [], user: true };
+        keep.add(s.view);
+      }
+      return Object.assign({}, s);
+    }) });
+  });
+  USER_VIEWS = keep;
+  // One .day-view per session, beside the shipped ones.
+  const anchor = document.getElementById('day-pull');
+  document.querySelectorAll('.day-view[data-user]').forEach(el => { if (!keep.has(el.dataset.user)) el.remove(); });
+  keep.forEach(v => {
+    if (document.getElementById('day-' + v) || !anchor) return;
+    const d = document.createElement('div');
+    d.id = 'day-' + v; d.className = 'day-view'; d.dataset.user = v;
+    anchor.parentNode.insertBefore(d, anchor.nextSibling);
+  });
+}
+
+/* ── The sheet ─────────────────────────────────────────────────────────────── */
+let PB = null;      // { step: 'start'|'edit', draft, editingId }
+const pbUid = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function pbAllSessionNames(exceptProgId) {
+  const out = new Set();
+  PROGRAMS.forEach(p => { if (p.id !== exceptProgId) p.sessions.forEach(s => out.add(s.name.toLowerCase())); });
+  (loadJSON('workout-types', []) || []).forEach(t => out.add(String(t.name).toLowerCase()));
+  return out;
+}
+function pbUniqueName(base, taken) {
+  let n = base, i = 2;
+  while (taken.has(n.toLowerCase())) n = base + ' ' + i++;
+  taken.add(n.toLowerCase());
+  return n;
+}
+/* Rows in the editor are flat and typed as text; they are turned back into the shipped
+   shape on save. "30s" in the reps box means a timed set. */
+function pbRowFromEx(e) {
+  return { key: e.key, ex: e.ex || exLinks()[e.key] || null, name: e.name, sets: e.sets || 3,
+    reps: e.mode === 'time' ? ((e.secs && (e.secs[1] || e.secs[0])) || 30) + 's' : String(e.reps || '10'),
+    rest: Array.isArray(e.rest) ? (e.rest[1] || e.rest[0]) : (Number(e.rest) || 60),
+    weight: exWeight ? (exWeight(e.key) ?? '') : '', tags: e.tags || [], steps: e.steps || [], tip: e.tip || null, sup: e.sup || undefined };
+}
+function pbRowToEx(r) {
+  const timed = /^\s*\d+\s*s(ec)?\s*$/i.test(r.reps);
+  const out = { key: r.key, name: r.name, sets: Math.max(1, parseInt(r.sets, 10) || 1),
+    mode: timed ? 'time' : 'reps', rest: [Number(r.rest) || 60, Number(r.rest) || 60],
+    tags: r.tags || [], steps: r.steps || [] };
+  if (timed) { const s = parseInt(r.reps, 10) || 30; out.secs = [s, s]; } else out.reps = String(r.reps || '10');
+  if (r.tip) out.tip = r.tip;
+  if (r.sup) out.sup = r.sup;
+  if (r.ex) out.ex = r.ex;
+  return out;
+}
+function openProgramBuilder(editId) {
+  if (editId) {
+    const p = userPrograms().find(x => x.id === editId);
+    if (!p) return;
+    const sess = userSessions();
+    PB = { step: 'edit', editingId: editId, draft: {
+      id: p.id, name: p.name, colour: p.colour || 'purple', icon: p.icon || 'bar',
+      sessions: p.sessions.map(s => ({ name: s.name, kind: s.kind, measure: s.measure, view: s.view,
+        circuit: s.circuit, rows: s.kind === 'view' ? ((sess[s.view] && sess[s.view].ex) || []).map(pbRowFromEx) : [] })) } };
+  } else {
+    PB = { step: 'start', draft: null, editingId: null };
+  }
+  document.getElementById('pb-sheet').hidden = false;
+  renderPB();
+}
+function closeProgramBuilder(force) {
+  if (!force && PB && PB.step === 'edit' && !confirm('Close without saving?')) return;
+  document.getElementById('pb-sheet').hidden = true;
+  PB = null;
+}
+function pbStartEmpty() {
+  PB.step = 'edit';
+  PB.draft = { id: pbUid(), name: '', colour: 'purple', icon: 'bar',
+    sessions: [{ name: '', kind: 'view', measure: 'min', rows: [] }] };
+  renderPB();
+}
+function pbStartCopy() {
+  const src = PROGRAMS.find(p => p.id === document.getElementById('pb-copy-src').value);
+  if (!src) return;
+  const taken = pbAllSessionNames(null);
+  PB.step = 'edit';
+  PB.draft = { id: pbUid(), name: src.name + ' (mine)', colour: 'purple', icon: (PROG_STYLE[src.id] || {}).icon || 'bar',
+    sessions: src.sessions.map(s => {
+      const name = pbUniqueName(s.name, taken);
+      if (s.kind === 'view') { const d = sessionDef(s.view); return { name, kind: 'view', measure: 'min', rows: (d ? d.ex : []).map(pbRowFromEx) }; }
+      return { name, kind: s.kind === 'circuit' ? 'circuit' : 'simple', circuit: s.circuit, measure: s.measure || 'min', rows: [] };
+    }) };
+  renderPB();
+}
+function pbSet(path, v) {          // path like "name", "s.0.name", "r.0.2.sets"
+  const d = PB.draft, p = path.split('.');
+  if (p[0] === 's') d.sessions[+p[1]][p[2]] = v;
+  else if (p[0] === 'r') d.sessions[+p[1]].rows[+p[2]][p[3]] = v;
+  else d[p[0]] = v;
+}
+function pbPick(k, v) { PB.draft[k] = v; renderPB(); }
+function pbAddSession(kind) {
+  PB.draft.sessions.push({ name: '', kind: kind, measure: kind === 'simple' ? 'km' : 'min', rows: [] });
+  renderPB();
+  setTimeout(() => { const els = document.querySelectorAll('.pb-sname'); const el = els[els.length - 1]; if (el) el.focus(); }, 30);
+}
+function pbDelSession(i) {
+  const s = PB.draft.sessions[i];
+  if ((s.rows.length || s.name) && !confirm('Remove ' + (s.name || 'this session') + '?')) return;
+  PB.draft.sessions.splice(i, 1); renderPB();
+}
+function pbMoveRow(i, j, d) {
+  const rows = PB.draft.sessions[i].rows, k = j + d;
+  if (k < 0 || k >= rows.length) return;
+  [rows[j], rows[k]] = [rows[k], rows[j]]; renderPB();
+}
+function pbDelRow(i, j) { PB.draft.sessions[i].rows.splice(j, 1); renderPB(); }
+function pbAddExercise(i) {
+  openLibrary(e => {
+    PB.draft.sessions[i].rows.push({ key: 'lib-' + e.id, ex: e.id, name: e.name, sets: 3, reps: '10', rest: 60,
+      weight: exWeight('lib-' + e.id) ?? '',
+      tags: (e.pri || []).slice(0, 2).map(m => ({ c: PB_MUSCLE_TAG(String(m).toLowerCase()), t: String(m).toUpperCase() })),
+      steps: e.steps || [] });
+    renderPB();
+  });
+}
+function renderPB() {
+  const host = document.getElementById('pb-body');
+  const title = document.getElementById('pb-title');
+  if (!host || !PB) return;
+  if (PB.step === 'start') {
+    title.textContent = 'New programme';
+    host.innerHTML = '<div class="pb-start">'
+      + '<button class="pb-choice" onclick="pbStartEmpty()"><b>Start empty</b><span>Name it, add sessions, pick exercises from the library.</span></button>'
+      + '<div class="pb-choice pb-copy"><b>Copy an existing programme</b><span>Start from one you already have and change what you like. The original is left alone.</span>'
+      +   '<div class="pb-copy-row"><select id="pb-copy-src">' + PROGRAMS.map(p => '<option value="' + esc(p.id) + '">' + esc(p.name)
+            + ' · ' + p.sessions.length + ' session' + (p.sessions.length === 1 ? '' : 's') + '</option>').join('') + '</select>'
+      +   '<button class="solid-btn" onclick="pbStartCopy()">Copy</button></div></div>'
+      + '</div>';
+    document.getElementById('pb-foot').hidden = true;
+    return;
+  }
+  const d = PB.draft;
+  title.textContent = PB.editingId ? 'Edit programme' : 'New programme';
+  document.getElementById('pb-foot').hidden = false;
+  document.getElementById('pb-del').hidden = !PB.editingId;
+  const q = s => "'" + s + "'";
+  host.innerHTML =
+      '<label class="mini-label">Name</label>'
+    + '<input class="pb-in pb-name" value="' + esc(d.name) + '" placeholder="e.g. Home dumbbell 3-day" oninput="pbSet(\'name\',this.value)" autocomplete="off" data-lpignore="true">'
+    + '<div class="pb-look"><div><label class="mini-label">Colour</label><div class="pb-swatches">'
+    +   PB_COLOURS.map(c => '<button class="pb-sw' + (d.colour === c.k ? ' on' : '') + '" style="background:' + c.colour + '" onclick="pbPick(\'colour\',' + q(c.k) + ')" aria-label="' + c.k + '"></button>').join('')
+    + '</div></div><div><label class="mini-label">Icon</label><div class="pb-icons">'
+    +   Object.keys(PROG_ICON).map(k => '<button class="pb-ic' + (d.icon === k ? ' on' : '') + '" onclick="pbPick(\'icon\',' + q(k) + ')"><svg viewBox="0 0 24 24" fill="none">' + PROG_ICON[k] + '</svg></button>').join('')
+    + '</div></div></div>'
+    + '<label class="mini-label" style="margin-top:16px;display:block">Sessions</label>'
+    + d.sessions.map((s, i) => {
+        const mins = s.kind === 'view' && s.rows.length ? sessionMinutes(s.rows.map(pbRowToEx)) : null;
+        return '<div class="pb-sess">'
+          + '<div class="pb-sess-h"><input class="pb-in pb-sname" value="' + esc(s.name) + '" placeholder="Session name — e.g. Upper body" oninput="pbSet(\'s.' + i + '.name\',this.value)" autocomplete="off" data-lpignore="true">'
+          + '<button class="meal-del" onclick="pbDelSession(' + i + ')" aria-label="Remove session">&times;</button></div>'
+          + (s.kind === 'view'
+              ? '<div class="pb-meta">' + s.rows.length + ' exercise' + (s.rows.length === 1 ? '' : 's') + (mins ? ' · ~' + mins + ' min' : '') + '</div>'
+                + (s.rows.length ? '<div class="pb-grid-h"><span>Exercise</span><span>Sets</span><span>Reps</span><span>Rest s</span><span>kg</span><span></span></div>' : '')
+                + s.rows.map((r, j) => '<div class="pb-row">'
+                    + '<span class="pb-ex">' + esc(r.name) + '</span>'
+                    + '<input class="pb-in sm" inputmode="numeric" value="' + esc(String(r.sets)) + '" oninput="pbSet(\'r.' + i + '.' + j + '.sets\',this.value)">'
+                    + '<input class="pb-in sm" value="' + esc(String(r.reps)) + '" oninput="pbSet(\'r.' + i + '.' + j + '.reps\',this.value)" title="10, 8–12, or 30s for a timed set">'
+                    + '<input class="pb-in sm" inputmode="numeric" value="' + esc(String(r.rest)) + '" oninput="pbSet(\'r.' + i + '.' + j + '.rest\',this.value)">'
+                    + '<input class="pb-in sm" inputmode="decimal" placeholder="—" value="' + esc(String(r.weight ?? '')) + '" oninput="pbSet(\'r.' + i + '.' + j + '.weight\',this.value)">'
+                    + '<span class="pb-acts"><button onclick="pbMoveRow(' + i + ',' + j + ',-1)" aria-label="Up">↑</button><button onclick="pbMoveRow(' + i + ',' + j + ',1)" aria-label="Down">↓</button><button onclick="pbDelRow(' + i + ',' + j + ')" aria-label="Remove">×</button></span>'
+                    + '</div>').join('')
+                + '<button class="ghost-btn pb-add" onclick="pbAddExercise(' + i + ')">+ Add exercise</button>'
+              : s.kind === 'circuit' ? '<div class="pb-meta">Timed circuit — runs the Full Body Circuit countdown.</div>'
+              : '<div class="pb-meta">Cardio, planned in <select onchange="pbSet(\'s.' + i + '.measure\',this.value)">'
+                + '<option value="km"' + (s.measure === 'km' ? ' selected' : '') + '>km</option><option value="min"' + (s.measure !== 'km' ? ' selected' : '') + '>minutes</option></select></div>')
+          + '</div>';
+      }).join('')
+    + '<div class="pb-addsess"><button class="ghost-btn" onclick="pbAddSession(\'view\')">+ Exercise session</button>'
+    + '<button class="ghost-btn" onclick="pbAddSession(\'simple\')">+ Cardio session</button></div>'
+    + '<div class="pb-err" id="pb-err"></div>';
+}
+function saveProgramBuilder() {
+  const d = PB.draft, err = document.getElementById('pb-err');
+  const fail = m => { if (err) { err.textContent = m; err.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return false; };
+  d.name = String(d.name || '').trim();
+  if (!d.name) return fail('Give the programme a name.');
+  if (!d.sessions.length) return fail('Add at least one session.');
+  const taken = pbAllSessionNames(d.id), here = new Set();
+  for (const s of d.sessions) {
+    s.name = String(s.name || '').trim();
+    if (!s.name) return fail('Every session needs a name.');
+    const k = s.name.toLowerCase();
+    if (taken.has(k) || here.has(k)) return fail('“' + s.name + '” is already used by another session — plans find sessions by name, so each must be different.');
+    here.add(k);
+    if (s.kind === 'view' && !s.rows.length) return fail('“' + s.name + '” has no exercises yet.');
+  }
+  const progs = userPrograms().filter(p => p.id !== d.id);
+  const sess = userSessions();
+  const old = userPrograms().find(p => p.id === d.id);
+  if (old) old.sessions.forEach(s => { if (s.view) delete sess[s.view]; });
+  const rec = { id: d.id, name: d.name, colour: d.colour, icon: d.icon, sessions: d.sessions.map((s, i) => {
+    if (s.kind === 'view') {
+      const view = s.view || (d.id + '_' + i + '_' + Math.random().toString(36).slice(2, 5));
+      sess[view] = { ex: s.rows.map(pbRowToEx) };
+      s.rows.forEach(r => {
+        if (r.ex) setExLink(r.key, r.ex);
+        // A starting weight only fills an empty one — it never overwrites what he has logged.
+        if (r.weight !== '' && r.weight != null && localStorage.getItem('workout-weight-' + r.key) == null)
+          localStorage.setItem('workout-weight-' + r.key, String(r.weight));
+      });
+      return { name: s.name, kind: 'view', measure: 'min', view };
+    }
+    return s.kind === 'circuit' ? { name: s.name, kind: 'circuit', measure: 'min', circuit: s.circuit || 'CIRCUIT' }
+                                : { name: s.name, kind: 'simple', measure: s.measure === 'km' ? 'km' : 'min' };
+  }) };
+  // An edited session keeps its view id, so weights, photos and edits stay attached.
+  saveJSON('user-sessions', sess);
+  saveUserPrograms(old ? userPrograms().map(p => p.id === d.id ? rec : p) : progs.concat([rec]));
+  saveJSON('user-builds-at', Date.now());
+  afterProgramsChanged();
+  closeProgramBuilder(true);
+  const first = rec.sessions[0];
+  if (first) { PLAN_BROWSING = true; showSession(first.name); }
+}
+function deleteProgramBuilder() {
+  const d = PB.draft;
+  if (!confirm('Delete ' + (d.name || 'this programme') + '?\n\nPast workouts and weights are kept. Days already planned with its sessions will show the name without its exercises.')) return;
+  const sess = userSessions();
+  (userPrograms().find(p => p.id === d.id) || { sessions: [] }).sessions.forEach(s => { if (s.view) delete sess[s.view]; });
+  saveJSON('user-sessions', sess);
+  saveUserPrograms(userPrograms().filter(p => p.id !== d.id));
+  saveJSON('user-builds-at', Date.now());
+  afterProgramsChanged();
+  closeProgramBuilder(true);
+}
+function afterProgramsChanged() {
+  syncUserPrograms();
+  renderAllBuiltins();
+  enableWeightPersistence();
+  paintLinkedExercises();
+  renderSessionNav();
+  renderPlan();
+}
+let PROG_Q = '';
+function progSearch(v) { PROG_Q = v; renderSessionNav(); }
 
 /* ══════════════════════════════════════════════════════
    USER PROGRAMS  —  built in the app, stored on the device
@@ -9989,6 +10353,7 @@ function collectState() {
     fitness: scanPrefixed('fitness-'),
     chat: CHAT,
     recipes: getRecipes(),
+    builds: { programs: userPrograms(), sessions: userSessions(), at: loadJSON('user-builds-at', 0) || 0 },
     weights, savedAt: Date.now()
   };
 }
@@ -10011,6 +10376,12 @@ function applyState(st) {
   Object.entries(st.weights || {}).forEach(([k, v]) => { if (v) localStorage.setItem(k, v); });
   if (Array.isArray(st.chat)) { CHAT = pruneChat(st.chat); saveChat(); renderChat(); }
   if (Array.isArray(st.recipes)) localStorage.setItem('recipes', JSON.stringify(st.recipes));
+  if (st.builds && (st.builds.at || 0) > (loadJSON('user-builds-at', 0) || 0)) {
+    localStorage.setItem('user-programs', JSON.stringify(st.builds.programs || []));
+    localStorage.setItem('user-sessions', JSON.stringify(st.builds.sessions || {}));
+    localStorage.setItem('user-builds-at', JSON.stringify(st.builds.at));
+    try { afterProgramsChanged(); } catch (_) {}
+  }
   document.querySelectorAll('.ex-weight-input').forEach((input, i) => {
     const v = localStorage.getItem('workout-weight-' + (input.dataset.wkey || i));
     if (v !== null && input.value !== v) input.value = v;
@@ -10072,6 +10443,8 @@ function mergeState(local, cloud) {
     fitness: perDay(local.fitness, cloud.fitness),
     chat: mergeChat(local.chat, cloud.chat),
     recipes: (toArr(local.recipes).length >= toArr(cloud.recipes).length ? local.recipes : cloud.recipes),
+    // His programmes travel as one piece; the copy saved most recently wins.
+    builds: ((cloud.builds && cloud.builds.at) || 0) > ((local.builds && local.builds.at) || 0) ? cloud.builds : (local.builds || cloud.builds),
     weights: Object.assign({}, cloud.weights || {}, local.weights || {}),
     savedAt: Date.now()
   };
