@@ -1289,6 +1289,12 @@
   .sum-what{flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--text-h)}
   .sum-row.rest .sum-what{font-weight:600;color:var(--text-dim)}
   .sum-amt{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--text-dim)}
+  .sum-amt-btn{border:1px solid var(--border);background:var(--bg-soft);border-radius:var(--r-pill,999px);
+    padding:2px 9px;margin-left:4px;cursor:pointer;color:var(--text-h)}
+  .sum-amt-btn.empty{color:var(--lime-dark);border-style:dashed;background:transparent}
+  .plan-fixed{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text-dim);
+    min-width:72px;text-align:center;align-self:center}
+  .sum-watch{font-size:11.5px;color:var(--text-dim);margin-top:2px}
   .sum-row.is-done .sum-what{color:var(--text-dim);text-decoration:line-through}
   .sum-empty{padding:10px 0;font-size:13px;color:var(--text-dim)}
   @media (max-width:420px){
@@ -1346,6 +1352,23 @@
     padding:11px 15px;text-align:left;font-family:inherit;font-size:13px;color:var(--text-h)}
   .meal-again-sub{font-weight:600;color:var(--text-dim);font-size:11.5px}
   .meal-plus{font-size:20px;color:var(--text-dim)}
+  .recent{border-top:1px solid var(--border)}
+  .recent-head{display:flex;align-items:center;justify-content:space-between;width:100%;border:none;
+    background:transparent;cursor:pointer;padding:11px 15px;text-align:left;font-family:inherit;font-size:13px;color:var(--text-h)}
+  .recent-chev{color:var(--text-dim);transition:transform var(--t-fast, .15s)}
+  .recent-chev.on{transform:rotate(180deg)}
+  .recent-day{border-top:1px solid var(--border)}
+  .recent-row{display:flex;align-items:center;gap:8px;padding:0 12px 0 0}
+  .recent-main{flex:1;min-width:0;border:none;background:transparent;text-align:left;cursor:pointer;
+    padding:10px 15px;font-family:inherit;font-size:13px;color:var(--text-h);line-height:1.35}
+  .recent-kcal{font-size:11.5px;font-weight:700;color:var(--text-dim);font-variant-numeric:tabular-nums}
+  .recent-add{flex:none;min-width:38px;height:34px;padding:0 10px;border-radius:var(--r-sm,9px);border:none;
+    background:var(--lime);color:var(--green-deep);font:700 17px/1 var(--body-f);cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:4px}
+  .recent-add span{font-size:11.5px}
+  .recent-add.sm{min-width:30px;height:28px;font-size:15px;background:var(--bg-soft);border:1px solid var(--border)}
+  .recent-items{padding:0 12px 8px 27px}
+  .recent-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;font-size:12.5px;color:var(--text-body)}
 
   .rep-row{display:flex;align-items:baseline;gap:12px;padding:8px 0;
     border-bottom:1px solid var(--border)}
@@ -1822,6 +1845,32 @@
   .wk-hero-sub{font-size:11.5px;color:var(--text-dim);margin-top:3px;}
   .wk-eta{font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.45;}
   .wk-row{display:flex;align-items:center;gap:10px;padding:7px 0;}
+  /* ══════════ Weekly calorie budget (Sat–Fri) ══════════ */
+  .wb-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .wb-big{font-family:var(--display);font-size:30px;font-weight:700;color:var(--text-h);
+    font-variant-numeric:tabular-nums slashed-zero;line-height:1}
+  .wb-big small{font-size:13px;font-weight:600;color:var(--text-dim);margin-left:4px}
+  .wb-today{text-align:right}
+  .wb-today b{display:block;font-family:var(--display);font-size:20px;color:var(--text-h);
+    font-variant-numeric:tabular-nums slashed-zero}
+  .wb-today span{font-size:11.5px;color:var(--text-dim)}
+  .wb-meter{height:10px;border-radius:var(--r-pill);background:var(--bg-soft);margin:12px 0 6px;
+    overflow:hidden;display:flex}
+  .wb-meter i{display:block;height:100%}
+  .wb-cap{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-dim);
+    font-variant-numeric:tabular-nums}
+  .wb-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
+  .wb-day{text-align:center;font-variant-numeric:tabular-nums}
+  .wb-col{position:relative;height:64px;background:var(--bg-soft);border-radius:7px;overflow:hidden}
+  .wb-col i{position:absolute;left:0;right:0;bottom:0;border-radius:7px 7px 0 0}
+  .wb-col .wb-line{position:absolute;left:3px;right:3px;height:0;border-top:1.5px dashed var(--text-dim)}
+  .wb-day.today .wb-col{outline:2px solid var(--green-deep);outline-offset:1px}
+  .wb-dn{font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--text-dim);margin-top:6px}
+  .wb-dv{font-size:11px;font-weight:700;color:var(--text-h);margin-top:3px}
+  .wb-dt{font-size:10px;color:var(--text-dim)}
+  .wb-note{font-size:12px;color:var(--text-body);margin-top:12px;line-height:1.45}
+  .w-proj{font-size:12.5px;color:var(--text-body);margin-top:10px;line-height:1.5}
+  .w-proj b{color:var(--text-h);font-variant-numeric:tabular-nums}
   .wk-row-name{font-size:12.5px;color:var(--text-h);width:92px;flex:none;}
   .wk-track{flex:1;height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
   .wk-fill{height:100%;border-radius:4px;}
@@ -1930,7 +1979,10 @@
   /* 16px stops mobile browsers zooming the page when the field is focused */
   /* 16px on the field itself stops mobile browsers zooming on focus; the placeholder
      is styled down separately so it does not shout. */
-  #chat-in{flex:1;min-width:0;height:44px;min-height:44px;max-height:120px;resize:none;
+  /* Grows with the text up to half the screen; only then does it scroll. No scrollbar
+     before that — the arrows were showing on a single line of text. */
+  #chat-in{flex:1;min-width:0;height:44px;min-height:44px;max-height:50vh;resize:none;overflow-y:hidden;
+    scrollbar-width:thin;
     padding:11px 12px;line-height:20px;background:var(--bg-soft);border:1.5px solid var(--border);
     border-radius:8px;font-family:var(--body-f);font-size:16px;color:var(--text-h);outline:none}
   #chat-in::placeholder{font-size:13px;color:var(--text-dim)}
@@ -1960,6 +2012,15 @@
   body.coach-open .page-rule{display:none}
   body.coach-open .page-header{padding-bottom:6px}
   .chat-full .chat-log{flex:1;max-height:none;min-height:0}
+  /* Nothing in the thread may widen the card. A long link or a wide card made the log
+     scroll sideways and left the compose bar short of the right edge. */
+  .chat-full{min-width:0;max-width:100%;box-sizing:border-box}
+  .chat-full .chat-log{overflow-x:hidden;min-width:0}
+  .chat-full .chat-log > *{max-width:100%;min-width:0}
+  .chat-full .msg{overflow-wrap:anywhere;word-break:break-word}
+  .chat-full .msg pre,.chat-full .msg table{max-width:100%;overflow-x:auto;display:block}
+  .chat-full .msg img{max-width:100%;height:auto}
+  .chat-full .chat-compose,.chat-full .compose-row{width:100%;box-sizing:border-box;align-self:stretch}
   .chat-full .chat-compose{position:sticky;bottom:0;
     padding-bottom:calc(10px + env(safe-area-inset-bottom))}
   #page-coach{padding-bottom:16px}
@@ -2527,6 +2588,18 @@
   .k-rec-det li { margin-bottom: 4px; }
   .k-rec-note { padding: 11px 14px; font: 400 12.5px/1.55 var(--body-f); color: var(--text-body);
     background: var(--green-soft); border-bottom: 1px solid var(--border); }
+  .k-makes { display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+    border-bottom: 1px solid var(--border); font: 500 12.5px/1.3 var(--body-f); color: var(--text-dim); }
+  .k-makes b { font: 700 16px/1 var(--display); color: var(--text-h); min-width: 18px; text-align: center;
+    font-variant-numeric: tabular-nums; }
+  .k-ing { list-style: none; padding-left: 14px !important; }
+  .k-ing li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 3px 0; }
+  .k-ing-t { flex: 1; min-width: 0; }
+  .k-swap { flex: none; width: 30px; height: 28px; border-radius: var(--r-sm); border: 1px solid var(--border);
+    background: var(--bg-card); color: var(--text-body); cursor: pointer; font-size: 14px; line-height: 1; }
+  .k-swap-row { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0 6px; }
+  .chat-top .k-head-btn { margin-right: 6px; }
+  #page-coach .k-saved { max-height: 40vh; overflow-y: auto; padding: 0 16px; }
   .k-rec-log { display: flex; align-items: center; gap: 10px; padding: 12px 14px 4px; flex-wrap: wrap; }
   .k-serves { display: flex; align-items: center; gap: 7px; }
   .k-serve-n { min-width: 26px; text-align: center; font: 700 16px/1 var(--display);
@@ -2898,19 +2971,6 @@
   <div class="section-label">Meals</div>
   <div id="meal-slots"></div>
 
-  <!-- A second conversation, for food rather than for the day. Its own thread and its
-       own prompt, so a question about a smoothie cannot put calories in Tuesday. -->
-  <button class="kitchen-open-btn" onclick="openKitchen()">
-    <span class="kitchen-icon">
-      <svg viewBox="0 0 24 24" fill="none" width="17" height="17"><path d="M5 3v8a3 3 0 006 0V3M8 11v10M15 3c-1.5 2-2 4-2 6s.5 3 2 3v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </span>
-    <span class="kitchen-open-txt">
-      <b>Kitchen</b>
-      <span>Recipes, swaps, calories — ask, then add what you made</span>
-    </span>
-    <svg viewBox="0 0 14 8" fill="none" width="13" class="kitchen-chev"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </button>
-
   <details class="food-card food-more acc" id="day-report-acc">
     <summary class="acc-sum"><span>Day report</span>
       <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -3189,10 +3249,15 @@
         stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-4-.9L3 21l1.9-4.5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg></div>
       <div style="flex:1;min-width:0;">
         <div class="tracker-title">Coach</div>
-        <div class="tracker-sub">Meals, weight, training, questions</div>
+        <div class="tracker-sub">Meals, weight, training, recipes</div>
       </div>
+      <button class="k-head-btn" id="k-saved-btn" onclick="toggleKitchenRecipes()" title="Saved recipes">
+        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 4.5A1.5 1.5 0 016.5 3h11A1.5 1.5 0 0119 4.5V21l-7-4-7 4V4.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span>Recipes</span>
+      </button>
       <span class="connect-status" id="chat-status">OFFLINE</span>
     </div>
+    <div class="k-saved" id="k-saved" hidden></div>
     <div class="chat-log" id="chat-log"></div>
     <div class="chat-histbar" id="chat-histbar"></div>
     <div class="chat-compose">
@@ -3225,54 +3290,7 @@
 
 </div><!-- /page-coach -->
 
-<div id="page-kitchen" class="page-section">
 
-  <div class="chat-card chat-full">
-    <div class="chat-top">
-      <button class="ghost-btn wk-arrow k-back" onclick="showPage('food')" aria-label="Back to Food">&lsaquo;</button>
-      <div class="chat-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="1.9"
-        stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v8a3 3 0 006 0V3M8 11v10M15 3c-1.5 2-2 4-2 6s.5 3 2 3v9"/></svg></div>
-      <div style="flex:1;min-width:0;">
-        <div class="tracker-title">Kitchen</div>
-        <div class="tracker-sub">Recipes and swaps</div>
-      </div>
-      <button class="k-head-btn" id="k-saved-btn" onclick="toggleKitchenRecipes()">
-        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M5 4.5A1.5 1.5 0 016.5 3h11A1.5 1.5 0 0119 4.5V21l-7-4-7 4V4.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        <span>Recipes</span>
-      </button>
-      <button class="k-head-btn k-head-icon" onclick="clearKitchen()" aria-label="Clear the conversation" title="Clear">
-        <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-    <div class="k-saved" id="k-saved" hidden></div>
-    <div class="k-log" id="k-log"></div>
-    <div class="k-compose">
-      <div class="k-scan-note" id="k-scan-note" hidden></div>
-      <div class="k-tray" id="k-tray" hidden></div>
-      <div class="k-row">
-        <label class="cam-btn" for="k-cam" title="Take a photo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        </label>
-        <input id="k-cam" type="file" accept="image/*" capture="environment" class="vis-hidden" onchange="addKShot(this)">
-        <label class="cam-btn" for="k-lib" title="Choose from photos">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5L5 21"/></svg>
-        </label>
-        <input id="k-lib" type="file" accept="image/*" multiple class="vis-hidden" onchange="addKShot(this)">
-        <button class="cam-btn" onclick="kitchenScan()" title="Scan a barcode" aria-label="Scan a barcode">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-            <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg>
-        </button>
-        <textarea id="k-in" rows="1" placeholder="Ask or describe…" oninput="growKitchenInput(this)"></textarea>
-        <button class="send-btn" onclick="sendKitchen()" title="Send">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /page-kitchen -->
 
 <div id="page-review" class="page-section">
 
@@ -3322,6 +3340,9 @@
     <button class="dnav" id="date-next" onclick="shiftViewDate(1)"><svg viewBox="0 0 24 24" fill="none"
       stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
   </div>
+
+  <div class="section-label">Calories this week</div>
+  <div class="tracker-card wb-card" id="wb-card"></div>
 
   <div class="section-label">Weight</div>
   <div class="tracker-card">
@@ -4739,16 +4760,17 @@ function renderKChat() {
    stepper decides what actually gets logged, and the figures underneath it move as he
    changes it — a card that said 380 cal and logged 760 would be a trap. */
 function recipeCardHTML(r, i) {
-  const n = r._serves || 1;
+  const n = r._serves || 1;                       // serves eaten (what gets logged)
+  const makes = r._makes || r.serves || 1;        // serves the batch is scaled to
+  const factor = makes / (r.serves || 1);
   const p = r.perServe || {};
   const saved = kitchenRecipes().some(x => x.name.toLowerCase() === String(r.name || '').toLowerCase());
   const line = (k, suffix) => p[k] != null ? Math.round(p[k] * n * 10) / 10 + suffix : null;
+  const open = r._open || {};
   return '<div class="k-recipe" id="krec-' + i + '">'
     + '<div class="k-rec-head">'
     +   '<div class="k-rec-name">' + esc(r.name || 'Recipe') + '</div>'
-    +   '<div class="k-rec-sub">Makes ' + esc(String(r.serves || 1)) + ' serve'
-    +     ((r.serves || 1) == 1 ? '' : 's')
-    +     (r.method === 'thermomix' ? ' · Thermomix' : '') + '</div>'
+    +   '<div class="k-rec-sub">' + (r.method === 'thermomix' ? 'Thermomix · ' : '') + 'per serve below</div>'
     + '</div>'
     + '<div class="k-macros">'
     +   ['kcal|cal', 'protein|g P', 'fat|g F', 'carbs|g C'].map(spec => {
@@ -4757,11 +4779,23 @@ function recipeCardHTML(r, i) {
             + esc(lab.trim()) + ' / serve</span></div>';
         }).join('')
     + '</div>'
+    + '<div class="k-makes"><span>Makes</span>'
+    +   '<button class="step-btn" onclick="bumpRecipeMakes(' + i + ',-1)" aria-label="Fewer serves">−</button>'
+    +   '<b>' + makes + '</b>'
+    +   '<button class="step-btn" onclick="bumpRecipeMakes(' + i + ',1)" aria-label="More serves">+</button>'
+    +   '<span>serve' + (makes == 1 ? '' : 's') + (factor !== 1 ? ' · amounts scaled' : '') + '</span>'
+    + '</div>'
     + (r.ingredients && r.ingredients.length
-        ? '<details class="k-rec-det"><summary>Ingredients</summary><ul>'
-          + r.ingredients.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></details>' : '')
+        ? '<details class="k-rec-det"' + (open.ing !== false ? ' open' : '') + ' ontoggle="recipeOpen(' + i + ',\'ing\',this.open)"><summary>Ingredients</summary><ul class="k-ing">'
+          + r.ingredients.map((x, j) => '<li><span class="k-ing-t">' + esc(scaleIngredient(x, factor)) + '</span>'
+            + '<button class="k-swap" onclick="toggleSwap(' + i + ',' + j + ')" aria-label="Swap or find alternatives">⇄</button>'
+            + (r._swap === j ? '<div class="k-swap-row">'
+                + '<button class="qchip" onclick="askAlternatives(' + i + ',' + j + ')">Suggest alternatives</button>'
+                + '<button class="qchip" onclick="swapFor(' + i + ',' + j + ')">Swap for…</button>'
+                + '<button class="qchip" onclick="leaveOut(' + i + ',' + j + ')">Leave it out</button></div>' : '')
+            + '</li>').join('') + '</ul></details>' : '')
     + (r.steps && r.steps.length
-        ? '<details class="k-rec-det"><summary>Method</summary><ol>'
+        ? '<details class="k-rec-det"' + (open.steps ? ' open' : '') + ' ontoggle="recipeOpen(' + i + ',\'steps\',this.open)"><summary>Method</summary><ol>'
           + r.steps.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol></details>' : '')
     + (r.notes ? '<div class="k-rec-note">' + esc(r.notes) + '</div>' : '')
     + '<div class="k-rec-log">'
@@ -4785,19 +4819,90 @@ function recipeCardHTML(r, i) {
     +     (saved ? 'Saved ✓' : 'Save recipe') + '</button>'
     + '</div></div>';
 }
+/* Scale the amount at the front of an ingredient line: "300ml skim milk", "1½ cups oats",
+   "1/2 tsp salt", "2 eggs". Only the leading number moves — "1 medium apple" doubled is
+   "2 medium apple", which reads fine and is never wrong. A line with no leading number
+   ("salt to taste") is left alone. */
+function scaleIngredient(text, f) {
+  if (!f || f === 1) return text;
+  const FR = { '¼': .25, '½': .5, '¾': .75, '⅓': 1 / 3, '⅔': 2 / 3, '⅛': .125 };
+  // 1 1/2 · 1/2 · 1½ · 1.5 · ½ — a space is only consumed when a fraction follows it.
+  const m = /^\s*(?:(\d+)\s+(\d+)\/(\d+)|(\d+)\/(\d+)|(\d+(?:\.\d+)?)(?:\s*([¼½¾⅓⅔⅛]))?|([¼½¾⅓⅔⅛]))/.exec(text);
+  if (!m) return text;
+  let v;
+  if (m[1]) v = +m[1] + m[2] / m[3];
+  else if (m[4]) v = m[4] / m[5];
+  else if (m[6]) v = +m[6] + (m[7] ? FR[m[7]] : 0);
+  else v = FR[m[8]];
+  if (!v) return text;
+  return fmtAmount(v * f) + text.slice(m[0].length);
+}
+function fmtAmount(v) {
+  if (v >= 20) return String(Math.round(v / 5) * 5);       // 300ml × 1.5 = 450, not 450.0
+  if (v >= 5) return String(Math.round(v));
+  const whole = Math.floor(v), frac = v - whole;
+  const near = [[0, ''], [.25, '¼'], [1 / 3, '⅓'], [.5, '½'], [2 / 3, '⅔'], [.75, '¾'], [1, '']]
+    .reduce((a, b) => Math.abs(b[0] - frac) < Math.abs(a[0] - frac) ? b : a);
+  const w = near[0] === 1 ? whole + 1 : whole;
+  return (w ? String(w) : '') + near[1] || '0';
+}
 function defaultSlot() {
   const h = new Date().getHours();
   return h < 10.5 ? 'breakfast' : h < 15 ? 'lunch' : h < 21 ? 'dinner' : 'snacks';
 }
+function recipeMsg(i) { const m = CHAT[i]; return m && m.recipe ? m : null; }
+function recipeOpen(i, k, v) { const m = recipeMsg(i); if (!m) return; m.recipe._open = Object.assign({}, m.recipe._open, { [k]: v }); saveChat(); }
 function bumpRecipeServes(i, d) {
-  const m = KCHAT[i];
-  if (!m || !m.recipe) return;
+  const m = recipeMsg(i); if (!m) return;
   m.recipe._serves = Math.max(0.5, Math.round(((m.recipe._serves || 1) + d * 0.5) * 2) / 2);
-  saveKChat(); renderKChat();
+  saveChat(); rerenderKeepScroll();
+}
+function bumpRecipeMakes(i, d) {
+  const m = recipeMsg(i); if (!m) return;
+  m.recipe._makes = Math.max(1, (m.recipe._makes || m.recipe.serves || 1) + d);
+  saveChat(); rerenderKeepScroll();
+}
+function toggleSwap(i, j) {
+  const m = recipeMsg(i); if (!m) return;
+  m.recipe._swap = m.recipe._swap === j ? null : j;
+  rerenderKeepScroll();
+}
+/* Re-rendering the thread would otherwise jump to the bottom under his thumb. */
+function rerenderKeepScroll() {
+  const box = document.getElementById('chat-log');
+  const y = box ? box.scrollTop : 0;
+  renderChat();
+  if (box) box.scrollTop = y;
+}
+function ingName(i, j) {
+  const r = recipeMsg(i).recipe;
+  return scaleIngredient(r.ingredients[j], (r._makes || r.serves || 1) / (r.serves || 1));
+}
+function askAlternatives(i, j) {
+  const m = recipeMsg(i); if (!m) return;
+  m.recipe._swap = null;
+  const ta = document.getElementById('chat-in');
+  ta.value = 'What could I use instead of the ' + ingName(i, j) + ' in the ' + m.recipe.name
+    + '? Give me a few options and what each changes, then update the recipe with your pick.';
+  sendChat();
+}
+function leaveOut(i, j) {
+  const m = recipeMsg(i); if (!m) return;
+  m.recipe._swap = null;
+  const ta = document.getElementById('chat-in');
+  ta.value = 'Leave the ' + ingName(i, j) + ' out of the ' + m.recipe.name + ' and update the recipe.';
+  sendChat();
+}
+function swapFor(i, j) {
+  const m = recipeMsg(i); if (!m) return;
+  m.recipe._swap = null; rerenderKeepScroll();
+  const ta = document.getElementById('chat-in');
+  ta.value = 'In the ' + m.recipe.name + ', swap the ' + ingName(i, j) + ' for ';
+  ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); if (window.growChatIn) growChatIn();
+  if (window.chatComposeMode) chatComposeMode();
 }
 function logRecipeFromChat(i) {
-  const m = KCHAT[i];
-  if (!m || !m.recipe) return;
+  const m = recipeMsg(i); if (!m) return;
   const r = m.recipe, n = r._serves || 1, p = r.perServe || {};
   const slot = (document.getElementById('kslot-' + i) || {}).value || defaultSlot();
   const row = { slot: slot, name: String(r.name || 'Recipe').slice(0, 80),
@@ -4807,22 +4912,36 @@ function logRecipeFromChat(i) {
   });
   addMeal(foodDate(), row);
   renderFood(); refreshAllViews();
-  KCHAT.push({ role: 'assistant', system: true,
-    content: 'Added ' + row.name + ' · ' + row.qty + ' to ' + slotName(slot)
+  CHAT.push({ role: 'assistant', day: todayKey(), system: true,
+    content: '✓ Added ' + row.name + ' · ' + row.qty + ' to ' + slotName(slot)
              + (row.kcal != null ? ' · ' + Math.round(row.kcal) + ' cal' : '') });
-  saveKChat(); renderKChat();
+  saveChat(); renderChat();
 }
 function saveKitchenRecipe(i) {
-  const m = KCHAT[i];
-  if (!m || !m.recipe) return;
+  const m = recipeMsg(i); if (!m) return;
   const list = kitchenRecipes();
   const r = Object.assign({}, m.recipe, { at: Date.now() });
-  delete r._serves;
+  ['_serves', '_makes', '_swap', '_open'].forEach(k => delete r[k]);
   const k = String(r.name || '').trim().toLowerCase();
   const at = list.findIndex(x => String(x.name).trim().toLowerCase() === k);
   if (at >= 0) list[at] = r; else list.push(r);
   saveKitchenRecipes(list);
-  renderKChat(); renderKitchenRecipes();
+  rerenderKeepScroll(); renderKitchenRecipes();
+}
+/* What the API sees of the thread. A recipe card lives beside the message, not in its
+   text, so without this the coach could not see the recipe he is asking to change. */
+function chatForApi(list) {
+  return list.map(m => {
+    let c = m.content;
+    if (m.recipe) {
+      const r = Object.assign({}, m.recipe);
+      ['_serves', '_swap', '_open'].forEach(k => delete r[k]);
+      if (r._makes && r._makes !== r.serves) { r.scaledTo = r._makes; }
+      delete r._makes;
+      c += '\n\n[Recipe card: ' + JSON.stringify(r) + ']';
+    }
+    return { role: m.role, content: c };
+  });
 }
 
 /* ── Saved recipes ──────────────────────────────────────────────────────────── */
@@ -4858,12 +4977,12 @@ function sortedKitchenRecipes() { return kitchenRecipes().slice().sort((a, b) =>
 function reopenRecipe(i) {
   const r = sortedKitchenRecipes()[i];
   if (!r) return;
-  KCHAT.push({ role: 'assistant', content: r.name + ' — from your saved recipes.',
+  CHAT.push({ role: 'assistant', day: todayKey(), content: r.name + ' — from your saved recipes.',
                recipe: Object.assign({}, r, { _serves: 1 }) });
-  saveKChat();
+  saveChat();
   document.getElementById('k-saved').hidden = true;
   document.getElementById('k-saved-btn').classList.remove('on');
-  renderKChat();
+  renderChat();
 }
 function deleteKitchenRecipe(i) {
   const r = sortedKitchenRecipes()[i];
@@ -4903,7 +5022,7 @@ async function barcodeIntoBox(code, boxId, noteId) {
       + ' (' + basis + ': ' + bits + ')'
       + (p.serving ? ' \u00b7 serving ' + p.serving : '') + ' \u2014 ';
     ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + line;
-    if (boxId === 'k-in') growKitchenInput(ta); else { sizeChat(); if (window.chatComposeMode) chatComposeMode(); }
+    if (boxId === 'k-in') growKitchenInput(ta); else { if (window.chatComposeMode) chatComposeMode(); if (window.growChatIn) growChatIn(); sizeChat(); }
     ta.focus();
     ta.setSelectionRange(ta.value.length, ta.value.length);
     if (note) note.hidden = true;
@@ -5171,9 +5290,9 @@ const PROGRAMS = [
     week: [
       { type: 'Walk' },                      // Sat — walk or run, walk by default
       { type: 'Run' },                       // Sun
-      { type: 'Push & Abs', amount: 45 },    // Mon
+      { type: 'Push & Abs' },                // Mon
       { type: 'Run' },                       // Tue
-      { type: 'Pull & Legs', amount: 45 },   // Wed
+      { type: 'Pull & Legs' },               // Wed
       null,                                  // Thu — rest
       { type: 'Run' }                        // Fri
     ]},
@@ -5182,7 +5301,7 @@ const PROGRAMS = [
   ]},
   { id: 'running', name: 'Running & Walking', sessions: [
     { name: 'Run',  measure: 'km', kind: 'simple' },
-    { name: 'Walk', measure: 'km', kind: 'simple' }
+    { name: 'Walk', measure: 'min', kind: 'simple' }   // walks are planned by time
   ]},
   { id: 'other', name: 'Other activity', sessions: [
     { name: 'Swim',  measure: 'min', kind: 'simple' },
@@ -5286,6 +5405,33 @@ function withPlace(fn) {
     if (el && !el.disabled) el.focus({ preventScroll: true });
   }
 }
+/* What a planned day commits to. A session with an exercise list states its own length,
+   worked out from its sets and rests (the same ~min the session page shows), so any
+   amount stored against it is ignored — older weeks carry a default 45 that was never
+   real. A run, walk or ride shows the distance or time he set, or null if he has not. */
+function planCommitment(type, amount) {
+  const s = sessionByName(type);
+  if (s && s.kind === 'view') { const d = sessionDef(s.view); return d ? { text: '~' + sessionMinutes(d.ex) + ' min', fixed: true } : null; }
+  if (s && s.kind === 'circuit') return { text: '~' + Math.round(circuitTotalSecs() / 60) + ' min', fixed: true };
+  const unit = measureFor(type) === 'km' ? 'km' : 'min';
+  return amount != null && amount !== '' ? { text: amount + ' ' + unit, unit } : { text: null, unit };
+}
+function watchLine(w) {
+  if (!w) return '';
+  const bits = [];
+  if (w.km != null) bits.push(w.km.toFixed(2) + ' km');
+  if (w.min != null) bits.push(Math.round(w.min) + ' min');
+  if (w.kcal != null) bits.push(Math.round(w.kcal) + ' cal');
+  return '⌚ ' + bits.join(' · ');
+}
+function promptPlanAmount(date) {
+  const plan = getPlan(planWeekStart());
+  const row = plan.days[date]; if (!row) return;
+  const unit = measureFor(row.type) === 'km' ? 'kilometres' : 'minutes';
+  const v = prompt(row.type + ' — how many ' + unit + '?', row.amount != null ? row.amount : '');
+  if (v === null) return;
+  setPlanAmount(date, v); renderPlan({ keepPlace: true });
+}
 function setPlanAmount(date, value) {
   const start = planWeekStart();
   const plan = getPlan(start);
@@ -5369,15 +5515,16 @@ function renderPlan(o) {
         + '<div class="plan-day">' + dayName + '</div>'
         + '<div class="plan-pick">'
         +   '<select onchange="setPlanType(\'' + date + '\', this.value)">' + opts + '</select>'
-        +   '<input type="number" min="0" step="' + (unit === 'km' ? '0.5' : '5') + '" '
+        +   ((row.type && planCommitment(row.type).fixed) ? '<span class="plan-fixed">' + esc(planCommitment(row.type).text) + '</span>' :
+            '<input type="number" min="0" step="' + (unit === 'km' ? '0.5' : '5') + '" '
         +     'inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" '
         // Chrome offers saved logins on any unnamed text-ish field inside a form-like
         // block. These three attributes are what stop the password bubble appearing
         // over the keyboard every time a distance is typed.
         +     'data-lpignore="true" data-form-type="other" name="amt-' + date + '" '
-        +     'placeholder="' + (plan.committed && amount === '' ? '' : unit) + '" value="' + amount + '" '
+        +     'placeholder="' + unit + '" value="' + amount + '" '
         +     'onchange="setPlanAmount(\'' + date + '\', this.value)"'
-        +     (row.type ? '' : ' disabled') + '>'
+        +     (row.type ? '' : ' disabled') + '>')
         + '</div>'
         + '<button class="plan-tick' + (row.done ? ' done' : '') + '"'
         +   (plan.committed && row.type ? '' : ' hidden')
@@ -5435,11 +5582,15 @@ function renderPlan(o) {
       const r = plan.days[date] || {};
       if (!r.type) { restRun.push(date); return; }
       flushRest();
-      const unit = measureFor(r.type) === 'km' ? 'km' : 'min';
+      const cm = planCommitment(r.type, r.amount);
+      const amt = !cm ? ''
+        : cm.fixed ? ' <span class="sum-amt">' + esc(cm.text) + '</span>'
+        : cm.text ? ' <button class="sum-amt sum-amt-btn" onclick="promptPlanAmount(\'' + date + '\')">' + esc(cm.text) + '</button>'
+        : ' <button class="sum-amt sum-amt-btn empty" onclick="promptPlanAmount(\'' + date + '\')">+ ' + cm.unit + '</button>';
       out.push('<div class="sum-row' + (date === today ? ' is-today' : '') + (r.done ? ' is-done' : '') + '">'
         + '<div class="sum-day">' + short(date) + '</div>'
-        + '<div class="sum-what">' + esc(r.type)
-        + (r.amount != null ? ' <span class="sum-amt">' + esc(String(r.amount)) + ' ' + unit + '</span>' : '')
+        + '<div class="sum-what">' + esc(r.type) + amt
+        + (r.watch ? '<div class="sum-watch">' + watchLine(r.watch) + '</div>' : '')
         + '</div>'
         + (plan.committed ? '<button class="plan-tick' + (r.done ? ' done' : '') + '" onclick="togglePlanDone(\'' + date + '\')" aria-label="Mark done">'
             + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"/></svg></button>' : '')
@@ -5554,7 +5705,8 @@ function applyFill() {
     const se = prog.sessions[i % prog.sessions.length];
     const row = plan.days[d] || {};
     row.type = se.name;
-    if (row.amount == null) row.amount = se.measure === 'km' ? null : 45;
+    // No default amount. A strength session's length comes from its exercises, and a
+    // run or walk is his number to set — a made-up 45 min was showing on every split day.
     plan.days[d] = row;
   });
   savePlan(start, plan);
@@ -6325,6 +6477,7 @@ function initTrackers() {
   initFitnessStats();
   initResultsLog();
   migrateTargets2026();
+  migrateGoal2027();
   migrateImageKeys();
   initTimer();
   renderPlan();          // also paints today's session and the browse strip
@@ -6373,7 +6526,12 @@ const DEFAULT_TARGETS = {
   active: 30,
   kcal: 2400,
   sleep: 8,
-  weight: 90,          // the stated goal; 80 was a leftover default
+  weight: 85,          // 22 Nov 2026: 85kg by 27 April 2027 (was 90)
+  goalDate: '2027-04-27',
+  // The week is a budget, not seven separate limits: 1,800 Mon–Fri, 2,200 Sat–Sun,
+  // 13,400 in all, running Saturday to Friday.
+  kcalWeekday: 1800,
+  kcalWeekend: 2200,
   afd: 4,
   workouts: 5
 };
@@ -6390,6 +6548,16 @@ function migrateTargets2026() {
   Object.keys(want).forEach(k => { t[k] = want[k]; });
   saveJSON('targets', t);
   saveJSON('targets-macros-set', Date.now());
+}
+
+/* The new goal and the weekly budget, written once over whatever is saved — same
+   pattern as above, so a later edit in Settings still stands. */
+function migrateGoal2027() {
+  if (loadJSON('targets-goal-2027', null)) return;
+  const t = Object.assign({}, loadJSON('targets', {}) || {});
+  Object.assign(t, { weight: 85, goalDate: '2027-04-27', kcalWeekday: 1800, kcalWeekend: 2200 });
+  saveJSON('targets', t);
+  saveJSON('targets-goal-2027', Date.now());
 }
 
 function getTargets() {
@@ -7376,14 +7544,7 @@ function renderMealSlots(date) {
       +   ' aria-label="Remove">&times;</button>'
       + '</div>').join('');
 
-    const prev = rows.length ? null : lastSlotEntries(date, slot.key);
-    const again = prev
-      ? '<button class="meal-again" onclick="repeatSlot(\'' + date + '\',\'' + slot.key + '\')">'
-        + '<span><b>Log ' + new Date(prev.date + 'T00:00:00').toLocaleDateString('en-AU',{weekday:'long'})
-        + '&rsquo;s again</b><br><span class="meal-again-sub">'
-        + esc(prev.rows[0].name) + (prev.rows.length > 1 ? ' and ' + (prev.rows.length - 1) + ' more' : '')
-        + '</span></span><span class="meal-plus">+</span></button>'
-      : '';
+    const again = recentSlotHTML(date, slot);
 
     return '<div class="meal-card">'
       + '<div class="meal-head">'
@@ -8111,6 +8272,75 @@ function removeMeal(date, id) {
     saveFitnessDataForDate(date, e);
   }
 }
+/* ── Recent meals ───────────────────────────────────────────────────────────
+   The last seven days of a slot, not just the most recent one. Each day can go in with
+   one tap, or be opened to add single items. Days with exactly the same items collapse
+   into the newest, so a breakfast eaten five days running is one row, not five. */
+const RECENT_OPEN = {};          // slot -> list open
+const RECENT_DAY_OPEN = {};      // slot|date -> items open
+function recentSlotDays(date, slot) {
+  const out = [], seen = new Set();
+  for (let back = 1; back <= 7; back++) {
+    const d = new Date(date + 'T00:00:00'); d.setDate(d.getDate() - back);
+    const key = isoOf(d);
+    const rows = getMeals(key).filter(m => m.slot === slot);
+    if (!rows.length) continue;
+    const sig = rows.map(r => String(r.name).trim().toLowerCase()).sort().join('|');
+    if (seen.has(sig)) continue;
+    seen.add(sig);
+    out.push({ date: key, back, rows, kcal: rows.reduce((a, r) => a + (Number(r.kcal) || 0), 0) });
+  }
+  return out;
+}
+function recentDayLabel(iso, back) {
+  if (back === 1) return 'Yesterday';
+  return new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' });
+}
+function recentSlotHTML(date, slot) {
+  const days = recentSlotDays(date, slot.key);
+  if (!days.length) return '';
+  const q = s => "'" + s + "'";
+  const open = !!RECENT_OPEN[slot.key];
+  let html = '<div class="recent">'
+    + '<button class="recent-head" onclick="toggleRecent(' + q(slot.key) + ')">'
+    +   '<span><b>Recent ' + slot.name.toLowerCase() + '</b> <span class="meal-again-sub">· last 7 days</span></span>'
+    +   '<svg class="recent-chev' + (open ? ' on' : '') + '" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+    + '</button>';
+  if (open) {
+    html += days.map(dy => {
+      const k = slot.key + '|' + dy.date;
+      const dOpen = !!RECENT_DAY_OPEN[k];
+      return '<div class="recent-day">'
+        + '<div class="recent-row">'
+        +   '<button class="recent-main" onclick="toggleRecentDay(' + q(k) + ')">'
+        +     '<b>' + esc(recentDayLabel(dy.date, dy.back)) + '</b> <span class="recent-kcal">' + nf(Math.round(dy.kcal)) + ' cal</span><br>'
+        +     '<span class="meal-again-sub">' + esc(dy.rows.map(r => r.name).join(', ')) + '</span>'
+        +   '</button>'
+        +   '<button class="recent-add" onclick="repeatSlotFrom(' + q(date) + ',' + q(slot.key) + ',' + q(dy.date) + ')" aria-label="Add all">+'
+        +   (dy.rows.length > 1 ? '<span>all</span>' : '') + '</button>'
+        + '</div>'
+        + (dOpen && dy.rows.length > 1 ? '<div class="recent-items">' + dy.rows.map(r =>
+            '<div class="recent-item"><span>' + esc(r.name) + (r.qty ? ' <span class="meal-again-sub">' + esc(r.qty) + '</span>' : '')
+            + ' <span class="recent-kcal">' + nf(Math.round(r.kcal || 0)) + '</span></span>'
+            + '<button class="recent-add sm" onclick="repeatSlotFrom(' + q(date) + ',' + q(slot.key) + ',' + q(dy.date) + ',' + q(r.id) + ')" aria-label="Add">+</button></div>'
+          ).join('') + '</div>' : '')
+        + '</div>';
+    }).join('');
+  }
+  return html + '</div>';
+}
+function toggleRecent(slot) { RECENT_OPEN[slot] = !RECENT_OPEN[slot]; renderMealSlots(foodDate()); }
+function toggleRecentDay(k) { RECENT_DAY_OPEN[k] = !RECENT_DAY_OPEN[k]; renderMealSlots(foodDate()); }
+function repeatSlotFrom(date, slot, fromDate, itemId) {
+  const rows = getMeals(fromDate).filter(m => m.slot === slot && (!itemId || m.id === itemId));
+  rows.forEach(r => {
+    const copy = Object.assign({}, r); delete copy.id; copy.at = Date.now(); copy.slot = slot;
+    addMeal(date, copy);
+  });
+  renderFood(); refreshAllViews();
+  if (typeof toast === 'function') toast('Added ' + (rows.length === 1 ? rows[0].name : rows.length + ' items') + ' to ' + slotName(slot));
+  return rows.length;
+}
 /* Yesterday's version of a slot, for "log it again". */
 function lastSlotEntries(date, slot) {
   for (let back = 1; back <= 7; back++) {
@@ -8177,7 +8407,98 @@ function fillFitnessLogForm() {
   });
 }
 
+/* ══════════ Weekly calorie budget ══════════
+   Saturday to Friday, 1,800 a weekday and 2,200 a weekend day — 13,400 for the week.
+   The week is the budget: whatever is left is spread over the days still to come in
+   proportion to their own targets, so a lighter weekend buys more per day Mon–Fri and
+   a heavy one takes it back. A past day with nothing logged counts at its target,
+   because treating it as zero would hand out calories that were probably eaten. */
+function weekBudgetDays(dateIso) {
+  const t = getTargets();
+  const wd = t.kcalWeekday || 1800, we = t.kcalWeekend || 2200;
+  const d = new Date(dateIso + 'T00:00:00');
+  d.setDate(d.getDate() - ((d.getDay() + 1) % 7));           // back to Saturday
+  const today = todayKey();
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const x = new Date(d); x.setDate(d.getDate() + i);
+    const iso = isoOf(x), dow = x.getDay();
+    const base = (dow === 0 || dow === 6) ? we : wd;
+    const v = getFitnessData(iso).kcalIn;
+    out.push({ iso, dow, base, eaten: (v == null || v === '') ? null : Number(v),
+               past: iso < today, today: iso === today });
+  }
+  return out;
+}
+function weekBudget(dateIso) {
+  const days = weekBudgetDays(dateIso);
+  const budget = days.reduce((a, d) => a + d.base, 0);
+  // Spent: past days (unlogged at target) plus whatever is logged today.
+  const spentPast = days.filter(d => d.past).reduce((a, d) => a + (d.eaten != null ? d.eaten : d.base), 0);
+  const rest = days.filter(d => !d.past);                     // today and later
+  const restBase = rest.reduce((a, d) => a + d.base, 0);
+  const left = budget - spentPast;
+  const scale = restBase ? left / restBase : 0;
+  days.forEach(d => { d.allow = d.past ? d.base : Math.max(0, Math.round(d.base * scale)); });
+  const eatenAll = days.reduce((a, d) => a + (d.eaten || 0), 0);
+  const banked = days.filter(d => d.past).reduce((a, d) => a + (d.base - (d.eaten != null ? d.eaten : d.base)), 0);
+  return { days, budget, eatenAll, spentPast, left, banked, unlogged: days.filter(d => d.past && d.eaten == null).length };
+}
+function renderWeekBudget() {
+  const el = document.getElementById('wb-card');
+  if (!el) return;
+  const b = weekBudget(viewDate());
+  const fmt = n => Math.round(n).toLocaleString('en-AU');
+  const isThisWeek = b.days.some(d => d.today);
+  const td = b.days.find(d => d.today);
+  const spent = b.spentPast + (td && td.eaten ? td.eaten : 0);
+  const remaining = b.budget - spent;
+  const pct = v => Math.max(0, Math.min(100, v / b.budget * 100));
+  const over = remaining < 0;
+  const maxCol = Math.max(...b.days.map(d => Math.max(d.allow, d.eaten || 0, d.base))) * 1.08;
+  const names = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const fmtD = iso => new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  const cols = b.days.map(d => {
+    const h = d.eaten != null ? (d.eaten / maxCol * 100) : 0;
+    const lineAt = (d.past ? d.base : d.allow) / maxCol * 100;
+    const overDay = d.eaten != null && d.eaten > (d.past ? d.base : d.allow);
+    const colour = overDay ? 'var(--c-kcalIn)' : 'var(--c-protein)';
+    return '<div class="wb-day' + (d.today ? ' today' : '') + '">'
+      + '<div class="wb-col">'
+      +   (d.eaten != null ? '<i style="height:' + h.toFixed(1) + '%;background:' + colour + ';opacity:' + (d.today ? .85 : 1) + '"></i>' : '')
+      +   '<span class="wb-line" style="bottom:' + lineAt.toFixed(1) + '%"></span>'
+      + '</div>'
+      + '<div class="wb-dn">' + names[d.dow] + '</div>'
+      + '<div class="wb-dv">' + (d.eaten != null ? fmt(d.eaten) : (d.past ? '—' : '')) + '</div>'
+      + '<div class="wb-dt">' + (d.past ? 'of ' + fmt(d.base) : fmt(d.allow)) + '</div>'
+      + '</div>';
+  }).join('');
+  let note;
+  if (!isThisWeek) {
+    note = b.eatenAll ? fmt(b.eatenAll) + ' logged against ' + fmt(b.budget) + ' for the week.' : 'Nothing logged that week.';
+  } else {
+    const nextWd = b.days.find(d => !d.past && d.dow >= 1 && d.dow <= 5);
+    const wdNow = nextWd ? ' Weekdays are now ' + fmt(nextWd.allow) + ' instead of ' + fmt(nextWd.base) + '.' : '';
+    note = Math.abs(b.banked) < 50 ? 'On budget so far — the rest of the week runs at its normal targets.'
+      : b.banked > 0 ? fmt(b.banked) + ' banked so far, spread across the days left.' + wdNow
+      : fmt(-b.banked) + ' over so far, taken back across the days left.' + wdNow;
+    if (b.unlogged) note += ' ' + b.unlogged + ' earlier day' + (b.unlogged > 1 ? 's' : '') + ' with nothing logged count' + (b.unlogged > 1 ? '' : 's') + ' at target.';
+  }
+  const todayBox = isThisWeek && td
+    ? '<div class="wb-today"><b>' + fmt(Math.max(0, td.allow - (td.eaten || 0))) + '</b><span>left today of ' + fmt(td.allow) + '</span></div>'
+    : '';
+  el.innerHTML = '<div class="wb-top"><div>'
+    + '<div class="wb-big">' + fmt(Math.abs(remaining)) + '<small>' + (over ? 'over the week' : 'left this week') + '</small></div>'
+    + '<div class="tracker-sub">' + fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso) + ' · Sat to Fri</div>'
+    + '</div>' + todayBox + '</div>'
+    + '<div class="wb-meter"><i style="width:' + pct(Math.min(spent, b.budget)).toFixed(1) + '%;background:' + (over ? 'var(--c-kcalIn)' : 'var(--c-protein)') + '"></i></div>'
+    + '<div class="wb-cap"><span>' + fmt(spent) + ' eaten</span><span>' + fmt(b.budget) + '</span></div>'
+    + '<div class="wb-days">' + cols + '</div>'
+    + '<div class="wb-note">' + note + '</div>';
+}
+
 function renderFitnessStats() {
+  try { renderWeekBudget(); } catch (e) { console.warn('week budget', e); }
   const data = todayFitnessData();
   const targets = getTargets();
   FITNESS_METRICS.forEach(m => {
@@ -8552,68 +8873,114 @@ function chartWidth(el, fallback) {
   return Math.max(300, Math.min(w || fallback, 1100));
 }
 
+/* The chart runs on real dates, not weigh-in positions, so it can carry on past today
+   to the goal date. Two forward lines: the pace NEEDED to reach the goal on the day
+   (dashed, red like the target), and where the CURRENT pace lands (dotted, grey) — the
+   gap between them is the whole story. Current pace is the 7-day trend over the last
+   fortnight; with less history than that it is not drawn, because a few days is water. */
+const DAY_MS = 86400000;
+function dayNum(iso) { return Math.round(new Date(iso + 'T00:00:00Z').getTime() / DAY_MS); }
+function weightPlan() {
+  const all = weightSeries();
+  const t = getTargets();
+  const goal = Number(t.weight) || 85, goalDate = t.goalDate || '2027-04-27';
+  if (!all.length) return null;
+  const i = all.length - 1, last = all[i], now = trendAt(all, i);
+  const daysLeft = dayNum(goalDate) - dayNum(last.date);
+  const weeksLeft = daysLeft / 7;
+  const needPerWeek = weeksLeft > 0 ? (now - goal) / weeksLeft : null;
+  // Pace: trend now vs trend at the weigh-in nearest 14 days back.
+  let pace = null;
+  const back = all.map((e, k) => ({ k, gap: dayNum(last.date) - dayNum(e.date) }))
+    .filter(x => x.gap >= 10).sort((x, y) => Math.abs(x.gap - 14) - Math.abs(y.gap - 14))[0];
+  if (back) pace = (now - trendAt(all, back.k)) / (back.gap / 7);   // kg per week, negative = losing
+  const atGoalDate = pace != null && weeksLeft > 0 ? now + pace * weeksLeft : null;
+  return { all, goal, goalDate, last, now, daysLeft, weeksLeft, needPerWeek, pace, atGoalDate };
+}
 function renderWeightChart() {
   const wrap = document.getElementById('weight-chart-wrap');
   if (!wrap) return;
   const all = weightSeries();
-  const target = getTargets().weight;
-  if (all.length < 2) {
+  const plan = weightPlan();
+  if (all.length < 2 || !plan) {
     wrap.innerHTML = '<div class="log-empty">Log weight on at least two days to see a trend line.</div>';
     renderWeightHeader();
     return;
   }
-  const entries = all.slice(-30);
-  const base = all.length - entries.length;
-  const W = chartWidth(wrap, 360), H = 168, M = { l: 38, r: 46, t: 14, b: 26 };
+  const { goal, goalDate, now, needPerWeek, pace, atGoalDate } = plan;
+  // History: the last six weeks of weigh-ins. Future: through to the goal date.
+  const lastD = dayNum(plan.last.date);
+  const firstIdx = Math.max(0, all.findIndex(e => dayNum(e.date) >= lastD - 42));
+  const entries = all.slice(firstIdx);
+  const trends = entries.map((_, k) => trendAt(all, firstIdx + k));
+  const d0 = dayNum(entries[0].date);
+  const dEnd = Math.max(lastD + 7, dayNum(goalDate));
+  const showFuture = dayNum(goalDate) > lastD;
+  const W = chartWidth(wrap, 360), H = 190, M = { l: 38, r: 50, t: 14, b: 26 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
-  const trends = entries.map((_, i) => trendAt(all, base + i));
-  // Scale to the weigh-ins only. Folding a goal 16kg away into the range flattens
-  // the line into a meaningless streak across the top of the box.
-  const pool = entries.map(e => e.weight).concat(trends);
+  const pool = entries.map(e => e.weight).concat(trends, [goal]);
+  if (atGoalDate != null && showFuture) pool.push(atGoalDate);
   let lo = Math.min(...pool), hi = Math.max(...pool);
-  const pad = Math.max((hi - lo) * 0.3, 0.4); lo -= pad; hi += pad;
-  const targetInView = target && target > lo && target < hi;
-  const X = i => entries.length === 1 ? M.l + pw / 2 : M.l + (i / (entries.length - 1)) * pw;
+  const pad = Math.max((hi - lo) * 0.08, 0.4); lo -= pad; hi += pad;
+  const X = d => M.l + ((d - d0) / Math.max(1, dEnd - d0)) * pw;
   const Y = v => M.t + ph - ((v - lo) / (hi - lo)) * ph;
-  const ticks = [lo + (hi - lo) * 0.12, (lo + hi) / 2, hi - (hi - lo) * 0.12];
-  const grid = ticks.map(t => `<line x1="${M.l}" x2="${M.l + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"
-      stroke="var(--border)" stroke-width="1"/>
-    <text x="${M.l - 6}" y="${(Y(t) + 3.5).toFixed(1)}" text-anchor="end" font-size="9.5"
-      fill="var(--text-dim)">${t.toFixed(1)}</text>`).join('');
-  const area = `M${X(0).toFixed(1)} ${Y(trends[0]).toFixed(1)} ` +
-    trends.map((v, i) => `L${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ') +
-    ` L${X(entries.length - 1).toFixed(1)} ${(M.t + ph).toFixed(1)} L${X(0).toFixed(1)} ${(M.t + ph).toFixed(1)} Z`;
-  const trendPath = trends.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' ');
-  const dots = entries.map((e, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(e.weight).toFixed(1)}" r="2.6"
-      fill="var(--border-md)" stroke="var(--bg-card)" stroke-width="1.5"><title>${formatDate(e.date)} · ${e.weight}kg</title></circle>`).join('');
-  // In range: draw the line. Out of range: a marker on the bottom edge, so you can see
-  // the goal exists without it eating the whole y-axis.
-  const tLine = targetInView
-    ? `<line x1="${M.l}" x2="${M.l + pw}" y1="${Y(target).toFixed(1)}" y2="${Y(target).toFixed(1)}"
-         stroke="var(--chest)" stroke-width="1.5" stroke-dasharray="4,4"/>
-       <text x="${M.l + pw + 5}" y="${(Y(target) + 3.5).toFixed(1)}" font-size="9.5" fill="var(--chest)">target</text>`
-    : (target ? `<line x1="${M.l}" x2="${M.l + pw}" y1="${(M.t + ph).toFixed(1)}" y2="${(M.t + ph).toFixed(1)}"
-         stroke="var(--chest)" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.55"/>
-       <text x="${M.l + pw + 5}" y="${(M.t + ph + 3.5).toFixed(1)}" font-size="9" fill="var(--chest)">${target}kg ↓</text>` : '');
-  const last = trends[trends.length - 1];
-  const xlabs = [0, entries.length - 1].filter((v, i, a) => a.indexOf(v) === i)
-    .map(i => `<text x="${X(i).toFixed(1)}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : 'end'}"
-        font-size="9.5" fill="var(--text-dim)">${formatDate(entries[i].date)}</text>`).join('');
+  const f = n => n.toFixed(1);
+  const step = (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : 1;
+  const ticks = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) ticks.push(v);
+  const grid = ticks.map(t => `<line x1="${M.l}" x2="${M.l + pw}" y1="${f(Y(t))}" y2="${f(Y(t))}" stroke="var(--border)" stroke-width="1"/>
+    <text x="${M.l - 6}" y="${f(Y(t) + 3.5)}" text-anchor="end" font-size="9.5" fill="var(--text-dim)">${t}</text>`).join('');
+  const xs = entries.map(e => dayNum(e.date));
+  const area = `M${f(X(xs[0]))} ${f(Y(trends[0]))} ` + trends.map((v, k) => `L${f(X(xs[k]))} ${f(Y(v))}`).join(' ')
+    + ` L${f(X(xs[xs.length - 1]))} ${f(M.t + ph)} L${f(X(xs[0]))} ${f(M.t + ph)} Z`;
+  const trendPath = trends.map((v, k) => (k ? 'L' : 'M') + f(X(xs[k])) + ' ' + f(Y(v))).join(' ');
+  const dots = entries.map((e, k) => `<circle cx="${f(X(xs[k]))}" cy="${f(Y(e.weight))}" r="2.6" fill="var(--border-md)" stroke="var(--bg-card)" stroke-width="1.5"><title>${formatDate(e.date)} · ${e.weight}kg</title></circle>`).join('');
+  const goalLine = `<line x1="${M.l}" x2="${M.l + pw}" y1="${f(Y(goal))}" y2="${f(Y(goal))}" stroke="var(--chest)" stroke-width="1" opacity=".35"/>`;
+  let future = '';
+  if (showFuture) {
+    const gx = X(dayNum(goalDate));
+    // Needed: straight from today's trend to the goal on the day.
+    future += `<line x1="${f(X(lastD))}" y1="${f(Y(now))}" x2="${f(gx)}" y2="${f(Y(goal))}" stroke="var(--chest)" stroke-width="1.7" stroke-dasharray="5,4"/>`;
+    // Weekly ticks on the needed line, so the kg-per-week reads off the chart.
+    for (let w = 4; w * 7 < dayNum(goalDate) - lastD; w += 4) {
+      const d = lastD + w * 7, v = now + (goal - now) * (w * 7) / (dayNum(goalDate) - lastD);
+      future += `<circle cx="${f(X(d))}" cy="${f(Y(v))}" r="2.2" fill="var(--chest)"><title>${formatDate(isoOffsetFrom(plan.last.date, w * 7))} · ${v.toFixed(1)}kg needed</title></circle>`;
+    }
+    if (atGoalDate != null) {
+      future += `<line x1="${f(X(lastD))}" y1="${f(Y(now))}" x2="${f(gx)}" y2="${f(Y(atGoalDate))}" stroke="var(--text-dim)" stroke-width="1.4" stroke-dasharray="1.5,3.5" stroke-linecap="round"/>`
+        + `<text x="${f(gx + 5)}" y="${f(Y(atGoalDate) + 3.5)}" font-size="9.5" fill="var(--text-dim)">${atGoalDate.toFixed(1)}</text>`;
+    }
+    future += `<circle cx="${f(gx)}" cy="${f(Y(goal))}" r="4" fill="var(--chest)" stroke="var(--bg-card)" stroke-width="2"/>`
+      + `<text x="${f(gx + 5)}" y="${f(Y(goal) + 3.5)}" font-size="10.5" font-weight="800" fill="var(--chest)">${goal}</text>`;
+    // Today divider
+    future += `<line x1="${f(X(lastD))}" x2="${f(X(lastD))}" y1="${M.t}" y2="${M.t + ph}" stroke="var(--border-md)" stroke-width="1" stroke-dasharray="2,3"/>`;
+  }
+  const xlabs = [[d0, entries[0].date, 'start'], [lastD, plan.last.date, showFuture ? 'middle' : 'end']]
+    .concat(showFuture ? [[dayNum(goalDate), goalDate, 'end']] : [])
+    .map(([d, iso, anc]) => `<text x="${f(X(d))}" y="${H - 6}" text-anchor="${anc}" font-size="9.5" fill="var(--text-dim)">${formatDate(iso)}</text>`).join('');
   wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;overflow:visible;">
-    ${grid}${tLine}
+    ${grid}${goalLine}
     <path d="${area}" fill="var(--lime)" opacity="0.16"/>
     <path d="${trendPath}" fill="none" stroke="var(--green-deep)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
-    ${dots}
-    <circle cx="${X(entries.length - 1).toFixed(1)}" cy="${Y(last).toFixed(1)}" r="4.2" fill="var(--green-deep)" stroke="var(--bg-card)" stroke-width="2"/>
-    <text x="${(X(entries.length - 1) + 7).toFixed(1)}" y="${(Y(last) + 3.5).toFixed(1)}" font-size="11.5" font-weight="800" fill="var(--text-h)">${last.toFixed(1)}</text>
+    ${dots}${future}
+    <circle cx="${f(X(lastD))}" cy="${f(Y(now))}" r="4.2" fill="var(--green-deep)" stroke="var(--bg-card)" stroke-width="2"/>
+    <text x="${f(X(lastD) + 7)}" y="${f(Y(now) - 8)}" text-anchor="start" font-size="11.5" font-weight="800" fill="var(--text-h)">${now.toFixed(1)}</text>
     ${xlabs}
   </svg>
   <div class="chart-legend" style="margin-top:6px;">
     <span><span class="legend-dot" style="background:var(--border-md)"></span>Weigh-in</span>
     <span><span class="legend-dot" style="background:var(--green-deep)"></span>7-day trend</span>
-    <span><span class="legend-dot" style="background:var(--chest)"></span>${targetInView ? 'Target' : 'Target (below chart)'}</span>
-  </div>`;
+    ${showFuture ? '<span><span class="legend-dot" style="background:var(--chest)"></span>Needed</span>' : ''}
+    ${showFuture && atGoalDate != null ? '<span><span class="legend-dot" style="background:var(--text-dim)"></span>Current pace</span>' : ''}
+  </div>
+  ${showFuture && needPerWeek != null ? `<div class="w-proj">${needPerWeek > 0
+      ? `To reach <b>${goal}kg by ${new Date(goalDate + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'long' })}</b>: lose <b>${needPerWeek.toFixed(2)}kg a week</b> for ${Math.round(plan.weeksLeft)} weeks (${(now - goal).toFixed(1)}kg to go).`
+      : `Already at or under ${goal}kg.`}
+    ${pace != null ? `<br>Current pace: <b>${pace <= 0 ? '−' : '+'}${Math.abs(pace).toFixed(2)}kg a week</b>${atGoalDate != null ? ` — about <b>${atGoalDate.toFixed(1)}kg</b> on the day` : ''}. ${pace < 0 && Math.abs(pace) >= needPerWeek ? 'On track.' : 'Behind the line.'}` : '<br>Current pace shows once there are two weeks of weigh-ins.'}</div>` : ''}`;
   renderWeightHeader();
+}
+function isoOffsetFrom(iso, days) {
+  const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + days); return isoOf(d);
 }
 function formatDate(iso) {
   const d = new Date(iso + 'T00:00:00');
@@ -9296,8 +9663,14 @@ function initChatInputs() {
   const ta = document.getElementById('chat-in');
   if (ta && !ta.dataset.wired) {
     ta.dataset.wired = '1';
-    const grow = () => { ta.style.height = 'auto';
-      ta.style.height = Math.min(120, Math.max(44, ta.scrollHeight)) + 'px'; };
+    const grow = () => {
+      const max = Math.round(((window.visualViewport && window.visualViewport.height) || window.innerHeight) * 0.5);
+      ta.style.height = 'auto';
+      const h = Math.max(44, ta.scrollHeight + 3);
+      ta.style.height = Math.min(max, h) + 'px';
+      ta.style.overflowY = h > max ? 'auto' : 'hidden';
+    };
+    window.growChatIn = grow;
     ta.addEventListener('input', grow);
     ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); sendChat(); } });
     // Typing = focused or holding a draft, unless he has just asked for the tools back.
@@ -9933,12 +10306,13 @@ function md(t) {
     return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
   }).join('').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 }
-function bubble(m) {
+function bubble(m, i) {
   return m.role === 'user'
     ? `<div class="msg msg-me">${(m.images || []).length ? `<div class="msg-shots">${m.images.map(s => `<img src="${s}">`).join('')}</div>` : ''}${md(m.content).replace(/<\/?p>/g, '')}</div>`
     : m.system
       ? `<div class="msg msg-sys${m.warn ? ' warn' : ''}">${md(m.content).replace(/<\/?p>/g, '')}</div>`
-      : `<div class="msg msg-c"><div class="who">Coach</div>${md(m.content)}</div>`;
+      : `<div class="msg msg-c"><div class="who">Coach</div>${md(m.content)}</div>`
+        + (m.recipe ? recipeCardHTML(m.recipe, i) : '');
 }
 function renderChat() {
   const box = document.getElementById('chat-log');
@@ -9950,7 +10324,7 @@ function renderChat() {
   shown.forEach(m => {
     const d = m.day || today;
     if (SHOW_ALL_CHAT && d !== lastDay) { lastDay = d; out += `<div class="daysep">${d === today ? 'Today' : formatDate(d)}</div>`; }
-    out += bubble(m);
+    out += bubble(m, CHAT.indexOf(m));
   });
   box.innerHTML = out || '<div class="log-empty">Nothing yet today. Log a meal, your weight, or ask anything.</div>';
   box.scrollTop = box.scrollHeight;
@@ -10006,7 +10380,7 @@ function typingOn(on) {
    Nothing is shown for this turn; only the resulting patch matters. */
 async function reaskForPatch(prevReply) {
   try {
-    const msgs = CHAT.slice(-40).map(m => ({ role: m.role, content: m.content }));
+    const msgs = chatForApi(CHAT.slice(-40));
     msgs.push({ role: 'assistant', content: prevReply || '' });
     msgs.push({ role: 'user', content:
       'Your last reply described logging or saving something but contained no fenced json block, '
@@ -10061,7 +10435,7 @@ async function sendChat() {
   if (!text && !SHOTS.length) return;
   const images = SHOTS.slice();
   CHAT.push({ role: 'user', day: todayKey(), content: text || '(photo)', images });
-  SHOTS = []; renderShots(); ta.value = ''; ta.style.height = '';
+  SHOTS = []; renderShots(); ta.value = ''; ta.style.height = ''; ta.style.overflowY = 'hidden';
   if (window.chatComposeMode) chatComposeMode();
   saveChat(); renderChat();
   if (!COACH_READY()) return;   // draft kept; the OFFLINE chip explains why nothing came back
@@ -10069,7 +10443,7 @@ async function sendChat() {
   typingOn(true);
   try {
     const body = JSON.stringify({
-      messages: CHAT.slice(-40).map(m => ({ role: m.role, content: m.content })),
+      messages: chatForApi(CHAT.slice(-40)),
       state: coachState(), images, viewDate: viewDate()
     });
     const res = await fetchRetry(COACH_URL() + '/chat', { method: 'POST', headers: coachHeaders(), body });
@@ -10089,7 +10463,9 @@ async function sendChat() {
         else if (j.patch[k] === undefined) j.patch[k] = salv.patch[k];
       });
     }
-    CHAT.push({ role: 'assistant', day: todayKey(), content: j.reply || '(no reply)' });
+    const amsg = { role: 'assistant', day: todayKey(), content: j.reply || '(no reply)' };
+    if (j.recipe && j.recipe.name) amsg.recipe = Object.assign({}, j.recipe, { _serves: 1 });
+    CHAT.push(amsg);
     // Say out loud what landed on the dials. A patch that quietly does nothing is
     // the worst failure mode there is — it looks like it worked.
     LAST_REPLY = j;
@@ -10097,7 +10473,7 @@ async function sendChat() {
       CHAT.push({ role: 'assistant', day: todayKey(), system: true, warn: !j.patch,
         content: (j.patch ? 'ⓘ ' : '⚠ ') + j.note.charAt(0).toUpperCase() + j.note.slice(1) + '.' });
     }
-    if (!j.patch) {
+    if (!j.patch && !j.recipe) {
       // The coach sometimes describes a save in prose and forgets the block. Prose
       // writes nothing, so rather than leave a false confirmation sitting there,
       // ask once for the block on its own and apply that.
@@ -10144,6 +10520,7 @@ function coachState() {
   getFitnessLogDates().slice(0, 60).forEach(d => { days[d] = getFitnessData(d); });
   return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 120),
     sessions: loadJSON('session-log', []).slice(-30), recipes: getRecipes(),
+    cookbook: kitchenRecipes().map(r => r.name),
     today: todayKey(), reviewDue: reviewDue(), labs: getLabs().slice(0, 120),
     plan: { thisWeek: getPlan(planWeekStart(0)), nextWeek: getPlan(planWeekStart(1)),
             weekStart: isoOf(planWeekStart(0)) },
