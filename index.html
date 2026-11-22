@@ -1368,6 +1368,20 @@
   .meal-again-sub{font-weight:600;color:var(--text-dim);font-size:11.5px}
   .meal-plus{font-size:20px;color:var(--text-dim)}
   .recent{border-top:1px solid var(--border)}
+  .water-bar{padding:4px 15px 12px}
+  .water-top{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--text-dim)}
+  .water-top b{font:700 15px var(--display);color:var(--text-h);font-variant-numeric:tabular-nums}
+  .water-top em{font-style:normal;font-weight:500;font-size:12px;color:var(--text-dim)}
+  .water-track{height:8px;border-radius:999px;background:var(--bg-soft);margin-top:6px;overflow:hidden}
+  .water-track i{display:block;height:100%;border-radius:999px;background:#7fb8e6}
+  .drink-row{display:flex;align-items:center;gap:8px;padding:9px 12px 9px 15px;border-top:1px solid var(--border)}
+  .drink-main{flex:1;min-width:0}
+  .drink-name{font-size:13.5px;font-weight:700;color:var(--text-h)}
+  .drink-sub{font-size:11.5px;color:var(--text-dim);margin-top:1px}
+  .drink-n{min-width:20px;text-align:center;font:700 14px var(--display);color:var(--text-h);font-variant-numeric:tabular-nums}
+  .drink-btn{flex:none;width:36px;height:34px;border-radius:var(--r-sm);border:none;background:var(--lime);
+    color:var(--green-deep);font:700 18px/1 var(--body-f);cursor:pointer}
+  .drink-btn.minus{background:var(--bg-soft);border:1px solid var(--border);color:var(--text-body)}
   .recent-head{display:flex;align-items:center;justify-content:space-between;width:100%;border:none;
     background:transparent;cursor:pointer;padding:11px 15px;text-align:left;font-family:inherit;font-size:13px;color:var(--text-h)}
   .recent-chev{color:var(--text-dim);transition:transform var(--t-fast, .15s)}
@@ -1563,6 +1577,15 @@
   .pb-acts{display:flex;gap:2px;justify-content:flex-end}
   .pb-acts button{width:23px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg-soft);color:var(--text-body);cursor:pointer;font-size:12px;padding:0}
   .pb-add{width:100%;margin-top:8px}
+  .pb-addrow{display:flex;gap:8px;margin-top:8px}
+  .pb-addrow .ghost-btn{flex:1}
+  .pb-cx{margin-top:10px;padding:12px;border-radius:var(--r-sm);background:var(--bg-soft);display:grid;gap:6px}
+  .pb-cx .pb-in{background:var(--bg-card)}
+  .pb-cx textarea.pb-in{font-weight:500;font-size:13px;resize:vertical}
+  .pb-cx-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pb-cx-or{font-size:11.5px;color:var(--text-dim);text-align:center;margin:4px 0}
+  .pb-cx-acts{display:flex;gap:8px;margin-top:4px}
+  .pb-cx-acts .solid-btn{flex:1}
   .pb-addsess{display:flex;gap:8px;margin-top:12px}
   .pb-addsess .ghost-btn{flex:1}
   .pb-err{color:var(--chest);font-size:13px;font-weight:700;margin-top:12px;min-height:18px}
@@ -2569,24 +2592,6 @@
     .set-run { width: min(100%, 1060px); }
   }
 
-/* ── Kitchen ──────────────────────────────────────────────────────────────── */
-  .kitchen-open-btn {
-    display: flex; align-items: center; gap: 12px; width: calc(100% - 32px);
-    margin: 4px 16px 14px; padding: 14px; cursor: pointer; text-align: left;
-    background: var(--bg-card); border: 1.5px solid var(--border);
-    border-radius: var(--r-md); box-shadow: var(--e1); color: var(--ink);
-  }
-  .kitchen-open-btn:active { box-shadow: var(--e-press); }
-  .kitchen-icon {
-    width: 38px; height: 38px; flex: none; border-radius: var(--r-sm);
-    background: var(--green-bg); color: var(--green);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .kitchen-open-txt { flex: 1; min-width: 0; display: block; }
-  .kitchen-open-txt b { display: block; font: 700 14.5px/1.3 var(--display); color: var(--text-h); }
-  .kitchen-open-txt span { display: block; font: 400 12px/1.45 var(--body-f); color: var(--text-dim); }
-  .kitchen-chev { transform: rotate(-90deg); color: var(--text-dim); flex: none; }
-
   /* The Kitchen is the Coach's card with a different conversation in it, so it uses
      the Coach's shell — .chat-card, .chat-full, .chat-top — and only the parts that
      differ are styled here. */
@@ -2598,7 +2603,6 @@
     font: 600 11px/1 var(--display);
   }
   .k-head-btn.on { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .k-head-icon { padding: 7px; }
 
   .k-saved { flex: none; border-bottom: 1.5px solid var(--border); background: var(--bg);
     max-height: 38vh; overflow-y: auto; padding: 0 16px; }
@@ -2609,37 +2613,8 @@
   .k-saved-main { flex: 1; min-width: 0; cursor: pointer; }
   .k-saved-name { font: 700 13.5px/1.35 var(--display); color: var(--text-h); }
   .k-saved-sub { font: 400 11.5px/1.4 var(--body-f); color: var(--text-dim); }
-
-  .k-log { flex: 1; min-height: 120px; overflow-y: auto; overscroll-behavior: contain;
-    padding: 16px; }
-  .k-col { max-width: 100%; }
-  .k-msg { margin-bottom: 12px; font-size: 13.5px; line-height: 1.6; }
-  .k-me { background: var(--green-deep); color: #fff; padding: 11px 14px;
-    border-radius: 16px 16px 5px 16px; width: fit-content; max-width: 86%;
-    margin-left: auto; margin-right: 0; }
-  .k-them { color: var(--text-body); max-width: 100%; }
-  .k-who { font: 600 9.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
-    color: var(--green); margin-bottom: 6px; }
-  .k-them p { margin: 0 0 8px; } .k-them p:last-child { margin-bottom: 0; }
-  .k-them ul { margin: 0 0 8px; padding-left: 19px; }
-  .k-them b { color: var(--text-h); }
-  .k-sys { width: fit-content; font: 600 11.5px/1.5 var(--body-f); color: var(--green);
-    background: var(--green-bg); border: 1px solid var(--green-bdr);
-    border-radius: var(--r-pill); padding: 7px 13px; }
-  .k-shots { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-  .k-shots img { width: 76px; height: 76px; object-fit: cover; border-radius: var(--r-sm); }
-  .k-typing { display: flex; gap: 4px; padding: 6px 2px; }
-  .k-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim);
-    animation: ktype 1.1s infinite ease-in-out; }
-  .k-typing i:nth-child(2) { animation-delay: .15s; }
-  .k-typing i:nth-child(3) { animation-delay: .3s; }
+.k-them p:last-child { margin-bottom: 0; }
   @keyframes ktype { 0%, 60%, 100% { opacity: .25; } 30% { opacity: 1; } }
-
-  .k-empty { padding: 10px 0 4px; }
-  .k-empty-mark { width: 44px; height: 44px; margin-bottom: 12px; border-radius: var(--r-sm);
-    background: var(--green-bg); color: var(--green);
-    display: flex; align-items: center; justify-content: center; }
-  .k-empty-h { font: 700 15px/1.35 var(--display); color: var(--text-h); margin-bottom: 6px; }
   .k-empty-p { font: 400 13px/1.6 var(--body-f); color: var(--text-dim); }
 
   .k-recipe { background: var(--bg); border: 1.5px solid var(--green-bdr);
@@ -2690,31 +2665,11 @@
     font-variant-numeric: tabular-nums; }
   .k-rec-actions { display: flex; gap: 8px; padding: 12px 14px 14px; }
   .k-rec-actions button { flex: 1; }
-
-  .k-compose { flex: none; border-top: 1.5px solid var(--border); background: var(--bg-card);
-    padding: 10px 12px; }
-  .k-row { display: flex; align-items: flex-end; gap: 7px; }
-  .k-row .cam-btn, .k-row .send-btn { flex: none; }
   @media (max-width: 520px) {
-    .k-row .cam-btn, .k-row .send-btn { width: 40px; height: 40px; }
-    .k-row .cam-btn svg { width: 17px; height: 17px; }
     /* The label goes, the bookmark stays — on a phone the icon carries it. */
     .k-head-btn span { display: none; }
     .k-head-btn { padding: 7px; }
   }
-  .k-row textarea { flex: 1; min-width: 0; resize: none; max-height: 132px;
-    border: 1px solid var(--border); border-radius: 18px; padding: 10px 14px;
-    background: var(--bg); color: var(--ink); font: 400 16px/1.4 var(--body-f); outline: none; }
-  .k-row textarea:focus { border-color: var(--green-bdr); }
-  .k-scan-note { font: 500 12px/1.4 var(--body-f); color: var(--text-dim); padding: 2px 2px 8px; }
-  .k-scan-note[hidden] { display: none; }
-  .k-tray { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-  .k-tray[hidden] { display: none; }
-  .k-shot { position: relative; }
-  .k-shot img { width: 54px; height: 54px; object-fit: cover; border-radius: var(--r-sm); display: block; }
-  .k-shot button { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
-    border-radius: 50%; border: 0; background: var(--ink); color: #fff; font-size: 13px;
-    line-height: 1; cursor: pointer; }
 
   .fr-est {
     display: block; width: 100%; margin-top: 10px; cursor: pointer;
@@ -4613,6 +4568,8 @@ function saveStrengthLog(l) { saveJSON('strength-log', l.slice(-200)); }
    equipment field decides; an exercise that is not linked says nothing rather than
    guessing. */
 function isDumbbell(key) {
+  const cx = customExercises()[key];                 // his own exercises say so themselves
+  if (cx) return cx.eq === 'dumbbell';
   const id = exLinks()[key];
   if (!id) return false;
   const lib = exById(id);
@@ -4796,65 +4753,13 @@ function askForProgression() {
    only thing it can produce is a RECIPE, and a recipe does nothing on its own — it is
    a card with a serving count and an Add button, and nothing reaches the food log
    until that button is pressed. */
-let KCHAT = loadJSON('kitchen-chat', []) || [];
-let KSHOTS = [];
-function saveKChat() {
-  try { localStorage.setItem('kitchen-chat', JSON.stringify(KCHAT)); }
-  catch (_) { KCHAT = KCHAT.slice(-Math.ceil(KCHAT.length / 2));
-              try { localStorage.setItem('kitchen-chat', JSON.stringify(KCHAT)); } catch (_) {} }
-}
 function kitchenRecipes() { return loadJSON('kitchen-recipes', []) || []; }
 function saveKitchenRecipes(l) { saveJSON('kitchen-recipes', l.slice(-60)); }
 
-function kLogToBottom() {
-  const b = document.getElementById('k-log');
-  if (b) b.scrollTop = b.scrollHeight;
-}
 /* The composer grows with the message rather than scrolling a one-line box. */
-function growKitchenInput(ta) {
-  ta.style.height = 'auto';
-  ta.style.height = Math.min(ta.scrollHeight, 132) + 'px';
-}
 
-function openKitchen() { showPage('kitchen'); }
-function closeKitchen() { if (document.getElementById('page-kitchen').classList.contains('active')) showPage('food'); }
-function clearKitchen() {
-  if (!confirm('Clear this conversation?\n\nSaved recipes are kept.')) return;
-  KCHAT = []; saveKChat(); renderKChat();
-}
 
 /* ── The thread ─────────────────────────────────────────────────────────────── */
-function renderKChat() {
-  const box = document.getElementById('k-log');
-  if (!box) return;
-  if (!KCHAT.length) {
-    box.innerHTML = '<div class="k-col"><div class="k-empty">'
-      + '<div class="k-empty-mark">'
-      +   '<svg viewBox="0 0 24 24" fill="none" width="26" height="26">'
-      +   '<path d="M5 3v8a3 3 0 006 0V3M8 11v10M15 3c-1.5 2-2 4-2 6s.5 3 2 3v9" '
-      +   'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-      + '</div>'
-      + '<div class="k-empty-h">Ask about food, or build a recipe</div>'
-      + '<div class="k-empty-p">What you have in the house, what a packet comes to, a '
-      + 'Thermomix version of something, what to use when you have run out. Photos work too. '
-      + 'Anything it writes up as a recipe you can add straight to the food log.</div>'
-      + '</div></div>';
-    return;
-  }
-  box.innerHTML = '<div class="k-col">' + KCHAT.map((m, i) => {
-    if (m.role === 'user') {
-      return '<div class="k-msg k-me">' + esc(m.content)
-        + (m.images && m.images.length ? '<div class="k-shots">'
-            + m.images.map(s => '<img src="' + s + '" alt="">').join('') + '</div>' : '')
-        + '</div>';
-    }
-    if (m.system) return '<div class="k-msg k-sys">' + esc(m.content) + '</div>';
-    return '<div class="k-msg k-them"><div class="k-who">Kitchen</div>'
-      + md(m.content) + '</div>'
-      + (m.recipe ? recipeCardHTML(m.recipe, i) : '');
-  }).join('') + '</div>';
-  box.scrollTop = box.scrollHeight;
-}
 
 /* ── The recipe card ────────────────────────────────────────────────────────
    Per serve on the card, because that is the number he can compare to a target. The
@@ -5123,7 +5028,7 @@ async function barcodeIntoBox(code, boxId, noteId) {
       + ' (' + basis + ': ' + bits + ')'
       + (p.serving ? ' \u00b7 serving ' + p.serving : '') + ' \u2014 ';
     ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + line;
-    if (boxId === 'k-in') growKitchenInput(ta); else { if (window.chatComposeMode) chatComposeMode(); if (window.growChatIn) growChatIn(); sizeChat(); }
+    { if (window.chatComposeMode) chatComposeMode(); if (window.growChatIn) growChatIn(); sizeChat(); }
     ta.focus();
     ta.setSelectionRange(ta.value.length, ta.value.length);
     if (note) note.hidden = true;
@@ -5133,77 +5038,14 @@ async function barcodeIntoBox(code, boxId, noteId) {
     else alert(msg);
   }
 }
-function lookupBarcodeForKitchen(code) { return barcodeIntoBox(code, 'k-in', 'k-scan-note'); }
 function lookupBarcodeForCoach(code)   { return barcodeIntoBox(code, 'chat-in', null); }
 function coachScan() { return openScanner(lookupBarcodeForCoach); }
 
 /* ── Photos ─────────────────────────────────────────────────────────────────── */
-async function addKShot(input) {
-  const files = Array.from(input.files || []).slice(0, 4 - KSHOTS.length);
-  for (const f of files) {
-    if (!f.type.startsWith('image/')) continue;
-    KSHOTS.push(await downscaleImage(f, 768, 0.6));
-  }
-  input.value = '';
-  renderKShots();
-}
-function dropKShot(i) { KSHOTS.splice(i, 1); renderKShots(); }
-function renderKShots() {
-  const t = document.getElementById('k-tray');
-  if (!t) return;
-  t.hidden = !KSHOTS.length;
-  t.innerHTML = KSHOTS.map((s, i) =>
-    '<div class="k-shot"><img src="' + s + '" alt="">'
-    + '<button onclick="dropKShot(' + i + ')" aria-label="Remove">×</button></div>').join('');
-}
 
 /* ── Sending ────────────────────────────────────────────────────────────────── */
-let KBUSY = false;
-async function sendKitchen() {
-  const ta = document.getElementById('k-in');
-  const text = (ta.value || '').trim();
-  if ((!text && !KSHOTS.length) || KBUSY) return;
-  if (!COACH_READY()) { alert('Connect the coach first — Settings → Coach connection. '
-    + 'The kitchen runs through the same worker.'); return; }
-  const images = KSHOTS.slice();
-  KCHAT.push({ role: 'user', content: text || '(photo)', images: images });
-  KSHOTS = []; renderKShots(); ta.value = ''; ta.style.height = '';
-  saveKChat(); renderKChat(); kLogToBottom();
-  KBUSY = true;
-  const box = document.getElementById('k-log');
-  const dots = document.createElement('div');
-  dots.className = 'k-typing'; dots.innerHTML = '<i></i><i></i><i></i>';
-  (box.querySelector('.k-col') || box).appendChild(dots);
-  box.scrollTop = box.scrollHeight;
-  try {
-    const res = await fetch(COACH_URL() + '/kitchen', {
-      method: 'POST', headers: coachHeaders(),
-      body: JSON.stringify({
-        messages: KCHAT.filter(m => !m.system).slice(-30).map(m => ({ role: m.role, content: m.content })),
-        images: images, state: kitchenState() })
-    });
-    const j = await res.json();
-    if (j.error) throw new Error(j.error);
-    const msg = { role: 'assistant', content: j.reply || '' };
-    if (j.recipe && j.recipe.name) msg.recipe = Object.assign({}, j.recipe, { _serves: 1 });
-    KCHAT.push(msg);
-  } catch (e) {
-    KCHAT.push({ role: 'assistant', system: true, content: 'Could not reach the kitchen — ' + (e.message || e) });
-  }
-  KBUSY = false;
-  saveKChat(); renderKChat();
-}
 /* Enough for it to answer "does this fit in what's left today" without handing a food
    conversation his blood results. */
-function kitchenState() {
-  const d = getFitnessData(foodDate()) || {};
-  return {
-    today: { kcalIn: d.kcalIn, protein: d.protein, carbs: d.carbs, fat: d.fat },
-    targets: getTargets(),
-    recipes: kitchenRecipes().map(r => ({ name: r.name, serves: r.serves,
-      kcal: r.perServe && r.perServe.kcal != null ? Math.round(r.perServe.kcal) : null }))
-  };
-}
 
 /* ══════════════════════════════════════════════════════
    THE SET RUNNER
@@ -6159,7 +6001,7 @@ function showPage(id) {
   const btn = document.querySelector(`.page-btn[data-page="${navFor}"]`);
   if (btn) btn.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'instant' });
-  document.body.classList.toggle('coach-open', id === 'coach' || id === 'kitchen');
+  document.body.classList.toggle('coach-open', id === 'coach');
   document.body.classList.toggle('greeting', id === 'coach');
   if (id === 'coach') {
     // Two frames: one for the class to apply, one for layout to settle before measuring.
@@ -6168,10 +6010,6 @@ function showPage(id) {
       const box = document.getElementById('chat-log');
       if (box) box.scrollTop = box.scrollHeight;
     }));
-  }
-  if (id === 'kitchen') {
-    renderKChat();
-    requestAnimationFrame(() => requestAnimationFrame(() => { sizeChat(); kLogToBottom(); }));
   }
   if (id === 'workout') ensureLibraryLinks();
   if (id === 'review') renderWeek();
@@ -6609,11 +6447,55 @@ function loadJSON(key, fallback) {
   } catch { return fallback; }
 }
 
-const CLOUD_NO_SYNC_KEYS = new Set(['coach-url', 'coach-secret', 'coach-last-sync', 'coach-chat', 'photo-quality']);
+const CLOUD_NO_SYNC_KEYS = new Set(['coach-url', 'coach-secret', 'coach-last-sync', 'coach-chat', 'photo-quality', 'sync-stamps', 'weight-view']);
 
+/* ── Whole-value sync between phone and laptop (23 Nov) ────────────────────
+   Until now only meals, weights, sessions and a few others travelled; week plans,
+   session edits, the strength log and the rest stayed on the device that made them.
+   These keys now sync as whole values: every save stamps the key, and on merge the
+   newest stamp wins. A key with no stamp yet (written before this existed) is never
+   allowed to overwrite another device's copy — it only fills a gap. */
+const SYNC_KV = new Set(['session-edits', 'custom-exercises', 'ex-links', 'workout-types', 'strength-log', 'train-suggest',
+  'supplements', 'labs', 'kitchen-recipes', 'my-equipment', 'coach-profile', 'body', 'program-weeks', 'burn-mode']);
+const isSyncKv = k => SYNC_KV.has(k) || /^plan-\d{4}-\d{2}-\d{2}$/.test(k);
+function syncStamps() { try { return JSON.parse(localStorage.getItem('sync-stamps') || '{}') || {}; } catch (_) { return {}; } }
+function stampKey(k, at) {
+  const st = syncStamps(); st[k] = at || Date.now();
+  localStorage.setItem('sync-stamps', JSON.stringify(st));
+}
 function saveJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+  if (isSyncKv(key)) stampKey(key);
   if (!CLOUD_NO_SYNC_KEYS.has(key)) queueCloudPush();
+}
+function collectKv() {
+  const st = syncStamps(), out = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !isSyncKv(k)) continue;
+    try { out[k] = { v: JSON.parse(localStorage.getItem(k)), at: st[k] || 0 }; } catch (_) {}
+  }
+  return out;
+}
+function mergeKv(l, c) {
+  const out = Object.assign({}, c || {});
+  Object.keys(l || {}).forEach(k => { if (!out[k] || (l[k].at || 0) >= (out[k].at || 0)) out[k] = l[k]; });
+  return out;
+}
+function applyKv(kv) {
+  const st = syncStamps(); let moved = false;
+  Object.keys(kv || {}).forEach(k => {
+    if (!isSyncKv(k)) return;
+    const e = kv[k], have = localStorage.getItem(k) !== null;
+    if (!have || (e.at || 0) > (st[k] || 0)) {
+      localStorage.setItem(k, JSON.stringify(e.v)); st[k] = e.at || 0; moved = true;
+    }
+  });
+  if (moved) {
+    localStorage.setItem('sync-stamps', JSON.stringify(st));
+    try { Object.keys(BUILTIN_SESSIONS).forEach(renderBuiltinSession); enableWeightPersistence(); paintLinkedExercises(); renderSessionNav(); renderPlan(); } catch (_) {}
+  }
+  return moved;
 }
 
 function genId() {
@@ -7267,6 +7149,53 @@ const PB_MUSCLE_TAG = m => /chest|pector/.test(m) ? 'chest' : /lat|back|trap|rho
   : /bicep|tricep|forearm/.test(m) ? 'arms' : /shoulder|delt/.test(m) ? 'shoulders'
   : /quad|hamstring|glute|calf|calves|adduct|abduct|leg/.test(m) ? 'legs' : /abdom|oblique|core|lower back/.test(m) ? 'core' : 'cardio';
 function userSessions() { return loadJSON('user-sessions', {}) || {}; }
+/* His own exercises (23 Nov): not in the library, so they carry their own name, muscle,
+   equipment and how-to. Kept in one list so they can be reused in any session. */
+function customExercises() { return loadJSON('custom-exercises', {}) || {}; }
+const PB_MUSCLES = [['chest','Chest'],['back','Back'],['shoulders','Shoulders'],['arms','Arms'],['legs','Legs'],['core','Core'],['cardio','Cardio / full body']];
+const PB_EQUIP = [['dumbbell','Dumbbells'],['barbell','Barbell'],['body only','Bodyweight'],['kettlebells','Kettlebell'],['bands','Bands'],['machine','Machine / cable'],['other','Other']];
+function pbToggleCustom(i) { const s = PB.draft.sessions[i]; s._cx = !s._cx; renderPB(); if (s._cx) setTimeout(() => { const el = document.getElementById('pbcx-name-' + i); if (el) el.focus(); }, 30); }
+function pbCustomRow(key, c) {
+  return { key, name: c.name, sets: 3, reps: '10', rest: 60, weight: exWeight(key) ?? '', eq: c.eq,
+           tags: [{ c: c.mus, t: (PB_MUSCLES.find(m => m[0] === c.mus) || [, 'Other'])[1].toUpperCase().replace(' / FULL BODY', '') }],
+           steps: c.steps || [] };
+}
+function pbReuseCustom(i, key) {
+  const c = customExercises()[key]; if (!c) return;
+  PB.draft.sessions[i].rows.push(pbCustomRow(key, c));
+  PB.draft.sessions[i]._cx = false; renderPB();
+}
+function pbSaveCustom(i) {
+  const v = id => (document.getElementById(id + '-' + i) || {}).value || '';
+  const name = v('pbcx-name').trim();
+  if (!name) { const el = document.getElementById('pbcx-name-' + i); if (el) el.focus(); return; }
+  const all = customExercises();
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+  let key = 'cx-' + slug, n = 2;
+  while (all[key] && all[key].name.toLowerCase() !== name.toLowerCase()) key = 'cx-' + slug + '-' + n++;
+  const c = { name, mus: v('pbcx-mus') || 'core', eq: v('pbcx-eq') || 'other',
+              steps: v('pbcx-steps').split('\n').map(t => t.trim()).filter(Boolean).slice(0, 12) };
+  all[key] = c; saveJSON('custom-exercises', all);
+  PB.draft.sessions[i].rows.push(pbCustomRow(key, c));
+  PB.draft.sessions[i]._cx = false; renderPB();
+}
+function pbCustomFormHTML(i) {
+  const mine = customExercises(), keys = Object.keys(mine);
+  return '<div class="pb-cx">'
+    + (keys.length ? '<label class="mini-label">Reuse one of yours</label><select class="pb-in" onchange="if(this.value)pbReuseCustom(' + i + ',this.value)">'
+        + '<option value="">Choose…</option>' + keys.sort((a, b) => mine[a].name.localeCompare(mine[b].name))
+          .map(k => '<option value="' + esc(k) + '">' + esc(mine[k].name) + '</option>').join('') + '</select>'
+        + '<div class="pb-cx-or">or make a new one</div>' : '')
+    + '<label class="mini-label">Name</label><input class="pb-in" id="pbcx-name-' + i + '" placeholder="e.g. Sandbag carry" autocomplete="off" data-lpignore="true">'
+    + '<div class="pb-cx-2"><div><label class="mini-label">Muscle</label><select class="pb-in" id="pbcx-mus-' + i + '">'
+    +   PB_MUSCLES.map(m => '<option value="' + m[0] + '">' + m[1] + '</option>').join('') + '</select></div>'
+    + '<div><label class="mini-label">Equipment</label><select class="pb-in" id="pbcx-eq-' + i + '">'
+    +   PB_EQUIP.map(m => '<option value="' + m[0] + '">' + m[1] + '</option>').join('') + '</select></div></div>'
+    + '<label class="mini-label">How to do it <span style="text-transform:none;letter-spacing:0">(optional, one step per line)</span></label>'
+    + '<textarea class="pb-in" id="pbcx-steps-' + i + '" rows="3"></textarea>'
+    + '<div class="pb-cx-acts"><button class="ghost-btn" onclick="pbToggleCustom(' + i + ')">Cancel</button>'
+    + '<button class="solid-btn" onclick="pbSaveCustom(' + i + ')">Add exercise</button></div></div>';
+}
 let USER_VIEWS = new Set();
 function syncUserPrograms() {
   // Out with the last registration…
@@ -7321,7 +7250,7 @@ function pbRowFromEx(e) {
   return { key: e.key, ex: e.ex || exLinks()[e.key] || null, name: e.name, sets: e.sets || 3,
     reps: e.mode === 'time' ? ((e.secs && (e.secs[1] || e.secs[0])) || 30) + 's' : String(e.reps || '10'),
     rest: Array.isArray(e.rest) ? (e.rest[1] || e.rest[0]) : (Number(e.rest) || 60),
-    weight: exWeight ? (exWeight(e.key) ?? '') : '', tags: e.tags || [], steps: e.steps || [], tip: e.tip || null, sup: e.sup || undefined };
+    weight: exWeight ? (exWeight(e.key) ?? '') : '', tags: e.tags || [], steps: e.steps || [], tip: e.tip || null, sup: e.sup || undefined, eq: e.eq || undefined };
 }
 function pbRowToEx(r) {
   const timed = /^\s*\d+\s*s(ec)?\s*$/i.test(r.reps);
@@ -7332,6 +7261,7 @@ function pbRowToEx(r) {
   if (r.tip) out.tip = r.tip;
   if (r.sup) out.sup = r.sup;
   if (r.ex) out.ex = r.ex;
+  if (r.eq) out.eq = r.eq;
   return out;
 }
 function openProgramBuilder(editId) {
@@ -7451,7 +7381,9 @@ function renderPB() {
                     + '<input class="pb-in sm" inputmode="decimal" placeholder="—" value="' + esc(String(r.weight ?? '')) + '" oninput="pbSet(\'r.' + i + '.' + j + '.weight\',this.value)">'
                     + '<span class="pb-acts"><button onclick="pbMoveRow(' + i + ',' + j + ',-1)" aria-label="Up">↑</button><button onclick="pbMoveRow(' + i + ',' + j + ',1)" aria-label="Down">↓</button><button onclick="pbDelRow(' + i + ',' + j + ')" aria-label="Remove">×</button></span>'
                     + '</div>').join('')
-                + '<button class="ghost-btn pb-add" onclick="pbAddExercise(' + i + ')">+ Add exercise</button>'
+                + (s._cx ? pbCustomFormHTML(i)
+                   : '<div class="pb-addrow"><button class="ghost-btn" onclick="pbAddExercise(' + i + ')">+ From the library</button>'
+                     + '<button class="ghost-btn" onclick="pbToggleCustom(' + i + ')">+ My own exercise</button></div>')
               : s.kind === 'circuit' ? '<div class="pb-meta">Timed circuit — runs the Full Body Circuit countdown.</div>'
               : '<div class="pb-meta">Cardio, planned in <select onchange="pbSet(\'s.' + i + '.measure\',this.value)">'
                 + '<option value="km"' + (s.measure === 'km' ? ' selected' : '') + '>km</option><option value="min"' + (s.measure !== 'km' ? ' selected' : '') + '>minutes</option></select></div>')
@@ -7529,29 +7461,10 @@ function progSearch(v) { PROG_Q = v; renderSessionNav(); }
 /* ══════════════════════════════════════════════════════
    USER PROGRAMS  —  built in the app, stored on the device
    ══════════════════════════════════════════════════════
-   A program is { id, name, week, sessions:[{ id, name, exercises:[...] }] }.
-   An exercise is { ex, name, sets, reps, rest, weight } where `ex` is a library id,
-   so the picture and the instructions come from exercises.json rather than being
-   copied in. Built-in programs stay as laid-out HTML for now; these render through
-   renderDataSession() into the same markup, so both look and behave identically. */
+   The storage helpers for the program builder above. */
 function userPrograms() { return loadJSON('user-programs', []) || []; }
 function saveUserPrograms(list) { saveJSON('user-programs', list); }
-function allPrograms() { return PROGRAMS.concat(userPrograms()); }
-function progById(id) { return allPrograms().find(p => p.id === id) || null; }
 
-/* Standard weeks are stored apart from the program so a BUILT-IN week can be edited
-   without the edit being lost the next time PROGRAMS changes in the source. */
-function weekOverrides() { return loadJSON('program-weeks', {}) || {}; }
-function programWeek(p) {
-  const o = weekOverrides();
-  if (o[p.id]) return o[p.id];
-  return p.week || null;
-}
-function saveProgramWeek(id, week) {
-  const o = weekOverrides();
-  if (week) o[id] = week; else delete o[id];
-  saveJSON('program-weeks', o);
-}
 
 /* ── How long a session takes ───────────────────────────────────────────────
    sets × (work + rest) + a changeover between exercises. Work is estimated from the
@@ -7599,53 +7512,6 @@ function trimToMinutes(ex, target) {
 }
 
 /* ── Rendering a data-driven session ────────────────────────────────────────── */
-function renderDataSession(prog, sess) {
-  const host = document.getElementById('data-session');
-  if (!host) return;
-  const colour = (PROG_STYLE[prog.id] || PROG_STYLE.mine).colour;
-  host.innerHTML =
-      '<div class="day-header">'
-    +   '<div class="day-tag" style="background:rgba(23,27,46,.07);color:' + colour + '">'
-    +     esc(prog.name.toUpperCase()) + '</div>'
-    +   '<div class="day-heading">' + esc(sess.name) + '</div>'
-    + '</div>'
-    + '<div class="section-label">Exercises — tap to expand '
-    +   '<span class="sess-mins">~' + sessionMinutes(sess.exercises) + ' min</span></div>'
-    + (sess.exercises || []).map((e, i) => {
-        const lib = e.ex ? exById(e.ex) : null;
-        const key = sess.id + '-' + i;
-        return '<div class="exercise-card" data-exkey="' + esc(key) + '">'
-          + '<div class="ex-top" onclick="toggleEx(this)">'
-          +   '<div class="ex-num num-navy">' + String(i + 1).padStart(2, '0') + '</div>'
-          +   '<div class="ex-info">'
-          +     '<div class="ex-name">' + esc(e.name) + '</div>'
-          +     '<div class="ex-sets">' + esc(e.sets) + ' sets × ' + esc(e.reps)
-          +       ' reps · ' + esc(String(e.rest)) + ' sec rest</div>'
-          +     (lib && lib.pri && lib.pri.length
-                 ? '<div class="ex-tags">' + lib.pri.slice(0, 2).map(m =>
-                     '<span class="ex-tag tag-core">' + esc(m.toUpperCase()) + '</span>').join('') + '</div>'
-                 : '')
-          +   '</div>'
-          +   '<div class="ex-weight-wrap"><div class="ex-weight-label">' + esc(weightLabel(e.key)) + '</div>'
-          +     '<input class="ex-weight-input" data-wkey="' + esc(key) + '" type="number" min="0" '
-          +     'step="0.5" placeholder="' + (e.weight != null ? esc(String(e.weight)) : '0') + ' kg" '
-          +     'onclick="event.stopPropagation()"></div>'
-          +   '<div class="ex-arrow"><svg viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="#909399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
-          + '</div>'
-          + '<div class="ex-detail">'
-          +   (lib && lib.img ? '<img class="ex-libimg" src="' + exImg(lib.id) + '" alt="">' : '')
-          +   '<div class="ex-instructions">'
-          +     (lib && lib.steps && lib.steps.length
-                  ? '<div class="inst-title">How to perform</div>'
-                    + lib.steps.map((t, n) => '<div class="inst-step"><div class="step-num">'
-                        + (n + 1) + '</div><div class="step-text">' + esc(t) + '</div></div>').join('')
-                  : '<div class="inst-title">No instructions recorded</div>')
-          +     (e.note ? '<div class="tip-box">' + esc(e.note) + '</div>' : '')
-          +   '</div>'
-          + '</div></div>';
-      }).join('');
-  enableWeightPersistence();
-}
 
 /* ══════════════════════════════════════════════════════
    EXERCISE LIBRARY  —  876 exercises, free-exercise-db (Unlicense)
@@ -7971,6 +7837,7 @@ function renderMealSlots(date) {
   const wrap = document.getElementById('meal-slots');
   if (!wrap) return;
   wrap.innerHTML = MEAL_SLOTS.map(slot => {
+    if (slot.key === 'drinks') return drinksCardHTML(date);
     const rows = getMeals(date).filter(m => m.slot === slot.key);
     const st = mealTotals(date, slot.key);
     const items = rows.map(m =>
@@ -8086,7 +7953,6 @@ let SCAN_STREAM = null, SCAN_STOP = false, SCAN_TRACK = null, SCAN_TORCH = false
    Torch too: barcodes printed on dark foil are the other common failure. */
 let SCAN_THEN = null;
 function mealScan() { return openScanner(lookupBarcode); }
-function kitchenScan() { return openScanner(lookupBarcodeForKitchen); }
 
 async function openScanner(onCode) {
   if (!foodApiReady()) return;
@@ -8608,8 +8474,67 @@ const MEAL_SLOTS = [
   { key: 'breakfast', name: 'Breakfast' },
   { key: 'lunch',     name: 'Lunch' },
   { key: 'dinner',    name: 'Dinner' },
-  { key: 'snacks',    name: 'Snacks' }
+  { key: 'snacks',    name: 'Snacks' },
+  { key: 'drinks',    name: 'Drinks' }
 ];
+/* ── Drinks (23 Nov) ────────────────────────────────────────────────────────
+   A tap list, not a form: + adds one serve, − takes the last one back. A 600ml bottle
+   is two taps of water. Each tap is its own meal row (update:false, or the second
+   would overwrite the first) tagged with `drink` and `ml`, so it counts in the day's
+   calories like anything else and water can be totalled against the 2.5L target.
+   Figures are typical Australian serves; change them here. */
+const DRINKS = [
+  { id: 'water',      name: 'Water',             qty: '300ml',               ml: 300, kcal: 0 },
+  { id: 'skim',       name: 'Coffee, skim',      qty: 'regular latte',       ml: 250, kcal: 85,  protein: 8.5, carbs: 12, fat: 0.4, sugar: 12, sodium: 110 },
+  { id: 'fullcream',  name: 'Coffee, full cream',qty: 'regular latte',       ml: 250, kcal: 145, protein: 7.5, carbs: 11, fat: 7.6, sugar: 11, sodium: 100 },
+  { id: 'tea',        name: 'Tea',               qty: '250ml',               ml: 250, kcal: 2 },
+  { id: 'sugary',     name: 'Sugary drink',      qty: '250ml (soft drink, juice)', ml: 250, kcal: 105, carbs: 27, sugar: 27, sodium: 10 },
+  { id: 'alcohol',    name: 'Alcohol',           qty: '1 nip (30ml spirit)', ml: 30,  kcal: 64 }
+];
+const WATER_TARGET_ML = 2500;
+function drinkRows(date) { return getMeals(date).filter(m => m.slot === 'drinks'); }
+function addDrink(id) {
+  const dk = DRINKS.find(x => x.id === id); if (!dk) return;
+  const row = { slot: 'drinks', name: dk.name, qty: dk.qty, update: false, drink: dk.id, ml: dk.ml };
+  MACRO_KEYS.forEach(k => { if (dk[k] != null) row[k] = dk[k]; });
+  addMeal(foodDate(), row);
+  renderFood(); refreshAllViews();
+}
+function removeDrink(id) {
+  const rows = drinkRows(foodDate()).filter(m => m.drink === id);
+  if (!rows.length) return;
+  removeMeal(foodDate(), rows[rows.length - 1].id);
+  renderFood(); refreshAllViews();
+}
+function drinksCardHTML(date) {
+  const rows = drinkRows(date);
+  const water = rows.filter(m => m.drink === 'water').reduce((a, m) => a + (Number(m.ml) || 0), 0);
+  const pct = Math.min(100, water / WATER_TARGET_ML * 100);
+  const kcal = rows.reduce((a, m) => a + (Number(m.kcal) || 0), 0);
+  const others = rows.filter(m => !m.drink);          // anything the coach logged in its own words
+  return '<div class="meal-card drinks-card">'
+    + '<div class="meal-head"><div class="meal-title">Drinks</div>'
+    +   (kcal ? '<div class="meal-kcal">' + nf(Math.round(kcal)) + ' cal</div>' : '') + '</div>'
+    + '<div class="water-bar"><div class="water-top"><span>Water</span><b>' + (water / 1000).toFixed(1)
+    +   ' <em>/ ' + (WATER_TARGET_ML / 1000).toFixed(1) + ' L</em></b></div>'
+    +   '<div class="water-track"><i style="width:' + pct.toFixed(1) + '%"></i></div></div>'
+    + DRINKS.map(dk => {
+        const n = rows.filter(m => m.drink === dk.id).length;
+        return '<div class="drink-row">'
+          + '<div class="drink-main"><div class="drink-name">' + esc(dk.name) + '</div>'
+          +   '<div class="drink-sub">' + esc(dk.qty) + (dk.kcal ? ' · ' + dk.kcal + ' cal' : '') + '</div></div>'
+          + (n ? '<button class="drink-btn minus" onclick="removeDrink(\'' + dk.id + '\')" aria-label="Remove one ' + esc(dk.name) + '">−</button>'
+               + '<span class="drink-n">' + n + '</span>' : '')
+          + '<button class="drink-btn" onclick="addDrink(\'' + dk.id + '\')" aria-label="Add ' + esc(dk.name) + '">+</button>'
+          + '</div>';
+      }).join('')
+    + (others.length ? '<div class="meal-items">' + others.map(m =>
+        '<div class="meal-item"><div class="meal-item-main" onclick="editMealEntry(\'' + date + '\',\'' + m.id + '\')">'
+        + '<div class="meal-item-name">' + esc(m.name) + '</div><div class="meal-item-sub">' + (m.qty ? esc(m.qty) + ' &middot; ' : '')
+        + nf(m.kcal || 0) + ' cal</div></div>'
+        + '<button class="meal-del" onclick="delMealEntry(\'' + date + '\',\'' + m.id + '\')" aria-label="Remove">&times;</button></div>').join('') + '</div>' : '')
+    + '</div>';
+}
 const MACRO_KEYS = ['kcal', 'protein', 'carbs', 'fat', 'fibre', 'sodium', 'sugar'];
 
 function getMeals(date) {
@@ -8678,6 +8603,8 @@ function addMeal(date, entry) {
   // than silently becoming nothing.
   MACRO_KEYS.forEach(k => { const v = Number(entry[k]); if (!isNaN(v) && entry[k] != null) row[k] = v; });
   if (entry.qty) row.qty = String(entry.qty);
+  if (entry.drink) row.drink = String(entry.drink);
+  if (entry.ml != null && !isNaN(Number(entry.ml))) row.ml = Number(entry.ml);
 
   if (i >= 0) { row.revised = Date.now(); list[i] = row; } else list.push(row);
   d.meals = list;
@@ -10364,6 +10291,10 @@ async function pullSamsung(silent) {
    So: say what is certain, and only raise the config causes when they are plausible. */
 function explainFetchError(err) {
   const m = String(err && err.message || err);
+  if (/coach timed out/.test(m)) {
+    return 'The coach took more than 3 minutes to answer — usually a very long reply, like a full '
+         + 'recipe with a log. Your message is saved: send it again, or ask for a shorter answer.';
+  }
   if (/failed to fetch|networkerror|load failed/i.test(m)) {
     // If the coach has answered at any point, the URL, secret and CORS are all fine.
     const workedBefore = !!loadJSON('coach-last-ok', null);
@@ -10395,6 +10326,7 @@ function collectState() {
     chat: CHAT,
     recipes: getRecipes(),
     builds: { programs: userPrograms(), sessions: userSessions(), at: loadJSON('user-builds-at', 0) || 0 },
+    kv: collectKv(),
     weights, savedAt: Date.now()
   };
 }
@@ -10417,6 +10349,7 @@ function applyState(st) {
   Object.entries(st.weights || {}).forEach(([k, v]) => { if (v) localStorage.setItem(k, v); });
   if (Array.isArray(st.chat)) { CHAT = pruneChat(st.chat); saveChat(); renderChat(); }
   if (Array.isArray(st.recipes)) localStorage.setItem('recipes', JSON.stringify(st.recipes));
+  if (st.kv) applyKv(st.kv);
   if (st.builds && (st.builds.at || 0) > (loadJSON('user-builds-at', 0) || 0)) {
     localStorage.setItem('user-programs', JSON.stringify(st.builds.programs || []));
     localStorage.setItem('user-sessions', JSON.stringify(st.builds.sessions || {}));
@@ -10487,6 +10420,7 @@ function mergeState(local, cloud) {
     // His programs travel as one piece; the copy saved most recently wins.
     builds: ((cloud.builds && cloud.builds.at) || 0) > ((local.builds && local.builds.at) || 0) ? cloud.builds : (local.builds || cloud.builds),
     weights: Object.assign({}, cloud.weights || {}, local.weights || {}),
+    kv: mergeKv(local.kv, cloud.kv),
     savedAt: Date.now()
   };
 }
@@ -11012,12 +10946,17 @@ async function sendChat() {
    network failure or a timeout retries — a real answer from the worker, even an error,
    is final. 90 seconds is well past a slow photo reply. */
 async function fetchRetry(url, opts, tries = 2) {
+  /* 23 Nov: 90s was too short — a long recipe answer can take that long, so the app hung
+     up on a reply that was still being written, then sent the whole request again. Now 3
+     minutes, and only a QUICK failure (a real dropped connection, under 15s) retries. */
   for (let i = 0; ; i++) {
     const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), 90000);
+    const t0 = Date.now();
+    const t = setTimeout(() => ctl.abort(), 180000);
     try { return await fetch(url, Object.assign({}, opts, { signal: ctl.signal })); }
     catch (e) {
-      if (i + 1 >= tries) throw (e.name === 'AbortError' ? new Error('Failed to fetch (timed out)') : e);
+      if (e.name === 'AbortError') throw new Error('coach timed out');
+      if (i + 1 >= tries || Date.now() - t0 > 15000) throw e;
       await new Promise(r => setTimeout(r, 1500));
     } finally { clearTimeout(t); }
   }
