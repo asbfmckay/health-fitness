@@ -73,7 +73,7 @@
     --c-kcalIn:#e2665c; --c-protein:#5c7a1f; --c-veg:#27a5b4;
     --accent-bg: var(--green-bg);
     --accent-border: var(--green-bdr);
-    --tag-active-bg: rgba(203,229,88,0.28);
+    --tag-active-bg: color-mix(in srgb, var(--lime) 28%, transparent);
     --tag-active-border: rgba(159,185,63,0.5);
     --tag-active-text: #5c7a1f;
 
@@ -1489,7 +1489,7 @@
   /* Lime was only ever a button fill. A hairline of it under the page title ties the
      accent to the whole screen instead of one control. */
   .page-nav{border-radius:var(--r-md);box-shadow:inset 0 1px 2px rgba(23,27,46,.05)}
-  .page-btn.active{box-shadow:0 2px 6px rgba(23,27,46,.22), 0 0 0 1px rgba(203,229,88,.30)}
+  .page-btn.active{box-shadow:0 2px 6px rgba(23,27,46,.22), 0 0 0 1px color-mix(in srgb, var(--lime) 30%, transparent)}
 
   .exercise-card{transition:box-shadow var(--t-fast)}
   .exercise-card:has(.ex-detail[style*="block"]){box-shadow:var(--e2)}
@@ -1537,6 +1537,18 @@
   .lib-sheet{position:fixed;inset:0;z-index:70;background:rgba(42,42,24,.42);
     backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center}
   .lib-sheet[hidden]{display:none}
+  .prof-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .prof-name{font:700 15px var(--display);color:var(--text-h)}
+  .ap-themes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+  .ap-theme{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--r-sm);border:1.5px solid var(--border);
+    background:var(--bg-card);cursor:pointer;font:600 12.5px var(--body-f);color:var(--text-body);text-align:left}
+  .ap-theme.on{border-color:var(--text-h);color:var(--text-h)}
+  .ap-sw{display:inline-flex;flex:none}
+  .ap-sw i{width:16px;height:16px;border-radius:50%;border:2px solid var(--bg-card);margin-left:-5px}
+  .ap-sw i:first-child{margin-left:0}
+  .ap-fonts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
+  .ap-font{padding:10px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--bg-card);cursor:pointer;font-size:14px;color:var(--text-body)}
+  .ap-font.on{border-color:var(--text-h);color:var(--text-h);font-weight:700}
   /* ══════════ Program builder ══════════ */
   .pb-sheet{z-index:65}                     /* under the library, which opens on top to pick */
   .pb-body{flex:1;overflow-y:auto;padding:4px 16px 16px}
@@ -1634,7 +1646,7 @@
   .lib-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
   .lib-chip{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--r-pill);
     padding:3px 9px;font-size:11px;font-weight:700;color:var(--text-dim);text-transform:capitalize}
-  .lib-chip.pri{background:rgba(203,229,88,.25);border-color:rgba(159,185,63,.45);color:var(--green)}
+  .lib-chip.pri{background:color-mix(in srgb, var(--lime) 25%, transparent);border-color:rgba(159,185,63,.45);color:var(--green)}
   .lib-chip.warn{background:rgba(242,165,63,.14);border-color:rgba(242,165,63,.4);color:#8a5a12}
   .lib-steps{margin:0 0 8px 18px;padding:0}
   .lib-steps li{font-size:13.5px;line-height:1.55;color:var(--text-b);margin-bottom:8px}
@@ -1950,7 +1962,7 @@
   .wb-side-big{font:600 26px/1.15 var(--body-f);color:var(--text-h);font-variant-numeric:tabular-nums}
   .wb-badge{display:inline-block;margin-top:8px;padding:3px 9px;border-radius:var(--r-pill,999px);
     font:600 11px/1.3 var(--body-f);background:var(--bg-soft);color:var(--text-dim)}
-  .wb-badge.up{background:rgba(203,229,88,.22);color:#6f8326}
+  .wb-badge.up{background:color-mix(in srgb, var(--lime) 22%, transparent);color:#6f8326}
   .wb-badge.dn{background:rgba(226,102,92,.13);color:#c2410c}
   .wb-rings{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:16px;text-align:center}
   .wb-d svg{display:block;margin:0 auto}
@@ -2168,8 +2180,8 @@
     width: 76px;
     height: 76px;
     border-radius: 16px;
-    background: rgba(203,229,88,0.12);
-    border: 2px solid rgba(203,229,88,0.25);
+    background: color-mix(in srgb, var(--lime) 12%, transparent);
+    border: 2px solid color-mix(in srgb, var(--lime) 25%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2203,7 +2215,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 2px solid rgba(203,229,88,0.5);
+    border: 2px solid color-mix(in srgb, var(--lime) 50%, transparent);
     background: transparent;
     transition: background 0.1s ease, border-color 0.1s ease;
   }
@@ -2235,7 +2247,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .lock-key:active { background: rgba(203,229,88,0.2); }
+  .lock-key:active { background: color-mix(in srgb, var(--lime) 20%, transparent); }
   .lock-key.del { font-size: 18px; color: rgba(255,255,255,0.5); }
   .lock-key.empty { background: none; cursor: default; }
 
@@ -2885,7 +2897,7 @@
       <span class="header-eyebrow">Health &amp; Fitness</span>
     </div>
   </div>
-  <div class="page-title" id="header-greeting">Good morning, Andrew</div>
+  <div class="page-title" id="header-greeting">Good morning</div>
   <div class="page-rule"></div>
 </div>
 </div>
@@ -3182,7 +3194,7 @@
      header too, which is what gives it the same Start as every other workout. -->
 <div id="day-circuit" class="day-view">
   <div class="day-header">
-    <div class="day-tag" style="background:rgba(203,229,88,0.18);color:var(--green-deep)">CIRCUIT</div>
+    <div class="day-tag" style="background:color-mix(in srgb, var(--lime) 18%, transparent);color:var(--green-deep)">CIRCUIT</div>
     <div class="day-heading">Full Body Circuit</div>
   </div>
   <div class="cardio-block">
@@ -3600,6 +3612,16 @@
     <div class="day-heading">Settings</div>
   </div>
 
+  <div class="section-label">Profile</div>
+  <div class="tracker-card prof-card">
+    <div class="prof-row"><div><div class="prof-name" id="prof-name"></div>
+      <div class="tracker-sub">Each profile has its own data, coach chat, targets and look.</div></div>
+      <button class="ghost-btn" onclick="switchProfile()">Switch profile</button></div>
+  </div>
+
+  <div class="section-label">Appearance</div>
+  <div class="tracker-card"><div id="appearance-box"></div></div>
+
   <div class="section-label">My equipment</div>
   <div class="tracker-card">
     <div id="equip-list" class="equip-list"></div>
@@ -3684,6 +3706,11 @@
       <div class="log-field">
         <label class="mini-label">Birth year</label>
         <input type="number" id="set-birth" min="1920" max="2020" step="1">
+      </div>
+      <div class="log-field">
+        <label class="mini-label">Sex (for resting burn)</label>
+        <select id="set-sex" style="width:100%;background:var(--bg-soft);border:1px solid var(--border-md);border-radius:var(--r-sm);padding:9px 10px;font:600 13px var(--body-f);color:var(--text-h)">
+          <option value="male">Male</option><option value="female">Female</option></select>
       </div>
       <div class="log-field">
         <label class="mini-label">Calories burned target</label>
@@ -3792,6 +3819,129 @@
 </div><!-- /page-settings -->
 
 <script>
+/* ══════════════════════════════════════════════════════
+   PROFILES  —  Andrew and Bronnia (23 Nov 2026)
+   ══════════════════════════════════════════════════════
+   The PIN picks the profile. Andrew's data keeps its original localStorage keys; any
+   other profile's keys are stored under "p:<id>:". This runs FIRST, before any code
+   reads storage, by patching localStorage itself — so every loadJSON, saveJSON and raw
+   localStorage call in the app is namespaced without touching any of them.
+   The active profile lives in sessionStorage and is set by the PIN screen, which
+   reloads the page when the profile changes so nothing from the last one is in memory.
+   HONEST LIMITS: the PINs are in this public file, both profiles can sit in one
+   browser's storage, and both run through the same worker and Anthropic key. This
+   keeps two people's data apart; it is not a security boundary. */
+const PROFILES = [
+  { id: 'andrew',  name: 'Andrew',  pin: '2064', sex: 'male' },     // changed 23 Nov (was 9294)
+  { id: 'bronnia', name: 'Bronnia', pin: '9294', sex: 'female' }
+];
+const PROFILE = (() => {
+  try { const p = sessionStorage.getItem('active-profile'); return PROFILES.some(x => x.id === p) ? p : 'andrew'; }
+  catch (_) { return 'andrew'; }
+})();
+const PROFILE_INFO = PROFILES.find(p => p.id === PROFILE);
+const PROFILE_NAME = PROFILE_INFO.name;
+/* Shared by every profile on a device: the coach connection is the same worker. */
+const PROFILE_GLOBAL_KEYS = new Set(['coach-url', 'coach-secret']);
+(function namespaceStorage() {
+  if (PROFILE === 'andrew') return;                // his keys are the originals
+  const pre = 'p:' + PROFILE + ':';
+  const P = Storage.prototype;
+  const orig = { get: P.getItem, set: P.setItem, rem: P.removeItem, key: P.key,
+                 len: Object.getOwnPropertyDescriptor(P, 'length').get, clear: P.clear };
+  const isLS = st => { try { return st === window.localStorage; } catch (_) { return false; } };
+  const nk = k => PROFILE_GLOBAL_KEYS.has(String(k)) ? String(k) : pre + k;
+  let cache = null;                                 // this profile's keys, unprefixed
+  const mine = st => {
+    if (cache) return cache;
+    const out = [], n = orig.len.call(st);
+    for (let i = 0; i < n; i++) { const k = orig.key.call(st, i); if (k && k.startsWith(pre)) out.push(k.slice(pre.length)); }
+    return (cache = out);
+  };
+  P.getItem = function (k) { return isLS(this) ? orig.get.call(this, nk(k)) : orig.get.call(this, k); };
+  P.setItem = function (k, v) { if (isLS(this)) { cache = null; return orig.set.call(this, nk(k), v); } return orig.set.call(this, k, v); };
+  P.removeItem = function (k) { if (isLS(this)) { cache = null; return orig.rem.call(this, nk(k)); } return orig.rem.call(this, k); };
+  P.key = function (i) { return isLS(this) ? (mine(this)[i] ?? null) : orig.key.call(this, i); };
+  Object.defineProperty(P, 'length', { configurable: true, get: function () { return isLS(this) ? mine(this).length : orig.len.call(this); } });
+  P.clear = function () { if (isLS(this)) { mine(this).slice().forEach(k => orig.rem.call(this, pre + k)); cache = null; return; } return orig.clear.call(this); };
+})();
+function renderProfileCard() {
+  const el = document.getElementById('prof-name');
+  if (el) el.textContent = 'Signed in as ' + PROFILE_NAME;
+  // Preview every font on its own button.
+  FONTS.forEach(f => { if (f.id !== 'space' && !document.getElementById('font-' + f.id)) {
+    const l = document.createElement('link'); l.id = 'font-' + f.id; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=' + f.g + '&display=swap'; document.head.appendChild(l); } });
+}
+function switchProfile() {
+  try { sessionStorage.removeItem('session-unlocked'); sessionStorage.removeItem('active-profile'); } catch (_) {}
+  location.reload();
+}
+function bodyDefaults() {
+  return PROFILE === 'andrew' ? { heightCm: 186, birthYear: 1992, sex: 'male' }
+                              : { heightCm: 165, birthYear: 1990, sex: PROFILE_INFO.sex || 'female' };
+}
+
+/* ── Appearance (per profile) ──────────────────────────────────────────────
+   Subtle themes: the background, greys and white never change; only the accent (the
+   lime) and the dark (the navy) are swapped. Plus the typeface. Applied before first
+   paint of the app; stored as 'appearance' in the profile's own storage. */
+const THEMES = [
+  { id: 'lime',     name: 'Lime & navy',        accent: '#cbe558', accentDark: '#9fb93f', accentText: '#5c7a1f', bg: '#eef6d9', bdr: '#dbe8ab', dark: '#171b2e' },
+  { id: 'sage',     name: 'Sage & charcoal',    accent: '#bcd9b4', accentDark: '#86ad7c', accentText: '#4f7546', bg: '#ecf4ea', bdr: '#d3e5ce', dark: '#262a30' },
+  { id: 'blush',    name: 'Blush & plum',       accent: '#f1c9c6', accentDark: '#d39591', accentText: '#9a5450', bg: '#fbefee', bdr: '#f0d6d3', dark: '#3a2638' },
+  { id: 'sky',      name: 'Sky & slate',        accent: '#bfdcf0', accentDark: '#79a8cc', accentText: '#3f6e93', bg: '#edf5fb', bdr: '#d3e6f3', dark: '#1e2b3b' },
+  { id: 'apricot',  name: 'Apricot & espresso', accent: '#f5d2a6', accentDark: '#d69f60', accentText: '#94622a', bg: '#fbf2e7', bdr: '#f0dfc6', dark: '#33251d' },
+  { id: 'lavender', name: 'Lavender & ink',     accent: '#d8cff3', accentDark: '#9f8fd2', accentText: '#62529c', bg: '#f2effb', bdr: '#e0daf3', dark: '#221f38' }
+];
+const FONTS = [
+  { id: 'space',   name: 'Space Grotesk', css: "'Space Grotesk'", g: 'Space+Grotesk:wght@300;400;500;600;700' },
+  { id: 'manrope', name: 'Manrope',       css: "'Manrope'",       g: 'Manrope:wght@400;500;600;700;800' },
+  { id: 'dmsans',  name: 'DM Sans',       css: "'DM Sans'",       g: 'DM+Sans:wght@400;500;600;700' },
+  { id: 'nunito',  name: 'Nunito',        css: "'Nunito'",        g: 'Nunito:wght@400;500;600;700;800' }
+];
+function getAppearance() {
+  let a = null; try { a = JSON.parse(localStorage.getItem('appearance') || 'null'); } catch (_) {}
+  return Object.assign({ theme: 'lime', font: 'space' }, a || {});
+}
+function applyAppearance() {
+  const a = getAppearance();
+  const t = THEMES.find(x => x.id === a.theme) || THEMES[0];
+  const f = FONTS.find(x => x.id === a.font) || FONTS[0];
+  const r = document.documentElement.style;
+  r.setProperty('--lime', t.accent); r.setProperty('--lime-dark', t.accentDark);
+  r.setProperty('--green', t.accentText); r.setProperty('--c-protein', t.accentText);
+  r.setProperty('--tag-active-text', t.accentText);
+  r.setProperty('--green-bg', t.bg); r.setProperty('--green-bdr', t.bdr);
+  r.setProperty('--green-deep', t.dark); r.setProperty('--ink', t.dark); r.setProperty('--text-h', t.dark);
+  const fam = f.css + ', -apple-system, BlinkMacSystemFont, sans-serif';
+  ['--body-f', '--display', '--mono'].forEach(v => r.setProperty(v, fam));
+  if (f.id !== 'space' && !document.getElementById('font-' + f.id)) {
+    const l = document.createElement('link');
+    l.id = 'font-' + f.id; l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=' + f.g + '&display=swap';
+    document.head.appendChild(l);
+  }
+}
+function setAppearance(k, v) {
+  const a = getAppearance(); a[k] = v;
+  saveJSON('appearance', a);
+  applyAppearance(); renderAppearance();
+  try { refreshAllViews(); } catch (_) {}
+}
+function renderAppearance() {
+  const host = document.getElementById('appearance-box');
+  if (!host) return;
+  const a = getAppearance();
+  host.innerHTML = '<label class="mini-label">Colours</label><div class="ap-themes">'
+    + THEMES.map(t => '<button class="ap-theme' + (a.theme === t.id ? ' on' : '') + '" onclick="setAppearance(\'theme\',\'' + t.id + '\')">'
+        + '<span class="ap-sw"><i style="background:' + t.accent + '"></i><i style="background:' + t.dark + '"></i></span>'
+        + '<span>' + t.name + '</span></button>').join('') + '</div>'
+    + '<label class="mini-label" style="margin-top:12px;display:block">Font</label><div class="ap-fonts">'
+    + FONTS.map(f => '<button class="ap-font' + (a.font === f.id ? ' on' : '') + '" style="font-family:' + f.css + ',sans-serif" onclick="setAppearance(\'font\',\'' + f.id + '\')">' + f.name + '</button>').join('') + '</div>';
+}
+applyAppearance();
+
 /* ══════════════════════════════════════════════════════
    QUICK CIRCUIT — nine exercises, four rounds, 20 seconds on. The whole point is
    that you never touch the phone once it starts, so it runs itself: work, rest,
@@ -4003,7 +4153,7 @@ let PLAN_OFFSET = 0;                 // 0 = the week containing today
 const PROG_STYLE = {
   split5:  { colour: 'var(--chest)',     tint: 'rgba(226,102,92,0.12)',  icon: 'bar' },
   split2:  { colour: 'var(--shoulders)', tint: 'rgba(92,189,138,0.14)',  icon: 'bar' },
-  circuits:{ colour: 'var(--lime-dark)', tint: 'rgba(203,229,88,0.22)',  icon: 'bolt' },
+  circuits:{ colour: 'var(--lime-dark)', tint: 'color-mix(in srgb, var(--lime) 22%, transparent)',  icon: 'bolt' },
   running: { colour: 'var(--back)',      tint: 'rgba(79,143,219,0.12)',  icon: 'pulse' },
   other:   { colour: 'var(--cardio)',    tint: 'rgba(242,165,63,0.14)',  icon: 'dot' },
   mine:    { colour: 'var(--arms)',      tint: 'rgba(156,120,214,0.12)', icon: 'dot' }
@@ -6013,7 +6163,7 @@ function showPage(id) {
   }
   if (id === 'workout') ensureLibraryLinks();
   if (id === 'review') renderWeek();
-  if (id === 'settings') { shareStatus(); renderEquipment(); }   // check the trainer link each time Settings opens
+  if (id === 'settings') { shareStatus(); renderEquipment(); renderAppearance(); renderProfileCard(); }   // check the trainer link each time Settings opens
   if (id === 'hf') renderFoodGroups();
 }
 
@@ -6297,7 +6447,7 @@ async function restoreSavedImages() {
    Lock screen — 4-digit PIN gate, auto-loads cloud key
    after first unlock so no manual key entry needed.
    ══════════════════════════════════════════════════════ */
-const LOCK_PIN = '9294';
+// PINs live in PROFILES at the top of the script; the PIN chooses the profile.
 const SESSION_UNLOCKED_KEY = 'session-unlocked';
 let lockInput = '';
 
@@ -6322,7 +6472,16 @@ function renderLockDots(error = false) {
 }
 
 function checkPin() {
-  if (lockInput === LOCK_PIN) {
+  const who = PROFILES.find(p => p.pin === lockInput && /^\d{4}$/.test(p.pin));
+  if (who && who.id !== PROFILE) {
+    // A different person: reload into their storage, so nothing of the last profile is
+    // left in memory.
+    sessionStorage.setItem('active-profile', who.id);
+    sessionStorage.setItem(SESSION_UNLOCKED_KEY, '1');
+    location.reload();
+    return;
+  }
+  if (who) {
     sessionStorage.setItem(SESSION_UNLOCKED_KEY, '1');
     document.getElementById('lock-screen').classList.add('hidden');
     bootApp();
@@ -6350,6 +6509,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    Runs once ever, and never overwrites a day that already has data. */
 const SEED_ID = 'seed-aug2026-done';
 function seedHistory() {
+  if (PROFILE !== 'andrew') return;           // Andrew's August days, not anyone else's
   if (localStorage.getItem(SEED_ID)) return;
   const rows = [
     { date: '2026-08-17', weight: 107.2, kcalIn: 2370, protein: 148, veg: 2, steps: 3180, sleep: 7,
@@ -6530,7 +6690,7 @@ function initTrackers() {
   if (greetingEl) {
     const hour = new Date().getHours();
     const part = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
-    greetingEl.textContent = `Good ${part}, Andrew`;
+    greetingEl.textContent = `Good ${part}, ${PROFILE_NAME}`;
   }
   document.body.classList.add('coach-open');   // Coach is the landing tab
   requestAnimationFrame(() => requestAnimationFrame(sizeChat));
@@ -6574,6 +6734,7 @@ const DEFAULT_TARGETS = {
    are the numbers he gave from his own plan, applied ONCE and then never again, so a
    later edit in Settings stands. The flag is what makes it once. */
 function migrateTargets2026() {
+  if (PROFILE !== 'andrew') return;          // his numbers; another profile sets her own
   if (loadJSON('targets-macros-set', null)) return;
   const want = { kcalIn: 1800, protein: 158, carbs: 158, fat: 60,
                  sodium: 2300, sugar: 102, fibre: 30, weight: 90 };
@@ -6586,6 +6747,7 @@ function migrateTargets2026() {
 /* The new goal and the weekly budget, written once over whatever is saved — same
    pattern as above, so a later edit in Settings still stands. */
 function migrateGoal2027() {
+  if (PROFILE !== 'andrew') return;          // his numbers; another profile sets her own
   if (loadJSON('targets-goal-2027', null)) return;
   const t = Object.assign({}, loadJSON('targets', {}) || {});
   Object.assign(t, { weight: 85, goalDate: '2027-04-27', kcalWeekday: 1800, kcalWeekend: 2400 });
@@ -6595,6 +6757,7 @@ function migrateGoal2027() {
 /* 23 Nov: weekends went 2,400 → 2,200 → back to 2,400. A device that already ran the
    migration above holds 2,200, so this writes 2,400 once over it. */
 function migrateWeekend2400() {
+  if (PROFILE !== 'andrew') return;          // his numbers; another profile sets her own
   if (loadJSON('targets-weekend-2400', null)) return;
   const t = Object.assign({}, loadJSON('targets', {}) || {});
   t.kcalWeekend = 2400;
@@ -6612,13 +6775,18 @@ function initSettings() {
     bm.value = loadJSON('burn-mode', 'active');
     bm.addEventListener('change', () => { saveJSON('burn-mode', bm.value); renderFitnessStats(); renderRestNote(); });
   }
-  const body = loadJSON('body', { heightCm: 186, birthYear: 1992 });
+  const body = loadJSON('body', bodyDefaults());
+  const sexEl = document.getElementById('set-sex');
+  if (sexEl) {
+    sexEl.value = body.sex || bodyDefaults().sex;
+    sexEl.addEventListener('change', () => { const b = loadJSON('body', bodyDefaults()); b.sex = sexEl.value; saveJSON('body', b); renderFitnessStats(); renderRestNote(); });
+  }
   [['set-height', 'heightCm'], ['set-birth', 'birthYear']].forEach(([id, key]) => {
     const el = document.getElementById(id);
     if (!el) return;
     el.value = body[key];
     el.addEventListener('change', () => {
-      const b = loadJSON('body', { heightCm: 186, birthYear: 1992 });
+      const b = loadJSON('body', bodyDefaults());
       b[key] = parseFloat(el.value) || b[key];
       saveJSON('body', b); renderFitnessStats(); renderRestNote();
     });
@@ -7143,7 +7311,7 @@ const PB_COLOURS = [
   { k: 'blue',   colour: 'var(--back)',      tint: 'rgba(79,143,219,0.12)' },
   { k: 'purple', colour: 'var(--arms)',      tint: 'rgba(156,120,214,0.12)' },
   { k: 'orange', colour: 'var(--cardio)',    tint: 'rgba(242,165,63,0.14)' },
-  { k: 'lime',   colour: 'var(--lime-dark)', tint: 'rgba(203,229,88,0.22)' }
+  { k: 'lime',   colour: 'var(--lime-dark)', tint: 'color-mix(in srgb, var(--lime) 22%, transparent)' }
 ];
 const PB_MUSCLE_TAG = m => /chest|pector/.test(m) ? 'chest' : /lat|back|trap|rhomb/.test(m) ? 'back'
   : /bicep|tricep|forearm/.test(m) ? 'arms' : /shoulder|delt/.test(m) ? 'shoulders'
@@ -8954,10 +9122,12 @@ function renderFitnessStats() {
    would say you are in a 1,500 calorie deficit every day, which is nonsense. So when the
    watch reports active calories we add resting burn back on. */
 function restingBurn() {
-  const p = loadJSON('body', { heightCm: 186, birthYear: 1992 });
-  const w = (loadJSON('results-log', [])[0] || {}).weight || 106;
+  const p = loadJSON('body', bodyDefaults());
+  const w = (loadJSON('results-log', [])[0] || {}).weight || (PROFILE === 'andrew' ? 106 : 70);
   const age = new Date().getFullYear() - (p.birthYear || 1992);
-  return Math.round(10 * w + 6.25 * (p.heightCm || 186) - 5 * age + 5);
+  // Mifflin-St Jeor: +5 for men, −161 for women.
+  const sex = p.sex || bodyDefaults().sex;
+  return Math.round(10 * w + 6.25 * (p.heightCm || 186) - 5 * age + (sex === 'female' ? -161 : 5));
 }
 /* What a day's burn actually was. ONE function, because the Calories Burned dial and
    the Energy tile were working it out separately and showing different numbers for the
@@ -10047,7 +10217,7 @@ const COACH_URL = () => loadJSON('coach-url', '');
 const COACH_SECRET = () => loadJSON('coach-secret', '');
 const COACH_READY = () => !!COACH_URL() && !!COACH_SECRET();
 function coachHeaders() {
-  return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + COACH_SECRET() };
+  return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + COACH_SECRET(), 'X-Profile': PROFILE };
 }
 /* Cloudflare never shows a secret back, so this field is the only copy he can read. */
 function toggleSecret() {
@@ -10327,6 +10497,7 @@ function collectState() {
     recipes: getRecipes(),
     builds: { programs: userPrograms(), sessions: userSessions(), at: loadJSON('user-builds-at', 0) || 0 },
     kv: collectKv(),
+    who: { name: PROFILE_NAME, sex: (loadJSON('body', bodyDefaults()) || {}).sex || PROFILE_INFO.sex },
     weights, savedAt: Date.now()
   };
 }
@@ -10421,6 +10592,7 @@ function mergeState(local, cloud) {
     builds: ((cloud.builds && cloud.builds.at) || 0) > ((local.builds && local.builds.at) || 0) ? cloud.builds : (local.builds || cloud.builds),
     weights: Object.assign({}, cloud.weights || {}, local.weights || {}),
     kv: mergeKv(local.kv, cloud.kv),
+    who: local.who || cloud.who,
     savedAt: Date.now()
   };
 }
@@ -10587,7 +10759,9 @@ function renderWeek() {
 
   // Averages against target. Magnitude against a reference — a short bar each,
   // one series, so no legend; the row name carries identity.
-  const maintenance = (loadJSON('coach-profile', {}) || {}).maintenance || 2590;
+  // Andrew's maintenance was worked out at 2,590; anyone else gets resting burn × 1.3
+  // (light activity) until the coach records a figure for them.
+  const maintenance = (loadJSON('coach-profile', {}) || {}).maintenance || (PROFILE === 'andrew' ? 2590 : Math.round(restingBurn() * 1.3));
   const defs = [
     { k: 'kcalIn',  name: 'Calories in', target: t.kcalIn || 2000, dec: 0, colour: 'var(--c-kcalIn)', ceiling: true },
     { k: 'protein', name: 'Protein',     target: t.protein || 150, dec: 0, unit: 'g', colour: 'var(--c-protein)' },
@@ -10969,6 +11143,7 @@ function coachState() {
   return { targets: t, days, weights: loadJSON('results-log', []).slice(0, 120),
     sessions: loadJSON('session-log', []).slice(-30), recipes: getRecipes(),
     cookbook: kitchenRecipes().map(r => r.name),
+    who: { name: PROFILE_NAME, sex: (loadJSON('body', bodyDefaults()) || {}).sex || PROFILE_INFO.sex },
     today: todayKey(), reviewDue: reviewDue(), labs: getLabs().slice(0, 120),
     plan: { thisWeek: getPlan(planWeekStart(0)), nextWeek: getPlan(planWeekStart(1)),
             weekStart: isoOf(planWeekStart(0)) },
