@@ -114,6 +114,8 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Form controls do not inherit the page font by default — 46 buttons were in Arial. */
+  button, input, select, textarea { font-family: inherit; }
 
   body {
     font-family: var(--body-f);
@@ -1295,7 +1297,12 @@
   .plan-fixed{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text-dim);
     min-width:72px;text-align:center;align-self:center}
   .sum-watch{font-size:11.5px;color:var(--text-dim);margin-top:2px}
-  .sum-row.is-done .sum-what{color:var(--text-dim);text-decoration:line-through}
+  .sum-row.is-done .sum-what{color:var(--text-dim)}
+  .sum-row.is-done .sum-name{text-decoration:line-through}
+  /* The watch read-out is the proof, not the plan — never crossed out. A text-decoration
+     on a parent paints through inline children, so the line is a block of its own. */
+  .sum-row.is-done .sum-watch{display:block;text-decoration:none;color:var(--c-protein);font-weight:700}
+  .sum-row.is-done .sum-amt-btn{text-decoration:none}
   .sum-empty{padding:10px 0;font-size:13px;color:var(--text-dim)}
   @media (max-width:420px){
     .today-strip{flex-direction:column;align-items:stretch}
@@ -1480,7 +1487,10 @@
   }
   /* Headings take the display face and tighten up; it has more personality than
      Manrope at size and holds together better at weight. */
-  .day-heading,.cal-big,.tracker-stat,.w-now,.lock-title,.greeting,.circuit-name,
+  /* #header-greeting, NOT .greeting: <body> carries class "greeting" while Coach is open,
+     so ".greeting" here turned the WHOLE APP into the display face on that tab and back
+     to Manrope on the others — the "mix of old fonts". */
+  .day-heading,.cal-big,.tracker-stat,.w-now,.lock-title,#header-greeting,.circuit-name,
   .meal-sheet-title,.prog-name,.today-name,.food-date,.wk-range,.ch-v b{
     font-family:var(--display);
     letter-spacing:-.4px;
@@ -1845,30 +1855,34 @@
   .wk-hero-sub{font-size:11.5px;color:var(--text-dim);margin-top:3px;}
   .wk-eta{font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.45;}
   .wk-row{display:flex;align-items:center;gap:10px;padding:7px 0;}
-  /* ══════════ Weekly calorie budget (Sat–Fri) ══════════ */
-  .wb-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
-  .wb-big{font-family:var(--display);font-size:30px;font-weight:700;color:var(--text-h);
-    font-variant-numeric:tabular-nums slashed-zero;line-height:1}
-  .wb-big small{font-size:13px;font-weight:600;color:var(--text-dim);margin-left:4px}
-  .wb-today{text-align:right}
-  .wb-today b{display:block;font-family:var(--display);font-size:20px;color:var(--text-h);
-    font-variant-numeric:tabular-nums slashed-zero}
-  .wb-today span{font-size:11.5px;color:var(--text-dim)}
-  .wb-meter{height:10px;border-radius:var(--r-pill);background:var(--bg-soft);margin:12px 0 6px;
-    overflow:hidden;display:flex}
-  .wb-meter i{display:block;height:100%}
-  .wb-cap{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-dim);
-    font-variant-numeric:tabular-nums}
-  .wb-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
-  .wb-day{text-align:center;font-variant-numeric:tabular-nums}
-  .wb-col{position:relative;height:64px;background:var(--bg-soft);border-radius:7px;overflow:hidden}
-  .wb-col i{position:absolute;left:0;right:0;bottom:0;border-radius:7px 7px 0 0}
-  .wb-col .wb-line{position:absolute;left:3px;right:3px;height:0;border-top:1.5px dashed var(--text-dim)}
-  .wb-day.today .wb-col{outline:2px solid var(--green-deep);outline-offset:1px}
-  .wb-dn{font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--text-dim);margin-top:6px}
-  .wb-dv{font-size:11px;font-weight:700;color:var(--text-h);margin-top:3px}
-  .wb-dt{font-size:10px;color:var(--text-dim)}
-  .wb-note{font-size:12px;color:var(--text-body);margin-top:12px;line-height:1.45}
+  /* ══════════ Weekly calorie budget (Sat–Fri) — option B, rings ══════════ */
+  .wb-hero{display:flex;align-items:center;gap:18px}
+  .wb-hero svg{flex:none}
+  .wb-ring-mid{font:700 21px var(--display);fill:var(--text-h);font-variant-numeric:tabular-nums}
+  .wb-ring-sub{font:500 10.5px var(--body-f);fill:var(--text-dim)}
+  .wb-side{min-width:0}
+  .wb-side-l{font-size:12px;color:var(--text-dim)}
+  .wb-side-big{font:700 30px/1.1 var(--display);color:var(--text-h);font-variant-numeric:tabular-nums slashed-zero}
+  .wb-badge{display:inline-block;margin-top:9px;padding:4px 10px;border-radius:var(--r-pill,999px);
+    font:700 11.5px/1.3 var(--body-f);background:var(--bg-soft);color:var(--text-body)}
+  .wb-badge.up{background:var(--green-bg);color:var(--c-protein)}
+  .wb-badge.dn{background:rgba(226,102,92,.13);color:#c2410c}
+  .wb-rings{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:16px;text-align:center}
+  .wb-d svg{display:block;margin:0 auto}
+  .wb-dn{display:block;font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--text-dim);margin-top:5px}
+  .wb-dv{display:block;font-size:11.5px;font-weight:700;color:var(--text-h);margin-top:3px;font-variant-numeric:tabular-nums}
+  .wb-dv.plan{color:var(--text-dim);font-weight:600}
+  .wb-d.today .wb-dn{color:var(--text-h)}
+  .wb-d.today svg{border-radius:50%;box-shadow:0 0 0 2px var(--bg-card),0 0 0 3.5px var(--green-deep)}
+  .wb-cap{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--text-dim);
+    margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+  .wb-note{font-size:11.5px;color:var(--text-dim);margin-top:6px}
+  .w-seg{display:inline-flex;gap:2px;background:var(--bg-soft);border:1px solid var(--border);
+    border-radius:var(--r-pill,999px);padding:3px;margin:2px 0 10px}
+  .w-seg button{border:none;background:transparent;border-radius:var(--r-pill,999px);padding:6px 13px;
+    font:700 12px var(--body-f);color:var(--text-dim);cursor:pointer}
+  .w-seg button.on{background:var(--bg-card);color:var(--text-h);box-shadow:var(--e1)}
+  .w-proj-mini{font-size:12px;color:var(--text-dim)}
   .w-proj{font-size:12.5px;color:var(--text-body);margin-top:10px;line-height:1.5}
   .w-proj b{color:var(--text-h);font-variant-numeric:tabular-nums}
   .wk-row-name{font-size:12.5px;color:var(--text-h);width:92px;flex:none;}
@@ -5419,6 +5433,7 @@ function planCommitment(type, amount) {
 function watchLine(w) {
   if (!w) return '';
   const bits = [];
+  if (w.kind && w.kind !== 'other') bits.push(w.kind.charAt(0).toUpperCase() + w.kind.slice(1));
   if (w.km != null) bits.push(w.km.toFixed(2) + ' km');
   if (w.min != null) bits.push(Math.round(w.min) + ' min');
   if (w.kcal != null) bits.push(Math.round(w.kcal) + ' cal');
@@ -5452,6 +5467,40 @@ function commitPlan() {
   savePlan(start, plan);
   renderPlan();
 }
+/* ── Watch workouts → the plan ──────────────────────────────────────────────
+   A Samsung Health workout on a planned day ticks that day off and puts its distance,
+   time and calories under it. Matched by KIND: a run to Run, a walk to Walk, a ride to
+   Ride, a swim to Swim, a strength workout to a split day or circuit; "Other" takes
+   anything. The biggest matching workout of the day wins. If he unticks a day the watch
+   ticked, that workout is remembered and never re-ticks it. */
+function planKind(type) {
+  const s = sessionByName(type);
+  if (!s) return 'other';
+  if (s.kind === 'view' || s.kind === 'circuit') return 'strength';
+  const n = String(type).toLowerCase();
+  return /run/.test(n) ? 'run' : /walk/.test(n) ? 'walk' : /ride|bike|cycl/.test(n) ? 'ride' : /swim/.test(n) ? 'swim' : 'other';
+}
+function linkWatchWorkouts(dates) {
+  let changed = 0;
+  (dates || []).forEach(date => {
+    const ws = (getFitnessData(date) || {}).workouts;
+    if (!Array.isArray(ws) || !ws.length) return;
+    const start = saturdayOf(new Date(date + 'T00:00:00'));
+    const plan = getPlan(start);
+    const row = plan.days[date];
+    if (!row || !row.type) return;
+    const want = planKind(row.type);
+    const hits = ws.filter(w => (want === 'other' || w.kind === want) && w.id !== row.watchSkip);
+    if (!hits.length) return;
+    const best = hits.slice().sort((a, b) => (b.km || 0) - (a.km || 0) || (b.min || 0) - (a.min || 0))[0];
+    const watch = { id: best.id, kind: best.kind, km: best.km ?? null, min: best.min ?? null, kcal: best.kcal ?? null };
+    let dirty = JSON.stringify(row.watch || null) !== JSON.stringify(watch);
+    row.watch = watch;
+    if (!row.done) { row.done = true; row.doneAt = Date.now(); row.auto = 'watch'; dirty = true; }
+    if (dirty) { savePlan(start, plan); changed++; }
+  });
+  return changed;
+}
 function togglePlanDone(date) {
   const start = planWeekStart();
   const plan = getPlan(start);
@@ -5459,6 +5508,8 @@ function togglePlanDone(date) {
   if (!row) return;
   row.done = !row.done;
   row.doneAt = row.done ? Date.now() : null;
+  // Unticking a day the watch ticked: remember that workout so the next sync leaves it.
+  if (!row.done && row.watch) { row.watchSkip = row.watch.id; delete row.watch; }
   savePlan(start, plan);
   renderPlan();
 }
@@ -5589,7 +5640,7 @@ function renderPlan(o) {
         : ' <button class="sum-amt sum-amt-btn empty" onclick="promptPlanAmount(\'' + date + '\')">+ ' + cm.unit + '</button>';
       out.push('<div class="sum-row' + (date === today ? ' is-today' : '') + (r.done ? ' is-done' : '') + '">'
         + '<div class="sum-day">' + short(date) + '</div>'
-        + '<div class="sum-what">' + esc(r.type) + amt
+        + '<div class="sum-what"><span class="sum-name">' + esc(r.type) + '</span>' + amt
         + (r.watch ? '<div class="sum-watch">' + watchLine(r.watch) + '</div>' : '')
         + '</div>'
         + (plan.committed ? '<button class="plan-tick' + (r.done ? ' done' : '') + '" onclick="togglePlanDone(\'' + date + '\')" aria-label="Mark done">'
@@ -6478,6 +6529,7 @@ function initTrackers() {
   initResultsLog();
   migrateTargets2026();
   migrateGoal2027();
+  migrateWeekend2400();
   migrateImageKeys();
   initTimer();
   renderPlan();          // also paints today's session and the browse strip
@@ -6528,10 +6580,10 @@ const DEFAULT_TARGETS = {
   sleep: 8,
   weight: 85,          // 22 Nov 2026: 85kg by 27 April 2027 (was 90)
   goalDate: '2027-04-27',
-  // The week is a budget, not seven separate limits: 1,800 Mon–Fri, 2,200 Sat–Sun,
-  // 13,400 in all, running Saturday to Friday.
+  // The week is a budget, not seven separate limits: 1,800 Mon–Fri, 2,400 Sat–Sun,
+  // 13,800 in all, running Saturday to Friday.
   kcalWeekday: 1800,
-  kcalWeekend: 2200,
+  kcalWeekend: 2400,
   afd: 4,
   workouts: 5
 };
@@ -6555,9 +6607,18 @@ function migrateTargets2026() {
 function migrateGoal2027() {
   if (loadJSON('targets-goal-2027', null)) return;
   const t = Object.assign({}, loadJSON('targets', {}) || {});
-  Object.assign(t, { weight: 85, goalDate: '2027-04-27', kcalWeekday: 1800, kcalWeekend: 2200 });
+  Object.assign(t, { weight: 85, goalDate: '2027-04-27', kcalWeekday: 1800, kcalWeekend: 2400 });
   saveJSON('targets', t);
   saveJSON('targets-goal-2027', Date.now());
+}
+/* 23 Nov: weekends went 2,400 → 2,200 → back to 2,400. A device that already ran the
+   migration above holds 2,200, so this writes 2,400 once over it. */
+function migrateWeekend2400() {
+  if (loadJSON('targets-weekend-2400', null)) return;
+  const t = Object.assign({}, loadJSON('targets', {}) || {});
+  t.kcalWeekend = 2400;
+  saveJSON('targets', t);
+  saveJSON('targets-weekend-2400', Date.now());
 }
 
 function getTargets() {
@@ -8408,14 +8469,14 @@ function fillFitnessLogForm() {
 }
 
 /* ══════════ Weekly calorie budget ══════════
-   Saturday to Friday, 1,800 a weekday and 2,200 a weekend day — 13,400 for the week.
+   Saturday to Friday, 1,800 a weekday and 2,400 a weekend day — 13,800 for the week.
    The week is the budget: whatever is left is spread over the days still to come in
    proportion to their own targets, so a lighter weekend buys more per day Mon–Fri and
    a heavy one takes it back. A past day with nothing logged counts at its target,
    because treating it as zero would hand out calories that were probably eaten. */
 function weekBudgetDays(dateIso) {
   const t = getTargets();
-  const wd = t.kcalWeekday || 1800, we = t.kcalWeekend || 2200;
+  const wd = t.kcalWeekday || 1800, we = t.kcalWeekend || 2400;
   const d = new Date(dateIso + 'T00:00:00');
   d.setDate(d.getDate() - ((d.getDay() + 1) % 7));           // back to Saturday
   const today = todayKey();
@@ -8424,7 +8485,11 @@ function weekBudgetDays(dateIso) {
     const x = new Date(d); x.setDate(d.getDate() + i);
     const iso = isoOf(x), dow = x.getDay();
     const base = (dow === 0 || dow === 6) ? we : wd;
-    const v = getFitnessData(iso).kcalIn;
+    // The meals are the record; kcalIn is only a cached total and is missing on days
+    // that synced in from the other device without being re-derived here.
+    const fd = getFitnessData(iso) || {};
+    const ml = Array.isArray(fd.meals) ? fd.meals : [];
+    const v = ml.length ? ml.reduce((a, m) => a + (Number(m.kcal) || 0), 0) : fd.kcalIn;
     out.push({ iso, dow, base, eaten: (v == null || v === '') ? null : Number(v),
                past: iso < today, today: iso === today });
   }
@@ -8444,6 +8509,21 @@ function weekBudget(dateIso) {
   const banked = days.filter(d => d.past).reduce((a, d) => a + (d.base - (d.eaten != null ? d.eaten : d.base)), 0);
   return { days, budget, eatenAll, spentPast, left, banked, unlogged: days.filter(d => d.past && d.eaten == null).length };
 }
+function wbRing(sz, frac, colour, w, mid, sub) {
+  const r = sz / 2 - w / 2 - 1, c = 2 * Math.PI * r, h = sz / 2;
+  return '<svg width="' + sz + '" height="' + sz + '" viewBox="0 0 ' + sz + ' ' + sz + '" aria-hidden="true">'
+    + '<circle cx="' + h + '" cy="' + h + '" r="' + r.toFixed(1) + '" fill="none" stroke="var(--bg-soft)" stroke-width="' + w + '"/>'
+    + (frac > 0 ? '<circle cx="' + h + '" cy="' + h + '" r="' + r.toFixed(1) + '" fill="none" stroke="' + colour + '" stroke-width="' + w
+      + '" stroke-linecap="round" stroke-dasharray="' + (Math.min(1, frac) * c).toFixed(1) + ' ' + c.toFixed(1)
+      + '" transform="rotate(-90 ' + h + ' ' + h + ')"/>' : '')
+    + (mid ? '<text x="50%" y="' + (h + (sub ? -1 : 6)) + '" text-anchor="middle" class="wb-ring-mid">' + mid + '</text>' : '')
+    + (sub ? '<text x="50%" y="' + (h + 16) + '" text-anchor="middle" class="wb-ring-sub">' + sub + '</text>' : '')
+    + '</svg>';
+}
+/* Option B (chosen 23 Nov): one ring for the week, today's allowance beside it, then a
+   small ring per day. A day's ring fills against ITS target — its base for a day that
+   has passed, the rebalanced allowance for today and the days to come — and turns red
+   when it goes over. */
 function renderWeekBudget() {
   const el = document.getElementById('wb-card');
   if (!el) return;
@@ -8451,50 +8531,51 @@ function renderWeekBudget() {
   const fmt = n => Math.round(n).toLocaleString('en-AU');
   const isThisWeek = b.days.some(d => d.today);
   const td = b.days.find(d => d.today);
-  const spent = b.spentPast + (td && td.eaten ? td.eaten : 0);
+  const spent = isThisWeek ? b.spentPast + (td && td.eaten ? td.eaten : 0) : b.eatenAll;
   const remaining = b.budget - spent;
-  const pct = v => Math.max(0, Math.min(100, v / b.budget * 100));
   const over = remaining < 0;
-  const maxCol = Math.max(...b.days.map(d => Math.max(d.allow, d.eaten || 0, d.base))) * 1.08;
   const names = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const fmtD = iso => new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-  const cols = b.days.map(d => {
-    const h = d.eaten != null ? (d.eaten / maxCol * 100) : 0;
-    const lineAt = (d.past ? d.base : d.allow) / maxCol * 100;
-    const overDay = d.eaten != null && d.eaten > (d.past ? d.base : d.allow);
-    const colour = overDay ? 'var(--c-kcalIn)' : 'var(--c-protein)';
-    return '<div class="wb-day' + (d.today ? ' today' : '') + '">'
-      + '<div class="wb-col">'
-      +   (d.eaten != null ? '<i style="height:' + h.toFixed(1) + '%;background:' + colour + ';opacity:' + (d.today ? .85 : 1) + '"></i>' : '')
-      +   '<span class="wb-line" style="bottom:' + lineAt.toFixed(1) + '%"></span>'
-      + '</div>'
-      + '<div class="wb-dn">' + names[d.dow] + '</div>'
-      + '<div class="wb-dv">' + (d.eaten != null ? fmt(d.eaten) : (d.past ? '—' : '')) + '</div>'
-      + '<div class="wb-dt">' + (d.past ? 'of ' + fmt(d.base) : fmt(d.allow)) + '</div>'
+
+  const big = wbRing(124, spent / b.budget, over ? 'var(--c-kcalIn)' : 'var(--c-protein)', 12,
+    fmt(Math.abs(remaining)), over ? 'over ' + fmt(b.budget) : 'left of ' + fmt(b.budget));
+
+  const nextWd = b.days.find(d => !d.past && d.dow >= 1 && d.dow <= 5);
+  let badge = '';
+  if (isThisWeek) {
+    const wdTxt = nextWd && nextWd.allow !== nextWd.base ? ' · weekdays now ' + fmt(nextWd.allow) : '';
+    badge = Math.abs(b.banked) < 50 ? '<span class="wb-badge">On budget so far</span>'
+      : b.banked > 0 ? '<span class="wb-badge up">' + fmt(b.banked) + ' banked' + wdTxt + '</span>'
+      : '<span class="wb-badge dn">' + fmt(-b.banked) + ' over' + wdTxt + '</span>';
+  }
+  const side = isThisWeek && td
+    ? '<div class="wb-side"><div class="wb-side-l">Today</div>'
+      + '<div class="wb-side-big">' + fmt(Math.max(0, td.allow - (td.eaten || 0))) + '</div>'
+      + '<div class="wb-side-l">left of ' + fmt(td.allow) + (td.eaten ? ' · ' + fmt(td.eaten) + ' eaten' : '') + '</div>'
+      + badge + '</div>'
+    : '<div class="wb-side"><div class="wb-side-l">' + fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso) + '</div>'
+      + '<div class="wb-side-big">' + fmt(b.eatenAll) + '</div><div class="wb-side-l">eaten of ' + fmt(b.budget) + '</div></div>';
+
+  const rings = b.days.map(d => {
+    const tgt = d.past ? d.base : d.allow;
+    const has = d.eaten != null;
+    const col = has && d.eaten > tgt ? 'var(--c-kcalIn)' : 'var(--c-protein)';
+    return '<div class="wb-d' + (d.today ? ' today' : '') + (d.past && !has ? ' miss' : '') + '">'
+      + wbRing(44, has ? d.eaten / tgt : 0, col, 6)
+      + '<span class="wb-dn">' + names[d.dow] + '</span>'
+      + '<b class="wb-dv' + (has ? '' : ' plan') + '">' + (has ? fmt(d.eaten) : d.past ? '—' : fmt(tgt)) + '</b>'
       + '</div>';
   }).join('');
-  let note;
-  if (!isThisWeek) {
-    note = b.eatenAll ? fmt(b.eatenAll) + ' logged against ' + fmt(b.budget) + ' for the week.' : 'Nothing logged that week.';
-  } else {
-    const nextWd = b.days.find(d => !d.past && d.dow >= 1 && d.dow <= 5);
-    const wdNow = nextWd ? ' Weekdays are now ' + fmt(nextWd.allow) + ' instead of ' + fmt(nextWd.base) + '.' : '';
-    note = Math.abs(b.banked) < 50 ? 'On budget so far — the rest of the week runs at its normal targets.'
-      : b.banked > 0 ? fmt(b.banked) + ' banked so far, spread across the days left.' + wdNow
-      : fmt(-b.banked) + ' over so far, taken back across the days left.' + wdNow;
-    if (b.unlogged) note += ' ' + b.unlogged + ' earlier day' + (b.unlogged > 1 ? 's' : '') + ' with nothing logged count' + (b.unlogged > 1 ? '' : 's') + ' at target.';
-  }
-  const todayBox = isThisWeek && td
-    ? '<div class="wb-today"><b>' + fmt(Math.max(0, td.allow - (td.eaten || 0))) + '</b><span>left today of ' + fmt(td.allow) + '</span></div>'
-    : '';
-  el.innerHTML = '<div class="wb-top"><div>'
-    + '<div class="wb-big">' + fmt(Math.abs(remaining)) + '<small>' + (over ? 'over the week' : 'left this week') + '</small></div>'
-    + '<div class="tracker-sub">' + fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso) + ' · Sat to Fri</div>'
-    + '</div>' + todayBox + '</div>'
-    + '<div class="wb-meter"><i style="width:' + pct(Math.min(spent, b.budget)).toFixed(1) + '%;background:' + (over ? 'var(--c-kcalIn)' : 'var(--c-protein)') + '"></i></div>'
-    + '<div class="wb-cap"><span>' + fmt(spent) + ' eaten</span><span>' + fmt(b.budget) + '</span></div>'
-    + '<div class="wb-days">' + cols + '</div>'
-    + '<div class="wb-note">' + note + '</div>';
+
+  const foot = isThisWeek && b.unlogged
+    ? '<div class="wb-note">' + b.unlogged + ' earlier day' + (b.unlogged > 1 ? 's' : '') + ' with nothing logged count'
+      + (b.unlogged > 1 ? '' : 's') + ' at target.</div>' : '';
+
+  el.innerHTML = '<div class="wb-hero">' + big + side + '</div>'
+    + '<div class="wb-rings">' + rings + '</div>'
+    + '<div class="wb-cap"><span>Sat to Fri · ' + fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso) + '</span>'
+    + '<span>Sat/Sun ' + fmt(b.days[0].base) + ' · weekdays ' + fmt(b.days[2].base) + '</span></div>'
+    + foot;
 }
 
 function renderFitnessStats() {
@@ -8908,24 +8989,28 @@ function renderWeightChart() {
     return;
   }
   const { goal, goalDate, now, needPerWeek, pace, atGoalDate } = plan;
-  // History: the last six weeks of weigh-ins. Future: through to the goal date.
+  /* Two views of one chart. TREND: the weigh-ins and 7-day trend across the full width,
+     scaled to the weights themselves so a 0.3kg wobble is visible. GOAL: the same recent
+     history squeezed to the left with the needed and current-pace lines running on to the
+     goal date. The choice is remembered. */
+  const mode = loadJSON('weight-view', 'trend') === 'goal' ? 'goal' : 'trend';
   const lastD = dayNum(plan.last.date);
-  const firstIdx = Math.max(0, all.findIndex(e => dayNum(e.date) >= lastD - 42));
+  const firstIdx = Math.max(0, all.findIndex(e => dayNum(e.date) >= lastD - (mode === 'goal' ? 42 : 30)));
   const entries = all.slice(firstIdx);
   const trends = entries.map((_, k) => trendAt(all, firstIdx + k));
   const d0 = dayNum(entries[0].date);
-  const dEnd = Math.max(lastD + 7, dayNum(goalDate));
-  const showFuture = dayNum(goalDate) > lastD;
-  const W = chartWidth(wrap, 360), H = 190, M = { l: 38, r: 50, t: 14, b: 26 };
+  const showFuture = mode === 'goal' && dayNum(goalDate) > lastD;
+  const dEnd = showFuture ? Math.max(lastD + 7, dayNum(goalDate)) : lastD;
+  const W = chartWidth(wrap, 360), H = 190, M = { l: 38, r: showFuture ? 50 : 16, t: 18, b: 26 };
   const pw = W - M.l - M.r, ph = H - M.t - M.b;
-  const pool = entries.map(e => e.weight).concat(trends, [goal]);
-  if (atGoalDate != null && showFuture) pool.push(atGoalDate);
+  const pool = entries.map(e => e.weight).concat(trends);
+  if (showFuture) { pool.push(goal); if (atGoalDate != null) pool.push(atGoalDate); }
   let lo = Math.min(...pool), hi = Math.max(...pool);
   const pad = Math.max((hi - lo) * 0.08, 0.4); lo -= pad; hi += pad;
   const X = d => M.l + ((d - d0) / Math.max(1, dEnd - d0)) * pw;
   const Y = v => M.t + ph - ((v - lo) / (hi - lo)) * ph;
   const f = n => n.toFixed(1);
-  const step = (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : 1;
+  const step = (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : (hi - lo) > 2 ? 1 : 0.5;
   const ticks = [];
   for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) ticks.push(v);
   const grid = ticks.map(t => `<line x1="${M.l}" x2="${M.l + pw}" y1="${f(Y(t))}" y2="${f(Y(t))}" stroke="var(--border)" stroke-width="1"/>
@@ -8935,7 +9020,7 @@ function renderWeightChart() {
     + ` L${f(X(xs[xs.length - 1]))} ${f(M.t + ph)} L${f(X(xs[0]))} ${f(M.t + ph)} Z`;
   const trendPath = trends.map((v, k) => (k ? 'L' : 'M') + f(X(xs[k])) + ' ' + f(Y(v))).join(' ');
   const dots = entries.map((e, k) => `<circle cx="${f(X(xs[k]))}" cy="${f(Y(e.weight))}" r="2.6" fill="var(--border-md)" stroke="var(--bg-card)" stroke-width="1.5"><title>${formatDate(e.date)} · ${e.weight}kg</title></circle>`).join('');
-  const goalLine = `<line x1="${M.l}" x2="${M.l + pw}" y1="${f(Y(goal))}" y2="${f(Y(goal))}" stroke="var(--chest)" stroke-width="1" opacity=".35"/>`;
+  const goalLine = showFuture ? `<line x1="${M.l}" x2="${M.l + pw}" y1="${f(Y(goal))}" y2="${f(Y(goal))}" stroke="var(--chest)" stroke-width="1" opacity=".35"/>` : '';
   let future = '';
   if (showFuture) {
     const gx = X(dayNum(goalDate));
@@ -8958,13 +9043,16 @@ function renderWeightChart() {
   const xlabs = [[d0, entries[0].date, 'start'], [lastD, plan.last.date, showFuture ? 'middle' : 'end']]
     .concat(showFuture ? [[dayNum(goalDate), goalDate, 'end']] : [])
     .map(([d, iso, anc]) => `<text x="${f(X(d))}" y="${H - 6}" text-anchor="${anc}" font-size="9.5" fill="var(--text-dim)">${formatDate(iso)}</text>`).join('');
-  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;overflow:visible;">
+  const seg = `<div class="w-seg" role="tablist">
+      <button class="${mode === 'trend' ? 'on' : ''}" onclick="setWeightView('trend')">Trend</button>
+      <button class="${mode === 'goal' ? 'on' : ''}" onclick="setWeightView('goal')">Goal · ${goal}kg</button></div>`;
+  wrap.innerHTML = seg + `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;display:block;overflow:visible;">
     ${grid}${goalLine}
     <path d="${area}" fill="var(--lime)" opacity="0.16"/>
     <path d="${trendPath}" fill="none" stroke="var(--green-deep)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
     ${dots}${future}
     <circle cx="${f(X(lastD))}" cy="${f(Y(now))}" r="4.2" fill="var(--green-deep)" stroke="var(--bg-card)" stroke-width="2"/>
-    <text x="${f(X(lastD) + 7)}" y="${f(Y(now) - 8)}" text-anchor="start" font-size="11.5" font-weight="800" fill="var(--text-h)">${now.toFixed(1)}</text>
+    <text x="${f(X(lastD) + (showFuture ? 7 : -7))}" y="${f(Y(now) - 9)}" text-anchor="${showFuture ? 'start' : 'end'}" font-size="11.5" font-weight="800" fill="var(--text-h)">${now.toFixed(1)}</text>
     ${xlabs}
   </svg>
   <div class="chart-legend" style="margin-top:6px;">
@@ -8973,12 +9061,14 @@ function renderWeightChart() {
     ${showFuture ? '<span><span class="legend-dot" style="background:var(--chest)"></span>Needed</span>' : ''}
     ${showFuture && atGoalDate != null ? '<span><span class="legend-dot" style="background:var(--text-dim)"></span>Current pace</span>' : ''}
   </div>
+  ${!showFuture && needPerWeek != null && needPerWeek > 0 ? `<div class="w-proj w-proj-mini">Need <b>${needPerWeek.toFixed(2)}kg a week</b> to reach ${goal}kg by ${new Date(goalDate + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}${pace != null ? ` · current pace <b>${pace <= 0 ? '−' : '+'}${Math.abs(pace).toFixed(2)}</b>` : ''}.</div>` : ''}
   ${showFuture && needPerWeek != null ? `<div class="w-proj">${needPerWeek > 0
       ? `To reach <b>${goal}kg by ${new Date(goalDate + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'long' })}</b>: lose <b>${needPerWeek.toFixed(2)}kg a week</b> for ${Math.round(plan.weeksLeft)} weeks (${(now - goal).toFixed(1)}kg to go).`
       : `Already at or under ${goal}kg.`}
     ${pace != null ? `<br>Current pace: <b>${pace <= 0 ? '−' : '+'}${Math.abs(pace).toFixed(2)}kg a week</b>${atGoalDate != null ? ` — about <b>${atGoalDate.toFixed(1)}kg</b> on the day` : ''}. ${pace < 0 && Math.abs(pace) >= needPerWeek ? 'On track.' : 'Behind the line.'}` : '<br>Current pace shows once there are two weeks of weigh-ins.'}</div>` : ''}`;
   renderWeightHeader();
 }
+function setWeightView(v) { saveJSON('weight-view', v); renderWeightChart(); }
 function isoOffsetFrom(iso, days) {
   const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + days); return isoOf(d);
 }
@@ -9825,6 +9915,10 @@ async function pullSamsung(silent) {
       // Whether that burn figure is active-only or a whole-day total decides whether
       // resting burn gets added to it. Guessing wrong is a 2,000 calorie error.
       if (j.burnKind) d.burnKind = j.burnKind;
+      // Workouts off the watch: kept on the day as they arrived, then matched to the plan.
+      if (Array.isArray(j.workouts) && JSON.stringify(d.workouts || []) !== JSON.stringify(j.workouts)) {
+        d.workouts = j.workouts; moved = true;
+      }
       if (moved) {
         d._watch = true;    // from here on the coach must not overwrite these
         saveFitnessDataForDate(date, d);
@@ -9840,7 +9934,8 @@ async function pullSamsung(silent) {
         saveJSON('results-log', entries);
       }
     });
-    if (filled) { saveJSON('coach-last-sync', Date.now()); refreshAllViews(); }
+    const linked = linkWatchWorkouts(dates);
+    if (filled || linked) { saveJSON('coach-last-sync', Date.now()); refreshAllViews(); if (linked) renderPlan(); }
     renderCoachLastSync();
     if (note && !silent) {
       note.textContent = !dates.length ? 'Connected — the phone has not posted yet'
