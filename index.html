@@ -217,66 +217,6 @@
 
   .settings-link svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-  .week-nav-wrap {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0 16px 16px;
-  }
-
-  .week-nav {
-    width: 100%;
-    max-width: 488px;
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .week-nav::-webkit-scrollbar { display: none; }
-
-  .day-btn {
-    flex: 1 1 0;
-    min-width: 0;
-    padding: 12px 6px 11px;
-    border-radius: 8px;
-    border: 1.5px solid var(--border-md);
-    background: var(--bg-card);
-    color: var(--text-dim);
-    cursor: pointer;
-    text-align: center;
-    font-family: var(--body-f);
-    transition: all 0.15s ease;
-  }
-
-  .day-btn .dn {
-    display: block;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    margin-bottom: 5px;
-    color: var(--ink);
-  }
-
-  .day-btn .df {
-    display: block;
-    margin-top: 0;
-    font-size: 10.5px;
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--text-dim);
-    white-space: normal;
-  }
-
-  .day-btn.active {
-    background: var(--green-deep);
-    border-color: var(--green-deep);
-  }
-
-  .day-btn.active .dn { color: var(--lime); }
-  .day-btn.active .df { color: #c7d9a0; }
-
   .day-view {
     display: none;
     max-width: 520px;
@@ -636,11 +576,6 @@
   }
 
   @media (hover: hover) {
-    .day-btn:hover {
-      border-color: var(--green-deep);
-      transform: translateY(-1px);
-    }
-
     .exercise-card:hover {
       border-color: var(--border-md);
       box-shadow: 0 6px 20px rgba(20,23,15,0.08);
@@ -1218,11 +1153,8 @@
 
   /* ══════════ Workout timer card (inline, sits under the last exercise) ══════════ */
   /* ══════════ Quick circuit ══════════ */
-  .circuit-card{padding:14px 16px 6px}
-  .circuit-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .circuit-name{font-family:var(--display);font-size:17px;font-weight:700;color:var(--text-h)}
   .circuit-meta{font-size:12px;color:var(--text-dim);margin-top:3px}
-  .circuit-top .solid-btn{flex:none;padding:11px 20px}
   /* The runner takes the whole screen: mid-circuit you are looking at it from the floor,
      so the clock has to be readable at arm's length and nothing else should compete. */
   .circuit-run{position:fixed;inset:0;z-index:300;background:var(--green-deep);color:#fff;
@@ -2006,6 +1938,12 @@
   .send-btn{flex:none;width:44px;height:44px;border-radius:8px;background:var(--lime);border:none;
     display:grid;place-items:center;cursor:pointer;color:var(--green-deep)}
   .send-btn svg{width:19px;height:19px}
+  /* While typing, the camera/photo/barcode buttons fold away behind one chevron so the
+     field gets the full bar. The chevron brings them back without losing the text. */
+  .tools-btn{display:none}
+  .chat-compose.typing .compose-row .cam-btn:not(.tools-btn){display:none}
+  .chat-compose.typing .tools-btn{display:grid}
+  .tools-btn svg{width:18px;height:18px}
   /* ══════════ Coach as a full page ══════════
      On its own tab the chat should fill the screen with the compose bar pinned to
      the bottom, the way a messaging app does — not sit in a 46vh box with the page
@@ -3260,6 +3198,9 @@
     <div class="chat-compose">
       <div class="shot-tray" id="shot-tray"></div>
       <div class="compose-row">
+        <button class="cam-btn tools-btn" id="chat-tools" type="button" title="Photo, camera, barcode" aria-label="Show photo, camera and barcode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
         <label class="cam-btn" for="chat-cam" title="Take a photo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -4962,7 +4903,7 @@ async function barcodeIntoBox(code, boxId, noteId) {
       + ' (' + basis + ': ' + bits + ')'
       + (p.serving ? ' \u00b7 serving ' + p.serving : '') + ' \u2014 ';
     ta.value = (ta.value ? ta.value.replace(/\s*$/, ' ') : '') + line;
-    if (boxId === 'k-in') growKitchenInput(ta); else sizeChat();
+    if (boxId === 'k-in') growKitchenInput(ta); else { sizeChat(); if (window.chatComposeMode) chatComposeMode(); }
     ta.focus();
     ta.setSelectionRange(ta.value.length, ta.value.length);
     if (note) note.hidden = true;
@@ -7545,6 +7486,10 @@ function kitchenScan() { return openScanner(lookupBarcodeForKitchen); }
 
 async function openScanner(onCode) {
   if (!foodApiReady()) return;
+  // The sheet's markup sits inside the Food page. A fixed overlay inside a hidden page
+  // is hidden too, so from Coach or Kitchen it never appeared. Lift it to <body> once.
+  const sh = document.getElementById('scan-sheet');
+  if (sh && sh.parentElement !== document.body) document.body.appendChild(sh);
   SCAN_THEN = onCode || lookupBarcode;
   if (!('BarcodeDetector' in window)) {
     const typed = prompt('This browser cannot use the camera to scan.\n\nType the barcode digits printed under the barcode:');
@@ -7733,20 +7678,40 @@ async function mealSearch() {
     clearFoodResults();
     return;
   }
+  // He types the way he talks. "Half slice of white bread" is a description, not a
+  // product name, and Open Food Facts can only ever answer the second. So a description
+  // goes straight to the estimate, and a name that finds no packet falls through to it
+  // on its own instead of asking him to press a second button.
+  if (looksLikeDescription(q)) return estimateFood(q, true);
   foodMsg('Searching for “' + esc(q) + '”…');
   try {
     const j = await foodApi('/food/search?q=' + encodeURIComponent(q));
-    if (!j.results || !j.results.length) {
-      return foodMsg('No packet called “' + esc(q) + '”. Open Food Facts catalogues '
-        + 'packaged products, so a plain food, a cafe coffee or anything you cooked will not '
-        + 'be in it.' + estimateBtn(q), 'warn');
-    }
+    if (!j.results || !j.results.length) return estimateFood(q);
     showFoodResults(j.results, j.cached ? 'From the cache' : 'Open Food Facts', q);
   } catch (e) {
-    // Their 503 means their server is busy, not that he did anything wrong — and it is
-    // no reason to leave him with an empty form when an estimate is one tap away.
-    foodMsg('Search failed — ' + esc(String(e.message || e)) + '.' + estimateBtn(q), 'warn');
+    // Their 503 means their server is busy, not that he did anything wrong.
+    return estimateFood(q);
   }
+}
+/* An amount, a portion word, or a sentence-length phrase means he is describing what he
+   ate rather than naming a packet. */
+function looksLikeDescription(q) {
+  const t = String(q).toLowerCase();
+  if (/\d/.test(t)) return true;
+  if (/\b(half|quarter|slice|slices|piece|pieces|cup|cups|bowl|plate|handful|serve|serving|portion|small|medium|large|tbsp|tsp|spoon|glass|mug|of|with|and|on|homemade|cooked|grilled|fried|boiled|toasted)\b/.test(t)) return true;
+  return t.split(/\s+/).length >= 4;
+}
+function searchPacketsBtn(q) {
+  return '<button class="fr-est" onclick="searchPackets(' + JSON.stringify(q).replace(/"/g, '&quot;')
+    + ')">Search packets for “' + esc(q) + '” instead</button>';
+}
+async function searchPackets(q) {
+  foodMsg('Searching for “' + esc(q) + '”…');
+  try {
+    const j = await foodApi('/food/search?q=' + encodeURIComponent(q));
+    if (!j.results || !j.results.length) return foodMsg('No packet called “' + esc(q) + '”.', 'warn');
+    showFoodResults(j.results, j.cached ? 'From the cache' : 'Open Food Facts', q);
+  } catch (e) { foodMsg('Search failed — ' + esc(String(e.message || e)), 'warn'); }
 }
 function estimateBtn(q) {
   return '<button class="fr-est" onclick="estimateFood(' + JSON.stringify(q).replace(/"/g, '&quot;')
@@ -7758,13 +7723,17 @@ function estimateBtn(q) {
    different answer, labelled as an estimate with the portion it assumed shown, rather
    than a number presented as if it had been read off a label. */
 let EST_ITEM = null;
-async function estimateFood(q) {
+async function estimateFood(q, offerPackets) {
   if (!foodApiReady()) return;
   const term = String(q || (document.getElementById('ms-name').value || '')).trim();
   if (term.length < 2) return;
-  foodMsg('Estimating “' + esc(term) + '”…');
+  // An amount typed in its own box belongs to the description.
+  const amt = (document.getElementById('ms-qty') || {}).value || '';
+  const ask = amt.trim() && !term.toLowerCase().includes(amt.trim().toLowerCase()) ? term + ', ' + amt.trim() : term;
+  foodMsg('Estimating “' + esc(ask) + '”…');
   try {
-    const j = await foodApi('/food/estimate?q=' + encodeURIComponent(term));
+    const j = await foodApi('/food/estimate?q=' + encodeURIComponent(ask));
+    if (!j.item) throw new Error(j.error || 'no estimate came back');
     const it = j.item;
     EST_ITEM = it;
     const el = document.getElementById('ms-results');
@@ -7784,7 +7753,8 @@ async function estimateFood(q) {
       +   '</button></div>'
       + '</div></div>'
       + '<div class="fr-msg">Check it against the packet or the menu where you can — '
-      + 'this is judged from the description, not measured.</div>';
+      + 'this is judged from the description, not measured.'
+      + (offerPackets ? searchPacketsBtn(term) : '') + '</div>';
   } catch (e) { foodMsg('Could not estimate that — ' + esc(String(e.message || e)), 'warn'); }
 }
 function useEstimate() {
@@ -9330,6 +9300,26 @@ function initChatInputs() {
       ta.style.height = Math.min(120, Math.max(44, ta.scrollHeight)) + 'px'; };
     ta.addEventListener('input', grow);
     ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); sendChat(); } });
+    // Typing = focused or holding a draft, unless he has just asked for the tools back.
+    // Re-measure after the row changes width, because the field's line count changes too.
+    const comp = ta.closest('.chat-compose');
+    let toolsOpen = false;
+    const mode = () => {
+      const typing = !toolsOpen && (document.activeElement === ta || ta.value.trim() !== '');
+      if (comp.classList.contains('typing') !== typing) {
+        comp.classList.toggle('typing', typing);
+        requestAnimationFrame(grow);
+      }
+    };
+    ta.addEventListener('focus', mode);
+    ta.addEventListener('blur', () => setTimeout(mode, 0));
+    ta.addEventListener('input', () => { toolsOpen = false; mode(); });
+    const tb = document.getElementById('chat-tools');
+    if (tb) {
+      tb.addEventListener('mousedown', e => e.preventDefault());   // keep the keyboard up
+      tb.addEventListener('click', () => { toolsOpen = true; mode(); });
+    }
+    window.chatComposeMode = () => { toolsOpen = false; mode(); };
   }
 }
 function initCoach() {
@@ -10072,18 +10062,17 @@ async function sendChat() {
   const images = SHOTS.slice();
   CHAT.push({ role: 'user', day: todayKey(), content: text || '(photo)', images });
   SHOTS = []; renderShots(); ta.value = ''; ta.style.height = '';
+  if (window.chatComposeMode) chatComposeMode();
   saveChat(); renderChat();
   if (!COACH_READY()) return;   // draft kept; the OFFLINE chip explains why nothing came back
   const due = reviewDue();
   typingOn(true);
   try {
-    const res = await fetch(COACH_URL() + '/chat', {
-      method: 'POST', headers: coachHeaders(),
-      body: JSON.stringify({
-        messages: CHAT.slice(-40).map(m => ({ role: m.role, content: m.content })),
-        state: coachState(), images, viewDate: viewDate()
-      })
+    const body = JSON.stringify({
+      messages: CHAT.slice(-40).map(m => ({ role: m.role, content: m.content })),
+      state: coachState(), images, viewDate: viewDate()
     });
+    const res = await fetchRetry(COACH_URL() + '/chat', { method: 'POST', headers: coachHeaders(), body });
     if (res.status === 401) throw new Error('shared secret rejected by the worker');
     if (!res.ok) throw new Error('worker ' + res.status);
     COACH_VERIFIED = true; COACH_LAST_ERR = '';
@@ -10131,6 +10120,22 @@ async function sendChat() {
     COACH_VERIFIED = false; COACH_LAST_ERR = explainFetchError(err);
     CHAT.push({ role: 'assistant', day: todayKey(), content: "Couldn't reach the coach.\n\n" + COACH_LAST_ERR + "\n\nYour message is saved." });
   } finally { typingOn(false); saveChat(); renderChat(); }
+}
+/* A phone on patchy signal drops a request now and then, and he was having to resend by
+   hand. One automatic retry after a short pause covers almost all of it. Safe to repeat:
+   nothing is written until a reply arrives, so a lost reply has logged nothing. Only a
+   network failure or a timeout retries — a real answer from the worker, even an error,
+   is final. 90 seconds is well past a slow photo reply. */
+async function fetchRetry(url, opts, tries = 2) {
+  for (let i = 0; ; i++) {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 90000);
+    try { return await fetch(url, Object.assign({}, opts, { signal: ctl.signal })); }
+    catch (e) {
+      if (i + 1 >= tries) throw (e.name === 'AbortError' ? new Error('Failed to fetch (timed out)') : e);
+      await new Promise(r => setTimeout(r, 1500));
+    } finally { clearTimeout(t); }
+  }
 }
 /* what the coach is allowed to see */
 function coachState() {
