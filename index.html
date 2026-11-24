@@ -9746,17 +9746,19 @@ function renderWeightHeader() {
   const i = list.length - 1;
   const trend = trendAt(list, i);
   const latest = list[i];
-  now.innerHTML = trend.toFixed(1) + '<small>kg</small>';
-  sub.textContent = `7-day trend · ${latest.weight.toFixed(1)}kg on ${formatDate(latest.date)}`;
+  // The big number is the scale reading (25 Nov) — he weighs daily and wants to see it.
+  // The smoothed trend stays as the supporting line and the chart.
+  now.innerHTML = latest.weight.toFixed(1) + '<small>kg</small>';
+  sub.textContent = `Weighed ${formatDate(latest.date)}` + (list.length > 1 ? ` · 7-day trend ${trend.toFixed(1)}kg` : '');
   const out = [];
   if (list.length > 1) {
     const prevIdx = Math.max(0, i - 7);
     const change = trend - trendAt(list, prevIdx);
     const cls = Math.abs(change) < 0.05 ? 'flat' : change < 0 ? '' : 'up';
-    out.push(`<span class="w-badge ${cls}">${change <= 0 ? '▼' : '▲'} ${Math.abs(change).toFixed(1)}kg ${list.length > 7 ? 'this week' : 'so far'}</span>`);
+    out.push(`<span class="w-badge ${cls}">${change <= 0 ? '▼' : '▲'} ${Math.abs(change).toFixed(1)}kg trend ${list.length > 7 ? 'this week' : 'so far'}</span>`);
   }
   const target = getTargets().weight;
-  if (target) out.push(`<span class="w-badge flat">${Math.max(0, trend - target).toFixed(1)}kg to ${target}kg</span>`);
+  if (target) out.push(`<span class="w-badge flat">${Math.max(0, latest.weight - target).toFixed(1)}kg to ${target}kg</span>`);
   badges.innerHTML = out.join('');
 }
 /* ── Charts are drawn at their real size, not scaled up ──────────────────────
