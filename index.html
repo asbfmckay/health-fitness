@@ -6755,6 +6755,7 @@ async function bootApp() {
   enableDragAndDrop();
   await restoreSavedImages();
   initTrackers();
+  scheduleGroupTagging(6000);       // fills in serves for anything logged without the coach
 }
 
 /* ══════════════════════════════════════════════════════
@@ -7139,10 +7140,10 @@ function renderFoodGroups() {
   const vals = dayGroups(viewDate());
   const any = FOOD_GROUPS.some(g => vals[g.key] != null);
   renderGroupBars(document.getElementById('fg-bars'), vals,
-    !any ? 'Nothing logged yet — these fill in as you tell the coach what you ate.'
+    !any ? 'Nothing logged yet — these fill in as you log food.'
     : FOOD_GROUPS.every(g => vals[g.key] != null)
-        ? 'Serves, filled in by the coach from what you log.'
-        : 'Only the groups tagged so far. Tell the coach what else you ate and the rest fill in.');
+        ? 'Serves, added up from each item you log.'
+        : 'Serves, added up from each item you log.');
 }
 const FITNESS_METRICS = [
   { key: 'steps',   name: 'Steps',           unit: '',     decimals: 0, colour: 'var(--arms)',      chart: 'var(--c-steps)',   owned: true },
@@ -8905,8 +8906,8 @@ const MEAL_SLOTS = [
    Figures are typical Australian serves; change them here. */
 const DRINKS = [
   { id: 'water',      name: 'Water',             qty: '300ml',               ml: 300, kcal: 0 },
-  { id: 'skim',       name: 'Coffee, skim',      qty: 'regular latte',       ml: 250, kcal: 85,  protein: 8.5, carbs: 12, fat: 0.4, sugar: 12, sodium: 110 },
-  { id: 'fullcream',  name: 'Coffee, full cream',qty: 'regular latte',       ml: 250, kcal: 145, protein: 7.5, carbs: 11, fat: 7.6, sugar: 11, sodium: 100 },
+  { id: 'skim',       name: 'Coffee, skim',      qty: 'regular latte',       ml: 250, kcal: 85,  protein: 8.5, carbs: 12, fat: 0.4, sugar: 12, sodium: 110, dairy: 0.5 },
+  { id: 'fullcream',  name: 'Coffee, full cream',qty: 'regular latte',       ml: 250, kcal: 145, protein: 7.5, carbs: 11, fat: 7.6, sugar: 11, sodium: 100, dairy: 0.5 },
   { id: 'tea',        name: 'Tea',               qty: '250ml',               ml: 250, kcal: 2 },
   { id: 'sugary',     name: 'Sugary drink',      qty: '250ml (soft drink, juice)', ml: 250, kcal: 105, carbs: 27, sugar: 27, sodium: 10 },
   { id: 'alcohol',    name: 'Alcohol',           qty: '1 nip (30ml spirit)', ml: 30,  kcal: 64 }
@@ -8917,6 +8918,7 @@ function addDrink(id) {
   const dk = DRINKS.find(x => x.id === id); if (!dk) return;
   const row = { slot: 'drinks', name: dk.name, qty: dk.qty, update: false, drink: dk.id, ml: dk.ml };
   MACRO_KEYS.forEach(k => { if (dk[k] != null) row[k] = dk[k]; });
+  row.groups = cleanGroups({ dairy: dk.dairy || 0 });   // fixed, so no lookup needed
   addMeal(foodDate(), row);
   renderFood(); refreshAllViews();
 }
@@ -8989,7 +8991,60 @@ function syncMealTotals(date) {
   d.fibre = Math.round(t.fibre);
   d.sodium = Math.round(t.sodium);
   d.sugar = Math.round(t.sugar);
+  // Food groups are the sum of the items' serves, like the calories. Only once an item is
+  // tagged — until then an older day keeps whatever total the coach sent.
+  const tagged = d.meals.filter(m => m.groups);
+  if (tagged.length) {
+    d.groups = {};
+    FOOD_GROUPS.forEach(fg => { d.groups[fg.key] = Math.round(tagged.reduce((a, m) => a + (Number(m.groups[fg.key]) || 0), 0) * 10) / 10; });
+    d.veg = d.groups.veg;                         // the veg dial and the group are one number
+  }
   saveFitnessDataForDate(date, d);
+}
+function cleanGroups(g) {
+  if (!g || typeof g !== 'object') return null;
+  const o = {};
+  FOOD_GROUPS.forEach(fg => { const v = Number(g[fg.key]); o[fg.key] = v > 0 ? Math.min(10, Math.round(v * 2) / 2) : 0; });
+  return o;
+}
+/* Items logged without the coach (search, scanner, Recent meals, recipes, the meal sheet)
+   have macros but no serves. This batches the untagged ones from the last 30 days to the
+   worker and writes each item's serves back, then re-sums those days. Runs shortly after
+   boot (which also back-fills older days) and a moment after anything is logged. */
+let GROUP_TAG_TIMER = null, GROUP_TAGGING = false;
+function scheduleGroupTagging(ms) {
+  clearTimeout(GROUP_TAG_TIMER);
+  GROUP_TAG_TIMER = setTimeout(tagUntaggedMeals, ms == null ? 2500 : ms);
+}
+async function tagUntaggedMeals() {
+  if (GROUP_TAGGING || typeof COACH_READY !== 'function' || !COACH_READY() || !navigator.onLine) return;
+  GROUP_TAGGING = true;
+  try {
+    for (let round = 0; round < 25; round++) {
+      const todo = [];
+      for (let back = 0; back < 30 && todo.length < 30; back++) {
+        const dt = new Date(); dt.setDate(dt.getDate() - back);
+        const date = isoOf(dt);
+        getMeals(date).forEach(m => { if (!m.groups && todo.length < 30) todo.push({ date, m }); });
+      }
+      if (!todo.length) break;
+      const j = await foodApi('/food/groups', { method: 'POST', body: JSON.stringify({
+        items: todo.map(t => ({ name: t.m.name, qty: t.m.qty, kcal: t.m.kcal, protein: t.m.protein, carbs: t.m.carbs, fat: t.m.fat })) }) });
+      const out = Array.isArray(j.groups) ? j.groups : [];
+      const dates = new Set();
+      todo.forEach((t, k) => {
+        const g = cleanGroups(out[k]); if (!g) return;
+        const d = getFitnessData(t.date) || {};
+        const row = (d.meals || []).find(x => x.id === t.m.id);
+        if (!row || row.groups) return;
+        row.groups = g; saveFitnessDataForDate(t.date, d); dates.add(t.date);
+      });
+      if (!dates.size) break;                     // nothing came back usable — try again next time
+      dates.forEach(syncMealTotals);
+      if (typeof refreshAllViews === 'function') refreshAllViews();
+    }
+  } catch (e) { console.warn('food-group tagging', e); }
+  finally { GROUP_TAGGING = false; }
 }
 /* Correcting a meal used to ADD a second one. "Very little sauce" came back as a
    revised Subway bowl and the day then held two of them, 650 calories over.
@@ -9022,6 +9077,12 @@ function addMeal(date, entry) {
   // On a revision, a macro the coach did not restate keeps its previous value rather
   // than silently becoming nothing.
   MACRO_KEYS.forEach(k => { const v = Number(entry[k]); if (!isNaN(v) && entry[k] != null) row[k] = v; });
+  // Food-group serves ride on the item (25 Nov). Sent → kept. Not sent on a revision that
+  // changed what the item IS (name, amount or calories) → dropped, so it is re-tagged.
+  const g = cleanGroups(entry.groups);
+  if (g) row.groups = g;
+  else if (i >= 0 && row.groups && (list[i].name !== name || (entry.qty != null && String(entry.qty) !== String(list[i].qty || ''))
+           || (entry.kcal != null && Number(entry.kcal) !== Number(list[i].kcal)))) delete row.groups;
   if (entry.qty) row.qty = String(entry.qty);
   if (entry.drink) row.drink = String(entry.drink);
   if (entry.ml != null && !isNaN(Number(entry.ml))) row.ml = Number(entry.ml);
@@ -9030,6 +9091,7 @@ function addMeal(date, entry) {
   d.meals = list;
   saveFitnessDataForDate(date, d);
   syncMealTotals(date);
+  if (!row.groups) scheduleGroupTagging();
   row._updated = i >= 0;
   return row;
 }
@@ -9059,6 +9121,7 @@ function removeMeal(date, id) {
     // comes back on the next merge.
     const e = getFitnessData(date) || {};
     ['kcalIn','protein','carbs','fat','fibre','sodium','sugar'].forEach(k => { e[k] = null; });
+    e.groups = null; e.veg = null;
     saveFitnessDataForDate(date, e);
   }
 }
@@ -11560,7 +11623,9 @@ function applyDayRow(row) {
   }
   const changed = [];
   const NAME = { kcalIn: 'cal', protein: 'g protein', veg: ' veg serves', steps: ' steps', sleep: 'h sleep' };
-  if (row.groups && typeof row.groups === 'object') {
+  // Once a day's items carry their own serves, the day total is their sum — a coach total
+  // for that day would only fight it.
+  if (row.groups && typeof row.groups === 'object' && !(d.meals || []).some(m => m.groups)) {
     d.groups = Object.assign({}, d.groups || {}, row.groups);
     if (row.groups.veg != null) d.veg = row.groups.veg;   // the dial and the group are one number
     changed.push('food groups');
