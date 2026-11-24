@@ -1548,6 +1548,7 @@
   .lib-sheet{position:fixed;inset:0;z-index:70;background:rgba(42,42,24,.42);
     backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center}
   .lib-sheet[hidden]{display:none}
+  .share-only[hidden]{display:none!important}
   .prof-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .prof-name{font:700 15px var(--display);color:var(--text-h)}
   .ap-themes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}
@@ -3749,8 +3750,8 @@
       what a new piece of kit would open up.</div>
   </div>
 
-  <div class="section-label">Share with your trainer</div>
-  <div class="tracker-card">
+  <div class="section-label share-only">Share with your trainer</div>
+  <div class="tracker-card share-only">
     <div id="share-state" class="share-state">Checking…</div>
     <div class="log-form" style="margin-top:12px;gap:8px;flex-wrap:wrap;">
       <div class="log-field" style="flex:1;min-width:120px;">
@@ -3989,6 +3990,8 @@ const PROFILE_GLOBAL_KEYS = new Set(['coach-url', 'coach-secret', 'device-appear
   P.clear = function () { if (isLS(this)) { mine(this).slice().forEach(k => orig.rem.call(this, pre + k)); cache = null; return; } return orig.clear.call(this); };
 })();
 function renderProfileCard() {
+  // The trainer report is Andrew's only (25 Nov); the worker refuses other profiles too.
+  document.querySelectorAll('.share-only').forEach(e => { e.hidden = PROFILE !== 'andrew'; });
   const el = document.getElementById('prof-name');
   if (el) el.textContent = 'Signed in as ' + PROFILE_NAME;
   // Preview every font on its own button.
