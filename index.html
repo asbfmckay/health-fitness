@@ -1975,25 +1975,43 @@
   .wk-eta{font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.45;}
   .wk-row{display:flex;align-items:center;gap:10px;padding:7px 0;}
   /* ══════════ Weekly calorie budget (Sat–Fri) — option B, rings ══════════ */
-  .wb-hero{display:flex;align-items:center;gap:18px}
-  .wb-hero svg{flex:none}
-  .wb-ring-mid{font:600 19px var(--body-f);fill:var(--text-h);font-variant-numeric:tabular-nums}
-  .wb-ring-sub{font:500 10.5px var(--body-f);fill:var(--text-dim)}
-  .wb-side{min-width:0}
+  /* Calories this week — rebuilt 27 Nov: two tiles, eaten-vs-maintenance bars, day breakdown.
+     The bars use a darker green of their own (--wb-bar), not the theme lime — asked for 27 Nov,
+     for this card only. */
+  .wb-card{--wb-bar:#7aab3a;--wb-bar-dark:#5e8a26}
+  .wb-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .wb-tile{background:var(--bg-soft);border-radius:var(--r-md,14px);padding:12px 12px 10px;min-width:0}
   .wb-side-l{font-size:12px;color:var(--text-dim)}
-  .wb-side-big{font:600 26px/1.15 var(--body-f);color:var(--text-h);font-variant-numeric:tabular-nums}
+  .wb-side-big{font:600 26px/1.15 var(--body-f);color:var(--text-h);font-variant-numeric:tabular-nums;margin:2px 0}
+  .wb-side-big.neg{color:#c2410c}
+  .wb-proj{margin-top:6px}
+  .wb-proj b{color:var(--text-h);font-variant-numeric:tabular-nums}
   .wb-badge{display:inline-block;margin-top:8px;padding:3px 9px;border-radius:var(--r-pill,999px);
-    font:600 11px/1.3 var(--body-f);background:var(--bg-soft);color:var(--text-dim)}
-  .wb-badge.up{background:color-mix(in srgb, var(--lime) 22%, transparent);color:#6f8326}
+    font-size:11px;font-weight:600;background:var(--bg-card);color:var(--text-body)}
+  .wb-badge.up{background:color-mix(in srgb, var(--lime) 22%, transparent);color:var(--green)}
   .wb-badge.dn{background:rgba(226,102,92,.13);color:#c2410c}
-  .wb-rings{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:16px;text-align:center}
-  .wb-d svg{display:block;margin:0 auto}
-  .wb-dn{display:block;font:600 10px/1 var(--body-f);letter-spacing:.06em;color:var(--text-dim);margin-top:5px}
-  .wb-dv{display:block;font-size:11.5px;font-weight:600;color:var(--text-body);margin-top:3px;font-variant-numeric:tabular-nums}
-  .wb-dv.plan{color:var(--text-dim);font-weight:500}
-  .wb-d.today .wb-dn{color:var(--text-h)}
-  .wb-d.today .wb-dv{color:var(--text-h)}
-  .wb-d.today svg{border-radius:50%;box-shadow:0 0 0 2px var(--bg-card),0 0 0 3px var(--lime-dark)}
+  .wb-legend{display:flex;gap:14px;font-size:11px;color:var(--text-dim);margin:14px 0 2px}
+  .wb-legend i{display:inline-block;vertical-align:middle;margin-right:5px}
+  .wb-legend .lg-bar{width:10px;height:10px;border-radius:3px;background:var(--wb-bar)}
+  .wb-legend .lg-line{width:14px;height:2px;background:var(--ink)}
+  .wb-legend .lg-plan{width:10px;height:10px;border-radius:3px;border:1.5px dashed var(--border-md)}
+  .wb-chart{width:100%;min-height:156px}
+  .wb-chart svg{display:block}
+  .wbc-v{font:600 10.5px var(--body-f);fill:var(--text-body);text-anchor:middle;font-variant-numeric:tabular-nums}
+  .wbc-v.dim{fill:var(--text-dim);font-weight:500}
+  .wbc-v.in{fill:var(--ink);font-size:10px}
+  .wbc-d{font:600 10px var(--body-f);fill:var(--text-dim);text-anchor:middle;letter-spacing:.06em}
+  .wbc-d.now{fill:var(--text-h)}
+  .wbx{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+  .wbx-h{font:600 13px var(--body-f);color:var(--text-h);margin-bottom:6px}
+  .wbx-r{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:4px 0;font-size:13px;color:var(--text-body)}
+  .wbx-r span small{display:block;font-size:11px;color:var(--text-dim);margin-top:1px}
+  .wbx-r b{font-weight:600;color:var(--text-h);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .wbx-r .wbx-i{font-size:11px;font-weight:500;color:var(--text-dim)}
+  .wbx-r.tot{border-top:1px solid var(--border);margin-top:2px;padding-top:7px}
+  .wbx-r.tot.good b{color:var(--green)}
+  .wbx-r.tot.bad b{color:#c2410c}
+  @media (max-width:380px){ .wb-side-big{font-size:22px} }
   .wb-cap{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--text-dim);
     margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
   .wb-note{font-size:11.5px;color:var(--text-dim);margin-top:6px}
@@ -7051,9 +7069,8 @@ function renderRestNote() {
   const el = document.getElementById('rest-note');
   if (!el) return;
   const mode = loadJSON('burn-mode', 'active');
-  el.textContent = mode === 'active'
-    ? `Resting burn is calculated at ${formatNumber(restingBurn(), 0)} cal/day and added to whatever the watch reports.`
-    : 'The watch figure is used as-is, with nothing added.';
+  // 27 Nov: burn is now built from steps, workouts and food (dayTDEE); this setting no longer changes it.
+  el.textContent = `BMR is ${formatNumber(restingBurn(), 0)} cal/day at your trend weight. Steps, workouts and digestion are added on top to give each day's maintenance.`;
 }
 function refreshAllTargetDisplays() {
   renderAfd();
@@ -8808,7 +8825,7 @@ function renderDayReport(date) {
   const eaten = tot.count ? tot.kcal : d.kcalIn;
   const prot = tot.count ? tot.protein : d.protein;
   const w = weightOn(date), tr = weightTrend(date);
-  const burn = dayBurn(d);
+  const burn = dayBurn(d, date);
   const train = trainingOn(date);
 
   const row = (label, value, note) =>
@@ -8869,7 +8886,7 @@ function weeklyReconcile(date) {
     const row = getFitnessData(key) || {};
     const tot = mealTotals(key);
     const ate = tot.count ? tot.kcal : row.kcalIn;
-    const b = dayBurn(row);
+    const b = dayBurn(row, key);
     if (ate == null || b.total == null) continue;
     deficit += (b.total - ate); days++;
   }
@@ -9323,74 +9340,356 @@ function weekBudget(dateIso) {
   const banked = days.filter(d => d.past).reduce((a, d) => a + (d.base - (d.eaten != null ? d.eaten : d.base)), 0);
   return { days, budget, eatenAll, spentPast, left, banked, unlogged: days.filter(d => d.past && d.eaten == null).length };
 }
-function wbRing(sz, frac, colour, w, mid, sub) {
-  const r = sz / 2 - w / 2 - 1, c = 2 * Math.PI * r, h = sz / 2;
-  return '<svg width="' + sz + '" height="' + sz + '" viewBox="0 0 ' + sz + ' ' + sz + '" aria-hidden="true">'
-    + '<circle cx="' + h + '" cy="' + h + '" r="' + r.toFixed(1) + '" fill="none" stroke="var(--bg-soft)" stroke-width="' + w + '"/>'
-    + (frac > 0 ? '<circle cx="' + h + '" cy="' + h + '" r="' + r.toFixed(1) + '" fill="none" stroke="' + colour + '" stroke-width="' + w
-      + '" stroke-linecap="round" stroke-dasharray="' + (Math.min(1, frac) * c).toFixed(1) + ' ' + c.toFixed(1)
-      + '" transform="rotate(-90 ' + h + ' ' + h + ')"/>' : '')
-    + (mid ? '<text x="50%" y="' + (h + (sub ? -1 : 6)) + '" text-anchor="middle" class="wb-ring-mid">' + mid + '</text>' : '')
-    + (sub ? '<text x="50%" y="' + (h + 16) + '" text-anchor="middle" class="wb-ring-sub">' + sub + '</text>' : '')
-    + '</svg>';
+/* ══════════ Daily maintenance (TDEE) — 27 Nov 2026 ══════════
+   Maintenance is not one number. It is built fresh for every day from four parts, the
+   same way his coach's spreadsheet does it:
+
+     BMR  — Mifflin-St Jeor at the 7-day TREND weight (a single weigh-in swings a kilo on
+            water). Falls about 10 cal for every kg lost, so maintenance comes down with him.
+     NEAT — steps × the net cost of a step. Walking costs ~0.5 cal per kg per km above
+            resting; his stride is ~0.415 × height. At 101.8kg / 186cm that is ~0.039 cal a
+            step, so 8,000 steps ≈ 315. Steps taken DURING a logged walk or run are taken
+            out here and counted under EAT instead, so nothing is counted twice.
+     EAT  — workouts. Watch calories when they look whole; otherwise an estimate from the
+            workout's distance or length and his weight (net of resting, which BMR already
+            holds). Samsung exports only fragments of its calories, so a watch figure under
+            half the estimate is treated as a fragment and the estimate is used.
+     TEF  — digesting food, from the day's macros: protein 25%, carbs 7.5%, fat 2% of
+            their calories. High-protein days burn more, which a flat 10% would hide.
+
+   Deliberately conservative: no allowance for fidgeting beyond steps, and a workout that is
+   only planned adds nothing until it is done. Overstating maintenance is the error that
+   hides a stall, so every guess here leans low. ONE function owns this — dayBurn(), the
+   Energy tile, the Week view and the weekly card all read dayTDEE(). */
+const TDEE_FALLBACK_STEPS = 6000;          // a day the watch never synced, with no history to go on
+const WALK_NET_PER_KG_KM = 0.5;            // cal per kg per km above resting, walking
+const RUN_NET_PER_KG_KM = 1.0;             // running costs ~1 cal/kg/km net at any sane pace
+const NET_MET = { ride: 6, swim: 6, strength: 3.5, circuit: 5, other: 3 };  // MET minus the 1 BMR already holds
+
+function tdeeWeight(date) {
+  return weightTrend(date) ?? weightOn(date) ?? (PROFILE === 'andrew' ? 106 : 70);
 }
-/* Option B (chosen 23 Nov): one ring for the week, today's allowance beside it, then a
-   small ring per day. A day's ring fills against ITS target — its base for a day that
-   has passed, the rebalanced allowance for today and the days to come — and turns red
-   when it goes over. */
+function bmrOn(date) {
+  const p = loadJSON('body', bodyDefaults()) || {};
+  const w = tdeeWeight(date || todayKey());
+  const age = Number(String(date || todayKey()).slice(0, 4)) - (p.birthYear || bodyDefaults().birthYear);
+  const sex = p.sex || bodyDefaults().sex;
+  return Math.round(10 * w + 6.25 * (p.heightCm || bodyDefaults().heightCm) - 5 * age + (sex === 'female' ? -161 : 5));
+}
+function strideKm() {
+  const p = loadJSON('body', bodyDefaults()) || {};
+  return (p.heightCm || bodyDefaults().heightCm) * 0.415 / 100000;
+}
+function stepKcal(date) { return WALK_NET_PER_KG_KM * tdeeWeight(date) * strideKm(); }
+
+/* Coarse kind of anything trained: run / walk / ride / swim / strength / circuit / other. */
+function tdeeKind(label, kind) {
+  const s = sessionByName(label);
+  if (s && s.kind === 'circuit') return 'circuit';
+  if (s && s.kind === 'view') return 'strength';
+  const k = String(kind || '').toLowerCase();
+  if (/^(run|walk|ride|swim|strength)$/.test(k)) return k;
+  const n = (String(label || '') + ' ' + k).toLowerCase();
+  return /run|jog/.test(n) ? 'run' : /walk|hike/.test(n) ? 'walk' : /ride|bike|cycl/.test(n) ? 'ride'
+       : /swim/.test(n) ? 'swim' : /strength|weight|push|pull|legs|abs|gym/.test(n) ? 'strength' : 'other';
+}
+/* Net calories and the steps it accounts for, for one workout. */
+function workoutCost(a, w) {
+  const stride = strideKm();
+  let km = a.km != null ? Number(a.km) : null, min = a.min != null ? Number(a.min) : null;
+  if (a.kind === 'run' && km == null && min) km = min / 6;         // assume 6:00/km
+  if (a.kind === 'walk' && km == null && min) km = min / 12;       // assume 5 km/h
+  let est = 0, steps = 0;
+  if (a.kind === 'run') { est = RUN_NET_PER_KG_KM * w * (km || 0); steps = (km || 0) / (stride * 1.55); }
+  else if (a.kind === 'walk') { est = WALK_NET_PER_KG_KM * w * (km || 0); steps = (km || 0) / stride; }
+  else est = (NET_MET[a.kind] || NET_MET.other) * w * (min || 0) / 60;
+  const watch = a.kcal != null ? Number(a.kcal) : null;
+  const useWatch = watch != null && watch >= est * 0.5;
+  return { kcal: Math.round(useWatch ? watch : est), steps: Math.round(steps), est: !useWatch, km };
+}
+/* Everything trained on a day, once each: watch workouts first (they carry distance and
+   calories), then app-timed sessions the watch did not also record, then plan days ticked
+   off with neither — those last are estimated from the plan's own km / minutes. */
+function dayWorkouts(date) {
+  const fd = getFitnessData(date) || {};
+  const out = [];
+  (Array.isArray(fd.workouts) ? fd.workouts : []).forEach(w => {
+    if ((w.min || 0) < 5) return;
+    out.push({ label: w.title || (w.kind ? w.kind.charAt(0).toUpperCase() + w.kind.slice(1) : 'Workout'),
+               kind: tdeeKind(w.title, w.kind), min: w.min, km: w.km, kcal: w.kcal, src: 'watch' });
+  });
+  const coarse = k => (k === 'strength' || k === 'circuit') ? 'strength' : (k === 'other' ? 'other' : 'cardio');
+  const used = new Set();
+  (loadJSON('session-log', []) || []).filter(e => e && e.date === date && (e.durationSec || 0) >= 300).forEach(e => {
+    const kind = tdeeKind(e.label, e.type === 'workout' ? '' : e.type);
+    const i = out.findIndex((o, k) => o.src === 'watch' && !used.has(k)
+      && (coarse(o.kind) === coarse(kind) || o.kind === 'other' || kind === 'other'));
+    if (i >= 0) { used.add(i); return; }
+    out.push({ label: e.label || 'Workout', kind, min: Math.round(e.durationSec / 60), km: null, kcal: null, src: 'app' });
+  });
+  const row = ((getPlan(saturdayOf(new Date(date + 'T00:00:00'))).days) || {})[date];
+  if (row && row.done && row.type && !out.length) out.push(Object.assign(planWorkout(row), { src: 'plan' }));
+  return out;
+}
+/* What a plan row would cost if done — for ticked-off days without data, and for the
+   days still to come. A Run or Walk with nothing set adds nothing: no guessing upward. */
+function planWorkout(row) {
+  const kind = tdeeKind(row.type);
+  const cm = planCommitment(row.type, row.amount);
+  const n = row.amount != null && row.amount !== '' ? Number(row.amount) : null;
+  let min = null, km = null;
+  if (cm && cm.fixed) min = Number(String(cm.text).replace(/[^0-9.]/g, '')) || null;
+  else if (n != null && !isNaN(n)) { if (measureFor(row.type) === 'km') km = n; else min = n; }
+  if (row.watch) { km = row.watch.km ?? km; min = row.watch.min ?? min; }
+  return { label: row.type, kind, min, km, kcal: row.watch ? row.watch.kcal : null };
+}
+/* Step-based NEAT for a day, with workout steps removed. null when the watch sent nothing. */
+function neatOf(date, acts) {
+  const fd = getFitnessData(date) || {};
+  if (fd.steps == null || fd.steps === '') return null;
+  const w = tdeeWeight(date);
+  const wSteps = (acts || []).reduce((a, x) => a + workoutCost(x, w).steps, 0);
+  const steps = Math.max(0, Number(fd.steps) - wSteps);
+  return { kcal: Math.round(steps * stepKcal(date)), steps: Number(fd.steps) };
+}
+/* Average NEAT over the 7 days before `date` that have steps — the floor for today's
+   projection and the stand-in for a day the watch missed. */
+const NEAT_BASE_CACHE = new Map();     // cleared by weekEnergy(); a render asks the same thing many times
+function neatBaseline(date) {
+  if (date > todayKey()) date = todayKey();             // days to come use today's history
+  if (NEAT_BASE_CACHE.has(date)) return NEAT_BASE_CACHE.get(date);
+  const r = neatBaselineCalc(date);
+  NEAT_BASE_CACHE.set(date, r);
+  return r;
+}
+function neatBaselineCalc(date) {
+  const vals = [];
+  for (let i = 1; i <= 7; i++) {
+    const d = isoOffsetFrom(date, -i);
+    const n = neatOf(d, dayWorkouts(d));
+    if (n && n.steps > 500) vals.push(n);
+  }
+  if (!vals.length) return { kcal: Math.round(TDEE_FALLBACK_STEPS * stepKcal(date)), steps: TDEE_FALLBACK_STEPS, days: 0 };
+  return { kcal: Math.round(vals.reduce((a, v) => a + v.kcal, 0) / vals.length),
+           steps: Math.round(vals.reduce((a, v) => a + v.steps, 0) / vals.length), days: vals.length };
+}
+/* TEF as a share of calories, from the targets — used for days not yet eaten. */
+function tefRatioTargets() {
+  const t = getTargets();
+  const k = (t.protein || 0) * 4 + (t.carbs || 0) * 4 + (t.fat || 0) * 9;
+  return k ? ((t.protein || 0) * 4 * .25 + (t.carbs || 0) * 4 * .075 + (t.fat || 0) * 9 * .02) / k : 0.1;
+}
+function tefOf(date, eatenFallback) {
+  const tot = mealTotals(date);
+  if (tot.count && (tot.protein || tot.carbs || tot.fat)) {
+    return { kcal: Math.round(tot.protein * 4 * .25 + tot.carbs * 4 * .075 + tot.fat * 9 * .02), from: 'macros' };
+  }
+  const fd = getFitnessData(date) || {};
+  const eaten = tot.count ? tot.kcal : fd.kcalIn;
+  if (eaten != null && eaten !== '') return { kcal: Math.round(Number(eaten) * 0.1), from: '10%' };
+  return eatenFallback ? { kcal: Math.round(eatenFallback * tefRatioTargets()), from: 'budget' } : { kcal: 0, from: null };
+}
+/* The day's maintenance. opts.eatAssume = calories to assume for TEF when nothing is logged
+   (a day still to come). Today is PROJECTED: steps so far, but never below the 7-day average,
+   so the figure holds steady through the day and rises only when he moves more than usual. */
+function dayTDEE(date, opts) {
+  opts = opts || {};
+  const today = todayKey();
+  const when = date > today ? 'future' : date === today ? 'today' : 'past';
+  const w = tdeeWeight(date);
+  const bmr = bmrOn(date);
+  let acts = when === 'future' ? [] : dayWorkouts(date);
+  if (when === 'future') {
+    const row = ((getPlan(saturdayOf(new Date(date + 'T00:00:00'))).days) || {})[date];
+    if (row && row.type) acts = [Object.assign(planWorkout(row), { src: 'plan' })];
+  }
+  const costs = acts.map(a => Object.assign({}, a, workoutCost(a, w)));
+  const eat = costs.reduce((s, c) => s + c.kcal, 0);
+  let neat = when === 'future' ? null : neatOf(date, acts);
+  let neatNote = 'steps';
+  if (when !== 'past' || neat == null) {
+    const base = neatBaseline(date);
+    if (neat == null) { neat = base; neatNote = base.days ? 'avg' : 'fallback'; }
+    else if (when === 'today' && base.kcal > neat.kcal) { neat = { kcal: base.kcal, steps: neat.steps, soFar: neat.kcal }; neatNote = 'projected'; }
+  }
+  const tef = tefOf(date, opts.eatAssume);
+  return { date, when, weight: w, bmr, neat: neat.kcal, steps: neat.steps, neatNote, neatSoFar: neat.soFar,
+           eat, acts: costs, tef: tef.kcal, tefFrom: tef.from, total: bmr + neat.kcal + eat + tef.kcal };
+}
+
+/* The weekly card's numbers. Builds on weekBudget() (the 1,800 / 2,400 budget, which still
+   decides "left today") and adds each day's maintenance and deficit. */
+function weekEnergy(dateIso) {
+  NEAT_BASE_CACHE.clear();
+  const b = weekBudget(dateIso);
+  b.days.forEach(d => {
+    // An unlogged past day counts at budget, so its digestion is worked out on the budget too.
+    const assume = d.past ? (d.eaten == null ? d.base : null) : (d.today ? Math.max(d.eaten || 0, d.allow) : d.allow);
+    d.tdee = dayTDEE(d.iso, { eatAssume: assume });
+    d.eatenUse = d.past ? (d.eaten != null ? d.eaten : d.base) : (d.eaten || 0);
+    d.deficit = d.tdee.total - d.eatenUse;                 // positive = under maintenance
+    d.planDeficit = d.tdee.total - (d.past ? d.eatenUse : assume);   // if he eats to budget from here
+  });
+  const done = b.days.filter(d => d.past);
+  b.deficitDone = done.reduce((a, d) => a + d.deficit, 0);
+  b.deficitPlan = b.days.reduce((a, d) => a + d.planDeficit, 0);
+  b.kgDone = b.deficitDone / 7700;
+  b.kgPlan = b.deficitPlan / 7700;
+  // The goal's pace, from the trend weight, so it moves as he does.
+  const t = getTargets();
+  const tw = weightTrend(todayKey()) ?? weightOn(todayKey());
+  if (t.weight && t.goalDate && tw != null) {
+    const daysLeft = Math.max(1, Math.round((new Date(t.goalDate + 'T00:00:00') - new Date(todayKey() + 'T00:00:00')) / 864e5));
+    b.goal = { kg: t.weight, date: t.goalDate, need: Math.max(0, (tw - t.weight) / (daysLeft / 7)), trend: tw };
+  }
+  return b;
+}
+let WB_SEL = null;                 // the day whose breakdown is open
+let WB_LAST = null;                // last computed week, for the chart's redraw on resize
+function selectWbDay(iso) { WB_SEL = iso; renderWeekBudget(); }
+
+/* Bars like his coach's spreadsheet: what he ate each day, with that day's maintenance
+   as a line stepping across the top — it moves with his activity, so it is not flat.
+   Drawn at the card's measured width (see observeChart) so strokes stay their real weight.
+   Days to come show the budget as a hollow bar and a dashed maintenance line. */
+function drawWbChart() {
+  const host = document.getElementById('wb-chart');
+  const b = WB_LAST;
+  if (!host || !b) return;
+  const W = host.clientWidth;
+  if (!W) return;
+  const H = 156, top = 18, bot = 22, ch = H - top - bot;
+  const max = Math.max(...b.days.map(d => Math.max(d.tdee.total, d.eatenUse || 0, d.allow || 0))) * 1.06;
+  const y = v => top + ch - (v / max) * ch;
+  const col = W / 7, bw = Math.min(30, col * 0.52);
+  const fmt = n => Math.round(n).toLocaleString('en-AU');
+  const names = ['S','M','T','W','T','F','S'];
+  let s = '';
+  // Maintenance as a stepped line: solid for days done, dashed for days to come.
+  const pts = b.days.map((d, i) => ({ x0: i * col + col * 0.08, x1: (i + 1) * col - col * 0.08, y: y(d.tdee.total), fut: !d.past && !d.today }));
+  b.days.forEach((d, i) => {
+    const cx = i * col + col / 2, sel = d.iso === WB_SEL;
+    if (sel) s += '<rect x="' + (i * col + 2) + '" y="2" width="' + (col - 4) + '" height="' + (H - 4) + '" rx="9" fill="var(--bg-soft)"/>';
+    if (d.past || d.today) {
+      const has = d.eaten != null && (d.eaten > 0 || d.past);
+      const v = d.past ? d.eatenUse : (d.eaten || 0);
+      const over = v > d.tdee.total;
+      if (v > 0) s += '<rect x="' + (cx - bw / 2) + '" y="' + y(v) + '" width="' + bw + '" height="' + (top + ch - y(v))
+        + '" rx="4" fill="' + (over ? 'rgba(226,102,92,.8)' : d.eaten == null ? 'var(--border-md)' : 'var(--wb-bar)') + '"/>';
+      if (d.today && d.allow > v) s += '<rect x="' + (cx - bw / 2 + .75) + '" y="' + y(d.allow) + '" width="' + (bw - 1.5) + '" height="'
+        + (y(v) - y(d.allow)) + '" rx="4" fill="none" stroke="var(--wb-bar-dark)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+      // The figure sits INSIDE the top of its bar when there is room: above it, it collided
+      // with the maintenance line whenever he ate close to maintenance.
+      const lblTop = d.today && d.allow > v ? y(d.allow) : y(v);
+      const inside = !(d.today && d.allow > v) && v > 0 && (top + ch - y(v)) > 22;
+      s += '<text x="' + cx + '" y="' + (inside ? lblTop + 14 : lblTop - 5) + '" class="wbc-v' + (inside ? ' in' : '') + '">'
+        + (has || d.today ? fmt(v) : '—') + '</text>';
+    } else {
+      s += '<rect x="' + (cx - bw / 2 + .75) + '" y="' + y(d.allow) + '" width="' + (bw - 1.5) + '" height="' + (top + ch - y(d.allow))
+        + '" rx="4" fill="none" stroke="var(--border-md)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+      s += '<text x="' + cx + '" y="' + (y(d.allow) - 5) + '" class="wbc-v dim">' + fmt(d.allow) + '</text>';
+    }
+    s += '<text x="' + cx + '" y="' + (H - 6) + '" class="wbc-d' + (d.today ? ' now' : '') + '">' + names[d.dow] + '</text>';
+  });
+  pts.forEach((p, i) => {
+    s += '<line x1="' + p.x0 + '" y1="' + p.y + '" x2="' + p.x1 + '" y2="' + p.y + '" stroke="var(--ink)" stroke-width="2"'
+      + (p.fut ? ' stroke-dasharray="4 3" opacity=".45"' : '') + ' stroke-linecap="round"/>';
+    const n = pts[i + 1];
+    if (n) s += '<line x1="' + p.x1 + '" y1="' + p.y + '" x2="' + n.x0 + '" y2="' + n.y + '" stroke="var(--ink)" stroke-width="1" opacity=".25"/>';
+  });
+  // Tap targets over each column.
+  b.days.forEach((d, i) => { s += '<rect x="' + (i * col) + '" y="0" width="' + col + '" height="' + H
+    + '" fill="transparent" style="cursor:pointer" onclick="selectWbDay(\'' + d.iso + '\')"/>'; });
+  host.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Calories eaten and maintenance each day">' + s + '</svg>';
+}
+
+function wbBreakdownHTML(d) {
+  const t = d.tdee;
+  const fmt = n => Math.round(n).toLocaleString('en-AU');
+  const dl = new Date(d.iso + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' });
+  const row = (k, v, note, cls) => '<div class="wbx-r' + (cls ? ' ' + cls : '') + '"><span>' + k + (note ? '<small>' + note + '</small>' : '')
+    + '</span><b>' + v + '</b></div>';
+  const stepsNote = t.neatNote === 'steps' ? fmt(t.steps) + ' steps'
+    : t.neatNote === 'projected' ? fmt(t.steps) + ' steps so far · counting your 7-day average until you pass it'
+    : t.neatNote === 'avg' ? (d.past || d.today ? 'no steps synced · ' : '') + 'your 7-day average'
+    : 'no step history yet · assumed ' + fmt(TDEE_FALLBACK_STEPS);
+  const eatNote = t.acts.length
+    ? t.acts.map(a => a.label + (a.km ? ' ' + (Math.round(a.km * 10) / 10) + ' km' : a.min ? ' ' + Math.round(a.min) + ' min' : '')
+        + (a.src === 'plan' && !d.past && !d.today ? ' (planned)' : a.est ? ' (est.)' : ' (watch)')).join(', ')
+    : d.past || d.today ? 'no workout logged' : 'nothing planned';
+  const tefNote = t.tefFrom === 'macros' ? 'from your macros' : t.tefFrom === '10%' ? '10% of calories eaten'
+    : t.tefFrom === 'budget' ? 'if you eat to budget' : 'nothing logged';
+  const eatenTxt = d.past ? (d.eaten != null ? fmt(d.eaten) : fmt(d.base) + ' <small class="wbx-i">not logged · counted at budget</small>')
+    : d.today ? fmt(d.eaten || 0) + ' <small class="wbx-i">so far</small>' : fmt(d.allow) + ' <small class="wbx-i">budget</small>';
+  const defV = d.past ? d.deficit : d.planDeficit;
+  const defLbl = d.past ? (defV >= 0 ? 'Deficit' : 'Surplus') : (defV >= 0 ? 'Deficit if you eat to budget' : 'Surplus at budget');
+  return '<div class="wbx"><div class="wbx-h">' + dl + (d.today ? ' · today (projected)' : !d.past ? ' · planned' : '') + '</div>'
+    + row('BMR', fmt(t.bmr), t.weight.toFixed(1) + ' kg trend weight')
+    + row('Steps (NEAT)', fmt(t.neat), stepsNote)
+    + row('Exercise (EAT)', fmt(t.eat), eatNote)
+    + row('Digestion (TEF)', fmt(t.tef), tefNote)
+    + row('Maintenance', fmt(t.total), '', 'tot')
+    + row('Eaten', eatenTxt, '')
+    + row(defLbl, (defV >= 0 ? '−' : '+') + fmt(Math.abs(defV)) + ' <small class="wbx-i">≈ ' + (Math.abs(defV) / 7700).toFixed(2) + ' kg</small>', '',
+          'tot ' + (defV >= 0 ? 'good' : 'bad'))
+    + '</div>';
+}
+
+/* The card (rebuilt 27 Nov). Keeps the 1,800 / 2,400 week budget for "left today" — that is
+   what he eats to — and puts maintenance beside it, so he can see each day whether he was
+   under it, by how much, and what the week adds up to in kg (7,700 cal = 1 kg). */
 function renderWeekBudget() {
   const el = document.getElementById('wb-card');
   if (!el) return;
-  const b = weekBudget(viewDate());
+  const b = weekEnergy(viewDate());
+  WB_LAST = b;
   const fmt = n => Math.round(n).toLocaleString('en-AU');
   const isThisWeek = b.days.some(d => d.today);
   const td = b.days.find(d => d.today);
-  const spent = isThisWeek ? b.spentPast + (td && td.eaten ? td.eaten : 0) : b.eatenAll;
-  const remaining = b.budget - spent;
-  const over = remaining < 0;
-  const names = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  if (!WB_SEL || !b.days.some(d => d.iso === WB_SEL)) WB_SEL = td ? td.iso : b.days[6].iso;
+  const sel = b.days.find(d => d.iso === WB_SEL);
   const fmtD = iso => new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  const kg = v => (v >= 0 ? '' : '+') + Math.abs(v).toFixed(2) + ' kg';
 
-  // Toned down 23 Nov: lime, thinner strokes, softer red — the card was shouting.
-  const big = wbRing(116, spent / b.budget, over ? 'rgba(226,102,92,.75)' : 'var(--lime)', 8,
-    fmt(Math.abs(remaining)), over ? 'over ' + fmt(b.budget) : 'left of ' + fmt(b.budget));
-
-  const nextWd = b.days.find(d => !d.past && d.dow >= 1 && d.dow <= 5);
-  let badge = '';
-  if (isThisWeek) {
+  // Left today, against the budget.
+  let today = '';
+  if (isThisWeek && td) {
+    const left = td.allow - (td.eaten || 0);
+    const nextWd = b.days.find(d => !d.past && d.dow >= 1 && d.dow <= 5);
     const wdTxt = nextWd && nextWd.allow !== nextWd.base ? ' · weekdays now ' + fmt(nextWd.allow) : '';
-    badge = Math.abs(b.banked) < 50 ? '<span class="wb-badge">On budget so far</span>'
+    const badge = Math.abs(b.banked) < 50 ? '<span class="wb-badge">On budget so far</span>'
       : b.banked > 0 ? '<span class="wb-badge up">' + fmt(b.banked) + ' banked' + wdTxt + '</span>'
       : '<span class="wb-badge dn">' + fmt(-b.banked) + ' over' + wdTxt + '</span>';
+    today = '<div class="wb-tile"><div class="wb-side-l">Left today</div>'
+      + '<div class="wb-side-big' + (left < 0 ? ' neg' : '') + '">' + (left < 0 ? '−' : '') + fmt(Math.abs(left)) + '</div>'
+      + '<div class="wb-side-l">of ' + fmt(td.allow) + (td.eaten ? ' · ' + fmt(td.eaten) + ' eaten' : '') + '</div>'
+      + '<div class="wb-side-l">Maintenance ~' + fmt(td.tdee.total) + '</div>' + badge + '</div>';
   }
-  const side = isThisWeek && td
-    ? '<div class="wb-side"><div class="wb-side-l">Today</div>'
-      + '<div class="wb-side-big">' + fmt(Math.max(0, td.allow - (td.eaten || 0))) + '</div>'
-      + '<div class="wb-side-l">left of ' + fmt(td.allow) + (td.eaten ? ' · ' + fmt(td.eaten) + ' eaten' : '') + '</div>'
-      + badge + '</div>'
-    : '<div class="wb-side"><div class="wb-side-l">' + fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso) + '</div>'
-      + '<div class="wb-side-big">' + fmt(b.eatenAll) + '</div><div class="wb-side-l">eaten of ' + fmt(b.budget) + '</div></div>';
+  // The week in kg.
+  const doneDays = b.days.filter(d => d.past).length;
+  const week = '<div class="wb-tile"><div class="wb-side-l">' + (isThisWeek ? 'This week so far' : fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso)) + '</div>'
+    + (isThisWeek && !doneDays
+        ? '<div class="wb-side-big">New week</div><div class="wb-side-l">first day today</div>'
+        : '<div class="wb-side-big' + (b.deficitDone < 0 ? ' neg' : '') + '">' + (b.deficitDone >= 0 ? '−' : '+') + fmt(Math.abs(b.deficitDone)) + '</div>'
+          + '<div class="wb-side-l">' + (b.deficitDone >= 0 ? 'under' : 'over') + ' maintenance · ≈&nbsp;' + kg(b.kgDone) + '</div>')
+    + (isThisWeek ? '<div class="wb-side-l wb-proj">Eat to budget to Fri: <b>≈ ' + kg(b.kgPlan) + '</b></div>' : '')
+    + (b.goal && isThisWeek ? '<span class="wb-badge ' + (b.kgPlan >= b.goal.need ? 'up' : 'dn') + '">Goal pace ' + b.goal.need.toFixed(2) + ' kg/wk · '
+        + (b.kgPlan >= b.goal.need ? 'on track' : 'behind') + '</span>' : '')
+    + '</div>';
 
-  const rings = b.days.map(d => {
-    const tgt = d.past ? d.base : d.allow;
-    const has = d.eaten != null;
-    const col = has && d.eaten > tgt ? 'rgba(226,102,92,.75)' : 'var(--lime)';
-    return '<div class="wb-d' + (d.today ? ' today' : '') + (d.past && !has ? ' miss' : '') + '">'
-      + wbRing(40, has ? d.eaten / tgt : 0, col, 4)
-      + '<span class="wb-dn">' + names[d.dow] + '</span>'
-      + '<b class="wb-dv' + (has ? '' : ' plan') + '">' + (has ? fmt(d.eaten) : d.past ? '—' : fmt(tgt)) + '</b>'
-      + '</div>';
-  }).join('');
+  const unl = isThisWeek ? b.unlogged : b.days.filter(d => d.past && d.eaten == null).length;
+  const foot = unl ? '<div class="wb-note">' + unl + ' day' + (unl > 1 ? 's' : '') + ' with nothing logged count'
+      + (unl > 1 ? '' : 's') + ' at budget.</div>' : '';
 
-  const foot = isThisWeek && b.unlogged
-    ? '<div class="wb-note">' + b.unlogged + ' earlier day' + (b.unlogged > 1 ? 's' : '') + ' with nothing logged count'
-      + (b.unlogged > 1 ? '' : 's') + ' at target.</div>' : '';
-
-  el.innerHTML = '<div class="wb-hero">' + big + side + '</div>'
-    + '<div class="wb-rings">' + rings + '</div>'
-    + '<div class="wb-cap"><span>Sat to Fri · ' + fmtD(b.days[0].iso) + ' – ' + fmtD(b.days[6].iso) + '</span>'
-    + '<span>Sat/Sun ' + fmt(b.days[0].base) + ' · weekdays ' + fmt(b.days[2].base) + '</span></div>'
+  el.innerHTML = '<div class="wb-tiles">' + today + week + '</div>'
+    + '<div class="wb-legend"><span><i class="lg-bar"></i>Eaten</span><span><i class="lg-line"></i>Maintenance</span>'
+    + (isThisWeek ? '<span><i class="lg-plan"></i>Budget</span>' : '') + '</div>'
+    + '<div id="wb-chart" class="wb-chart"></div>'
+    + (sel ? wbBreakdownHTML(sel) : '')
+    + '<div class="wb-cap"><span>Sat to Fri · tap a day for its breakdown</span>'
+    + '<span>Budget ' + fmt(b.days[2].base) + ' weekdays · ' + fmt(b.days[0].base) + ' Sat/Sun</span></div>'
     + foot;
+  drawWbChart();
 }
 
 function renderFitnessStats() {
@@ -9424,8 +9723,7 @@ function renderFitnessStats() {
         const b = dayBurn(data);
         // Name where the number came from, so a large total built on a small measurement
         // is never mistaken for a large measurement.
-        txt += b.measuredOnly ? ' · from watch'
-             : ' · ' + formatNumber(b.activity, 0) + ' active + ' + formatNumber(b.rest, 0) + ' resting';
+        txt += ' · ' + formatNumber(b.rest, 0) + ' BMR + ' + formatNumber(b.activity, 0) + ' steps, exercise & food';
       }
       labelEl.textContent = txt;
     }
@@ -9436,30 +9734,19 @@ function renderFitnessStats() {
    the movement on top of simply being alive. Subtracting intake from active calories alone
    would say you are in a 1,500 calorie deficit every day, which is nonsense. So when the
    watch reports active calories we add resting burn back on. */
-function restingBurn() {
-  const p = loadJSON('body', bodyDefaults());
-  const w = (loadJSON('results-log', [])[0] || {}).weight || (PROFILE === 'andrew' ? 106 : 70);
-  const age = new Date().getFullYear() - (p.birthYear || 1992);
-  // Mifflin-St Jeor: +5 for men, −161 for women.
-  const sex = p.sex || bodyDefaults().sex;
-  return Math.round(10 * w + 6.25 * (p.heightCm || 186) - 5 * age + (sex === 'female' ? -161 : 5));
+function restingBurn(date) {
+  // 27 Nov: BMR at the 7-day trend weight (was the first entry in results-log, a single reading).
+  return bmrOn(date || todayKey());
 }
 /* What a day's burn actually was. ONE function, because the Calories Burned dial and
    the Energy tile were working it out separately and showing different numbers for the
    same day — 180 on one, 2,248 on the other. */
-function dayBurn(data) {
-  const rest = restingBurn();
-  const raw = data.kcal;
-  // Samsung sometimes reports Active Energy, sometimes only Total. The worker says which,
-  // and that beats the manual setting: adding resting burn to a real total double counts
-  // it, and not adding it to an active figure understates the day by about 2,000.
-  let mode = data.burnKind || loadJSON('burn-mode', 'active');
-  // But Samsung writes only FRAGMENTS of Total Energy into Health Connect — its own app
-  // shows 1,358 while Health Connect holds 180. A "total" below resting burn is therefore
-  // a piece of the day, not a day, so read it as movement on top of resting.
-  if (mode === 'total' && raw != null && raw < rest) mode = 'estimate';
-  const total = raw == null ? null : (mode === 'total' ? raw : raw + rest);
-  return { total, activity: raw, rest, mode, measuredOnly: mode === 'total' };
+function dayBurn(data, date) {
+  // 27 Nov: the day's burn IS its maintenance — BMR + steps + workouts + digestion, from
+  // dayTDEE(). The watch's own calorie figure is no longer added to a resting estimate:
+  // Samsung exports fragments of it, and steps are the number it gets right.
+  const t = dayTDEE(date || viewDate());
+  return { total: t.total, activity: t.total - t.bmr, rest: t.bmr, mode: 'tdee', measuredOnly: false, tdee: t };
 }
 function renderEnergy(data, targets) {
   const inK = data.kcalIn;
@@ -9471,10 +9758,13 @@ function renderEnergy(data, targets) {
   const oLbl = document.querySelector('#bal-out')?.previousElementSibling;
   if (oLbl) {
     oLbl.textContent = out == null ? 'Out'
-      : mode === 'estimate' ? 'Out (est.)'
+      : mode === 'estimate' || mode === 'tdee' ? 'Out (est.)'
       : (mode === 'active' ? 'Out (' + formatNumber(rest, 0) + '+)' : 'Out (total)');
     if (out != null && data.burnKind) oLbl.dataset.auto = '1';
     oLbl.title = out == null ? ''
+      : mode === 'tdee'
+        ? 'Maintenance: ' + formatNumber(burn.tdee.bmr, 0) + ' BMR + ' + formatNumber(burn.tdee.neat, 0) + ' steps + '
+          + formatNumber(burn.tdee.eat, 0) + ' exercise + ' + formatNumber(burn.tdee.tef, 0) + ' digestion'
       : mode === 'estimate'
         ? 'Health Connect holds only ' + formatNumber(data.kcal, 0) + ' cal — far below a day of '
           + 'resting burn, so it is a fragment of the day rather than a total. Counted as '
@@ -10315,6 +10605,7 @@ function observeChart(id, draw) {
 function observeCharts() {
   observeChart('weight-chart-wrap', renderWeightChart);
   observeChart('hist-chart', renderHistory);
+  observeChart('wb-card', drawWbChart);
 }
 
 function renderHistory() {
@@ -11120,7 +11411,11 @@ function renderWeek() {
   // one series, so no legend; the row name carries identity.
   // Andrew's maintenance was worked out at 2,590; anyone else gets resting burn × 1.3
   // (light activity) until the coach records a figure for them.
-  const maintenance = (loadJSON('coach-profile', {}) || {}).maintenance || (PROFILE === 'andrew' ? 2590 : Math.round(restingBurn() * 1.3));
+  // 27 Nov: the average of each day's own maintenance (dayTDEE) over the days so far,
+  // replacing the fixed 2,590 worked out at 107kg.
+  const mDays = st.dates.filter(d => d <= todayKey());
+  const maintenance = mDays.length ? Math.round(mDays.reduce((a, d) => a + dayTDEE(d).total, 0) / mDays.length)
+    : Math.round(restingBurn() * 1.3);
   const defs = [
     { k: 'kcalIn',  name: 'Calories in', target: t.kcalIn || 2000, dec: 0, colour: 'var(--c-kcalIn)', ceiling: true },
     { k: 'protein', name: 'Protein',     target: t.protein || 150, dec: 0, unit: 'g', colour: 'var(--c-protein)' },
